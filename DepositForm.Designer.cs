@@ -38,6 +38,8 @@ namespace SmartCashDisbursementApp
             pbSpecific = new PictureBox();
             lblSpecificTitle = new Label();
             lblSpecificDesc = new Label();
+            lblCategory = new Label();
+            cmbCategory = new ComboBox();
             pnlFooter = new Panel();
             lblFooter = new Label();
             btnBack = new Button();
@@ -243,7 +245,25 @@ namespace SmartCashDisbursementApp
             lblSpecificDesc.Click += lblSpecificDesc_Click;
             // 
             // pnlFooter
-            // 
+            // lblCategory
+            lblCategory.AutoSize = true;
+            lblCategory.Location = new Point(140, 420);
+            lblCategory.Name = "lblCategory";
+            lblCategory.Size = new Size(78, 15);
+            lblCategory.TabIndex = 9;
+            lblCategory.Text = "Category:";
+            lblCategory.Visible = false;
+            // cmbCategory
+            cmbCategory.DropDownStyle = ComboBoxStyle.DropDownList;
+            cmbCategory.FormattingEnabled = true;
+            cmbCategory.Items.AddRange(new object[] { "Needs", "Wants", "Savings", "Other" });
+            cmbCategory.Location = new Point(220, 417);
+            cmbCategory.Name = "cmbCategory";
+            cmbCategory.Size = new Size(250, 23);
+            cmbCategory.TabIndex = 10;
+            cmbCategory.Visible = false;
+            cmbCategory.SelectedIndexChanged += cmbCategory_SelectedIndexChanged;
+            // pnlFooter
             pnlFooter.BackColor = Color.FromArgb(8, 80, 145);
             pnlFooter.Controls.Add(lblFooter);
             pnlFooter.Controls.Add(btnBack);
@@ -304,6 +324,8 @@ namespace SmartCashDisbursementApp
             ClientSize = new Size(800, 520);
             Controls.Add(label1);
             Controls.Add(pnlOptions);
+            Controls.Add(cmbCategory);
+            Controls.Add(lblCategory);
             Controls.Add(lblChooseMethod);
             Controls.Add(lblAmountHint);
             Controls.Add(pnlAmountBox);
@@ -350,6 +372,8 @@ namespace SmartCashDisbursementApp
         private PictureBox pbSpecific;
         private Label lblSpecificTitle;
         private Label lblSpecificDesc;
+        private Label lblCategory;
+        private ComboBox cmbCategory;
         private Panel pnlFooter;
         private Button btnBack;
         private Button btnConfirm;
