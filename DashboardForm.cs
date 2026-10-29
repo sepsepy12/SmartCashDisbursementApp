@@ -27,7 +27,7 @@ namespace SmartCashDisbursementApp
 		private void btnCashWithdrawal_Click(object sender, EventArgs e)
 		{
 			this.Hide();
-			var withdraw = new WithdrawalForm();
+			var withdraw = new WithdrawalForm(userId);
 			withdraw.FormClosed += (s, args) => this.Show();
 			withdraw.Show();
 		}

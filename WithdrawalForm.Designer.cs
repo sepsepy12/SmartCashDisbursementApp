@@ -23,6 +23,8 @@ namespace SmartCashDisbursementApp
 			label2 = new Label();
 			label3 = new Label();
 			label4 = new Label();
+			lblAvailableBalance = new Label();
+			lblReview = new Label();
 			pnlAmount = new Panel();
 			lblPeso = new Label();
 			txtAmount = new TextBox();
@@ -95,6 +97,14 @@ namespace SmartCashDisbursementApp
 			label4.Text = "2. CHOOSE WHERE TO WITHDRAW FROM:";
 			label4.Click += label4_Click;
 			//
+			// lblAvailableBalance
+			//
+			lblAvailableBalance.AutoSize = true;
+			lblAvailableBalance.Font = new Font("Segoe UI", 9F, FontStyle.Italic);
+			lblAvailableBalance.ForeColor = Color.FromArgb(60, 75, 90);
+			lblAvailableBalance.Location = new Point(530, 234);
+			lblAvailableBalance.Text = "Available balance: ₱0.00";
+			//
 			// pnlAmount
 			//
 			pnlAmount.BackColor = Color.WhiteSmoke;
@@ -130,12 +140,56 @@ namespace SmartCashDisbursementApp
 			lblAmountHint.Location = new Point(302, 234);
 			lblAmountHint.Text = "(Enter amount via numeric keypad)";
 			//
-			// Category buttons
+			// lblReview
 			//
-			ConfigureCategoryButton(button1, new Point(20, 292), "A. NEEDS\n\n(WITHDRAWAL FOR\nESSENTIAL LIVING\nEXPENSES)");
+			lblReview.AutoSize = false;
+			lblReview.Font = new Font("Segoe UI", 9F, FontStyle.Italic);
+			lblReview.ForeColor = Color.FromArgb(45, 65, 85);
+			lblReview.Location = new Point(130, 395);
+			lblReview.Size = new Size(540, 25);
+			lblReview.Text = "Select a category and review your withdrawal before confirming.";
+			//
+			// button1
+			//
+			button1.BackColor = Color.White;
+			button1.FlatAppearance.BorderColor = Color.FromArgb(130, 130, 130);
+			button1.FlatAppearance.BorderSize = 1;
+			button1.FlatStyle = FlatStyle.Flat;
+			button1.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
+			button1.ForeColor = Color.FromArgb(20, 75, 115);
+			button1.Location = new Point(20, 292);
+			button1.Size = new Size(190, 90);
+			button1.Text = "A. NEEDS\n\n(WITHDRAWAL FOR\nESSENTIAL LIVING\nEXPENSES)";
+			button1.UseVisualStyleBackColor = false;
 			button1.Click += button1_Click;
-			ConfigureCategoryButton(button2, new Point(305, 292), "B. WANTS\n\n(WITHDRAWAL FOR\nDISCRETIONARY OR\nLEISURE SPENDING)");
-			ConfigureCategoryButton(button3, new Point(590, 292), "C. SAVINGS\n\n(WITHDRAWAL FROM\nEMERGENCY OR\nGOAL FUNDS)");
+			//
+			// button2
+			//
+			button2.BackColor = Color.White;
+			button2.FlatAppearance.BorderColor = Color.FromArgb(130, 130, 130);
+			button2.FlatAppearance.BorderSize = 1;
+			button2.FlatStyle = FlatStyle.Flat;
+			button2.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
+			button2.ForeColor = Color.FromArgb(20, 75, 115);
+			button2.Location = new Point(305, 292);
+			button2.Size = new Size(190, 90);
+			button2.Text = "B. WANTS\n\n(WITHDRAWAL FOR\nDISCRETIONARY OR\nLEISURE SPENDING)";
+			button2.UseVisualStyleBackColor = false;
+			button2.Click += button2_Click;
+			//
+			// button3
+			//
+			button3.BackColor = Color.White;
+			button3.FlatAppearance.BorderColor = Color.FromArgb(130, 130, 130);
+			button3.FlatAppearance.BorderSize = 1;
+			button3.FlatStyle = FlatStyle.Flat;
+			button3.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
+			button3.ForeColor = Color.FromArgb(20, 75, 115);
+			button3.Location = new Point(590, 292);
+			button3.Size = new Size(190, 90);
+			button3.Text = "C. SAVINGS\n\n(WITHDRAWAL FROM\nEMERGENCY OR\nGOAL FUNDS)";
+			button3.UseVisualStyleBackColor = false;
+			button3.Click += button3_Click;
 			//
 			// pnlFooter
 			//
@@ -166,7 +220,7 @@ namespace SmartCashDisbursementApp
 			btnBack.Size = new Size(100, 34);
 			btnBack.Text = "← BACK";
 			btnBack.UseVisualStyleBackColor = false;
-			btnBack.Click += (sender, e) => Close();
+			btnBack.Click += btnBack_Click;
 			//
 			// button5
 			//
@@ -179,6 +233,7 @@ namespace SmartCashDisbursementApp
 			button5.Size = new Size(145, 34);
 			button5.Text = "REVIEW WITHDRAWAL";
 			button5.UseVisualStyleBackColor = false;
+			button5.Click += button5_Click;
 			//
 			// button4
 			//
@@ -191,6 +246,7 @@ namespace SmartCashDisbursementApp
 			button4.Size = new Size(125, 34);
 			button4.Text = "CONFIRM";
 			button4.UseVisualStyleBackColor = false;
+			button4.Click += button4_Click;
 			//
 			// WithdrawalForm
 			//
@@ -202,6 +258,8 @@ namespace SmartCashDisbursementApp
 			Controls.Add(button3);
 			Controls.Add(button2);
 			Controls.Add(button1);
+			Controls.Add(lblReview);
+			Controls.Add(lblAvailableBalance);
 			Controls.Add(lblAmountHint);
 			Controls.Add(pnlAmount);
 			Controls.Add(label4);
@@ -225,20 +283,6 @@ namespace SmartCashDisbursementApp
 			PerformLayout();
 		}
 
-		private static void ConfigureCategoryButton(Button button, Point location, string text)
-		{
-			button.BackColor = Color.White;
-			button.FlatAppearance.BorderColor = Color.FromArgb(130, 130, 130);
-			button.FlatAppearance.BorderSize = 1;
-			button.FlatStyle = FlatStyle.Flat;
-			button.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
-			button.ForeColor = Color.FromArgb(20, 75, 115);
-			button.Location = location;
-			button.Size = new Size(190, 90);
-			button.Text = text;
-			button.UseVisualStyleBackColor = false;
-		}
-
 		private Panel pnlHeader;
 		private Label lblAppName;
 		private Label lblAppSubtitle;
@@ -246,6 +290,8 @@ namespace SmartCashDisbursementApp
 		private Label label2;
 		private Label label3;
 		private Label label4;
+		private Label lblAvailableBalance;
+		private Label lblReview;
 		private Panel pnlAmount;
 		private Label lblPeso;
 		private TextBox txtAmount;
