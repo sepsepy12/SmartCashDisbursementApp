@@ -8,21 +8,26 @@ using System.Windows.Forms;
 
 namespace SmartCashDisbursementApp
 {
-    public partial class WithdrawalForm : Form
-    {
-        public WithdrawalForm()
-        {
-            InitializeComponent();
-        }
+	public partial class WithdrawalForm : Form
+	{
+		public WithdrawalForm()
+		{
+			InitializeComponent();
+		}
 
-        private void label2_Click(object sender, EventArgs e)
-        {
+		private void label2_Click(object sender, EventArgs e)
+		{
 
-        }
+		}
 
-        private void button1_Click(object sender, EventArgs e)
-        {
+		private void button1_Click(object sender, EventArgs e)
+		{
 
-        }
-    }
+		}
+
+		private void label4_Click(object sender, EventArgs e)
+		{
+
+		}
+	}
 }
