@@ -40,6 +40,14 @@ namespace SmartCashDisbursementApp
 			counseling.Show();
 		}
 
+		private void btnTransactionHistory_Click(object sender, EventArgs e)
+		{
+			this.Hide();
+			var history = new TransactionHistoryForm(userId);
+			history.FormClosed += (s, args) => this.Show();
+			history.Show();
+		}
+
 		private void pnlOptionA_Paint(object sender, PaintEventArgs e)
 		{
 

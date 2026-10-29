@@ -35,6 +35,7 @@
 			pnlFooter = new Panel();
 			lblSecurity = new Label();
 			lblDateTime = new Label();
+			btnTransactionHistory = new Button();
 			pnlHeader.SuspendLayout();
 			pnlMain.SuspendLayout();
 			pnlCashDeposit.SuspendLayout();
@@ -244,6 +245,7 @@
 			pnlFooter.BackColor = Color.FromArgb(8, 80, 145);
 			pnlFooter.Controls.Add(lblSecurity);
 			pnlFooter.Controls.Add(lblDateTime);
+			pnlFooter.Controls.Add(btnTransactionHistory);
 			pnlFooter.Dock = DockStyle.Bottom;
 			pnlFooter.Location = new Point(0, 480);
 			pnlFooter.Name = "pnlFooter";
@@ -272,6 +274,22 @@
 			lblDateTime.Size = new Size(152, 15);
 			lblDateTime.TabIndex = 1;
 			lblDateTime.Text = "October 28, 2026 | 10:59 PM";
+			//
+			// btnTransactionHistory
+			//
+			btnTransactionHistory.BackColor = Color.FromArgb(8, 80, 145);
+			btnTransactionHistory.FlatAppearance.BorderColor = Color.White;
+			btnTransactionHistory.FlatAppearance.BorderSize = 1;
+			btnTransactionHistory.FlatStyle = FlatStyle.Flat;
+			btnTransactionHistory.Font = new Font("Segoe UI", 8F, FontStyle.Bold);
+			btnTransactionHistory.ForeColor = Color.White;
+			btnTransactionHistory.Location = new Point(370, 7);
+			btnTransactionHistory.Name = "btnTransactionHistory";
+			btnTransactionHistory.Size = new Size(160, 27);
+			btnTransactionHistory.TabIndex = 2;
+			btnTransactionHistory.Text = "TRANSACTION HISTORY";
+			btnTransactionHistory.UseVisualStyleBackColor = false;
+			btnTransactionHistory.Click += btnTransactionHistory_Click;
 			// 
 			// DashboardForm
 			// 
@@ -324,5 +342,6 @@
         private System.Windows.Forms.Panel pnlFooter;
         private System.Windows.Forms.Label lblSecurity;
         private System.Windows.Forms.Label lblDateTime;
+		private System.Windows.Forms.Button btnTransactionHistory;
     }
 }
