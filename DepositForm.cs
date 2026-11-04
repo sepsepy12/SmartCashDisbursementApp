@@ -34,7 +34,7 @@ namespace SmartCashDisbursementApp
             lblCategory.Visible = false;
 
             MessageBox.Show(
-                $"Total Deposit: {CurrencyDisplay.Format(amount)}\n\nNeeds: {CurrencyDisplay.Format(pendingAllocation["Needs"])}\nWants: {CurrencyDisplay.Format(pendingAllocation["Wants"])}\nSavings: {CurrencyDisplay.Format(pendingAllocation["Savings"])}\n\nClick CONFIRM to save this deposit.",
+                $"Total Deposit: ₱{amount:F2}\n\nNeeds: ₱{pendingAllocation["Needs"]:F2}\nWants: ₱{pendingAllocation["Wants"]:F2}\nSavings: ₱{pendingAllocation["Savings"]:F2}\n\nClick CONFIRM to save this deposit.",
                 "Automated Budgeting", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
 
@@ -69,7 +69,7 @@ namespace SmartCashDisbursementApp
                     MessageBox.Show("No deposit allocation is available.", "Deposit Required", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                     return;
                 }
-                ConfirmDeposit(pendingAllocation, $"Total Deposited: {CurrencyDisplay.Format(GetPendingTotal())}\nNeeds: {CurrencyDisplay.Format(pendingAllocation["Needs"])}\nWants: {CurrencyDisplay.Format(pendingAllocation["Wants"])}\nSavings: {CurrencyDisplay.Format(pendingAllocation["Savings"])}");
+                ConfirmDeposit(pendingAllocation, $"Total Deposited: ₱{GetPendingTotal():F2}\nNeeds: ₱{pendingAllocation["Needs"]:F2}\nWants: ₱{pendingAllocation["Wants"]:F2}\nSavings: ₱{pendingAllocation["Savings"]:F2}");
             }
             else if (string.IsNullOrEmpty(pendingSpecificCategory) || pendingSpecificAmount <= 0)
             {
@@ -77,7 +77,7 @@ namespace SmartCashDisbursementApp
             }
             else
             {
-                ConfirmDeposit(new Dictionary<string, decimal> { { pendingSpecificCategory, pendingSpecificAmount } }, $"Total Deposited: {CurrencyDisplay.Format(pendingSpecificAmount)}\nCategory: {pendingSpecificCategory}");
+                ConfirmDeposit(new Dictionary<string, decimal> { { pendingSpecificCategory, pendingSpecificAmount } }, $"Total Deposited: ₱{pendingSpecificAmount:F2}\nCategory: {pendingSpecificCategory}");
             }
         }
 
@@ -144,12 +144,12 @@ namespace SmartCashDisbursementApp
         {
             lblSpecificDesc.Text = pendingSpecificCategory == null
                 ? "(Select a category below)"
-                : $"{pendingSpecificCategory}: {CurrencyDisplay.Format(pendingSpecificAmount)}";
+                : $"{pendingSpecificCategory}: ₱{pendingSpecificAmount:F2}";
         }
 
         private void ResetPendingDeposit()
         {
-            txtAmountDisplay.Text = "0";
+            txtAmountDisplay.Text = "0.00";
             selectedMethod = null;
             pendingAllocation = null;
             pendingSpecificCategory = null;

@@ -78,7 +78,7 @@ namespace SmartCashDisbursementApp
 			textBox1.Name = "textBox1";
 			textBox1.Size = new Size(180, 36);
 			textBox1.TabIndex = 3;
-			textBox1.Text = "0";
+			textBox1.Text = "0.00";
 			// 
 			// textBox2
 			// 
