@@ -63,10 +63,10 @@ namespace SmartCashDisbursementApp
 		private void ShowWithdrawalConfirmation()
 		{
 			string confirmation =
-				$"WITHDRAWAL CONFIRMATION\n\nAmount: ₱{pendingAmount:F2}\n" +
+				$"WITHDRAWAL CONFIRMATION\n\nAmount: {CurrencyDisplay.Format(pendingAmount)}\n" +
 				$"Category: {selectedCategory.ToUpperInvariant()}\n" +
-				$"Available Balance: ₱{availableBalance:F2}\n" +
-				$"Remaining Balance: ₱{availableBalance - pendingAmount:F2}\n\n" +
+				$"Available Balance: {CurrencyDisplay.Format(availableBalance)}\n" +
+				$"Remaining Balance: {CurrencyDisplay.Format(availableBalance - pendingAmount)}\n\n" +
 				"Are you sure you want to proceed with this withdrawal?";
 
 			if (MessageBox.Show(confirmation, "Withdrawal Confirmation", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
@@ -101,14 +101,14 @@ namespace SmartCashDisbursementApp
 				if (budgetRepo.TryWithdraw(userId, selectedCategory, amount, out decimal remainingBalance, out string failureReason))
 				{
 					availableBalance = remainingBalance;
-					lblAvailableBalance.Text = $"Available balance: ₱{availableBalance:F2}";
-					MessageBox.Show($"Withdrawal successful!\n\nAmount: ₱{amount:F2}\nCategory: {selectedCategory}", "Withdrawal Successful", MessageBoxButtons.OK, MessageBoxIcon.Information);
+					lblAvailableBalance.Text = $"Available balance: {CurrencyDisplay.Format(availableBalance)}";
+					MessageBox.Show($"Withdrawal successful!\n\nAmount: {CurrencyDisplay.Format(amount)}\nCategory: {selectedCategory}", "Withdrawal Successful", MessageBoxButtons.OK, MessageBoxIcon.Information);
 					ResetWithdrawal();
 					return;
 				}
 
 				availableBalance = remainingBalance;
-				lblAvailableBalance.Text = $"Available balance: ₱{availableBalance:F2}";
+				lblAvailableBalance.Text = $"Available balance: {CurrencyDisplay.Format(availableBalance)}";
 				ClearPendingWithdrawal();
 				lblReview.Text = failureReason ?? "The withdrawal was declined. Please select a category again.";
 				MessageBox.Show(failureReason ?? "The withdrawal was declined.", "Withdrawal Declined", MessageBoxButtons.OK, MessageBoxIcon.Warning);
@@ -152,14 +152,14 @@ namespace SmartCashDisbursementApp
 		private void RefreshSelectedCategoryBalance()
 		{
 			availableBalance = budgetRepo.GetCategoryBalance(userId, selectedCategory);
-			lblAvailableBalance.Text = $"Available balance: ₱{availableBalance:F2}";
+			lblAvailableBalance.Text = $"Available balance: {CurrencyDisplay.Format(availableBalance)}";
 		}
 
 		private void ResetWithdrawal()
 		{
-			txtAmount.Text = "0.00";
+			txtAmount.Text = "0";
 			ClearPendingWithdrawal();
-			lblAvailableBalance.Text = $"Available balance: ₱{availableBalance:F2}";
+			lblAvailableBalance.Text = $"Available balance: {CurrencyDisplay.Format(availableBalance)}";
 			lblReview.Text = $"Selected category: {selectedCategory}. Enter an amount and select a category to continue.";
 		}
 

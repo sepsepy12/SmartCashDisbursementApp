@@ -126,7 +126,7 @@ namespace SmartCashDisbursementApp
             txtAmountDisplay.Name = "txtAmountDisplay";
             txtAmountDisplay.Size = new Size(430, 40);
             txtAmountDisplay.TabIndex = 1;
-            txtAmountDisplay.Text = "0.00";
+            txtAmountDisplay.Text = "0";
             txtAmountDisplay.TextAlign = HorizontalAlignment.Center;
             // 
             // lblAmountHint

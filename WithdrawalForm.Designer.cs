@@ -101,7 +101,7 @@ namespace SmartCashDisbursementApp
 			lblAvailableBalance.Font = new Font("Segoe UI", 9F, FontStyle.Italic);
 			lblAvailableBalance.ForeColor = Color.FromArgb(60, 75, 90);
 			lblAvailableBalance.Location = new Point(530, 234);
-			lblAvailableBalance.Text = "Available balance: ₱0.00";
+			lblAvailableBalance.Text = "Available balance: ₱0";
 			//
 			// pnlAmount
 			//
@@ -128,7 +128,7 @@ namespace SmartCashDisbursementApp
 			txtAmount.ForeColor = Color.DimGray;
 			txtAmount.Location = new Point(170, 6);
 			txtAmount.Size = new Size(220, 32);
-			txtAmount.Text = "0.00";
+			txtAmount.Text = "0";
 			txtAmount.TextAlign = HorizontalAlignment.Center;
 			//
 			// lblAmountHint

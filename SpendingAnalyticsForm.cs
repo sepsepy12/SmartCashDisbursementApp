@@ -61,9 +61,9 @@ namespace SmartCashDisbursementApp
             {
                 dgvCategoryBalances.Rows.Add(
                     cat.Name,
-                    cat.Allocated.ToString("F2"),
-                    cat.Spent.ToString("F2"),
-                    cat.Remaining.ToString("F2")
+                    CurrencyDisplay.FormatNumber(cat.Allocated),
+                    CurrencyDisplay.FormatNumber(cat.Spent),
+                    CurrencyDisplay.FormatNumber(cat.Remaining)
                 );
             }
         }

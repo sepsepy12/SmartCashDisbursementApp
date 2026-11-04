@@ -106,7 +106,7 @@ namespace SmartCashDisbursementApp
 				budgetRepo.SaveGoal(userId, categoryId, amount, targetDate);
 			}
 
-			MessageBox.Show($"Goal set: ₱{amount:F2} for {selectedCategory} by {targetDate:yyyy-MM-dd}");
+			MessageBox.Show($"Goal set: {CurrencyDisplay.Format(amount)} for {selectedCategory} by {targetDate:yyyy-MM-dd}");
 			ClearForm();
 		}
 

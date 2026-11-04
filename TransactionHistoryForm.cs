@@ -245,7 +245,7 @@ namespace SmartCashDisbursementApp
 		private string FormatAmount(object value)
 		{
 			if (decimal.TryParse(Convert.ToString(value), out decimal amount))
-				return $"₱{amount:N2}";
+				return CurrencyDisplay.Format(amount);
 			return Convert.ToString(value);
 		}
 
