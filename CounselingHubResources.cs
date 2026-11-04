@@ -10,9 +10,12 @@ namespace SmartCashDisbursementApp
 {
     public partial class CounselingHub_Resources : Form
     {
-        public CounselingHub_Resources()
+        private readonly int userId;
+
+        public CounselingHub_Resources(int userId)
         {
             InitializeComponent();
+            this.userId = userId;
         }
     }
 }

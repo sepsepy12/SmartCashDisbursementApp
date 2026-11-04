@@ -3,54 +3,59 @@ using System.Windows.Forms;
 
 namespace SmartCashDisbursementApp
 {
-	public partial class DashboardForm : Form
-	{
-		private int userId;
-		private string fullName;
+    public partial class DashboardForm : Form
+    {
+        private int userId;
+        private string fullName;
 
-		public DashboardForm(int userId, string fullName)
-		{
-			InitializeComponent();
-			this.userId = userId;
-			this.fullName = fullName;
-			lblSubtitle.Text = $"MAIN MENU - PLEASE SELECT AN OPTION  |  Welcome, {fullName}";
-		}
+        public DashboardForm(int userId, string fullName)
+        {
+            InitializeComponent();
+            this.userId = userId;
+            this.fullName = fullName;
+            lblSubtitle.Text = $"MAIN MENU - PLEASE SELECT AN OPTION  |  Welcome, {fullName}";
+        }
 
-		private void btnCashDeposit_Click(object sender, EventArgs e)
-		{
-			this.Hide();
-			var deposit = new DepositForm(userId);
-			deposit.FormClosed += (s, args) => this.Show();
-			deposit.Show();
-		}
+        private void btnCashDeposit_Click(object sender, EventArgs e)
+        {
+            this.Hide();
+            var deposit = new DepositForm(userId);
+            deposit.FormClosed += (s, args) => this.Show();
+            deposit.Show();
+        }
 
-		private void btnCashWithdrawal_Click(object sender, EventArgs e)
-		{
-			this.Hide();
-			var withdraw = new WithdrawalForm(userId);
-			withdraw.FormClosed += (s, args) => this.Show();
-			withdraw.Show();
-		}
+        private void btnCashWithdrawal_Click(object sender, EventArgs e)
+        {
+            this.Hide();
+            var withdraw = new WithdrawalForm(userId);
+            withdraw.FormClosed += (s, args) => this.Show();
+            withdraw.Show();
+        }
 
-		private void btnBudgetingCounseling_Click(object sender, EventArgs e)
-		{
-			this.Hide();
-			var counseling = new BudgetingCounselingForm(userId);
-			counseling.FormClosed += (s, args) => this.Show();
-			counseling.Show();
-		}
+        private void btnBudgetingCounseling_Click(object sender, EventArgs e)
+        {
+            this.Hide();
+            var counseling = new BudgetingCounselingForm(userId);
+            counseling.FormClosed += (s, args) => this.Show();
+            counseling.Show();
+        }
 
-		private void btnTransactionHistory_Click(object sender, EventArgs e)
-		{
-			this.Hide();
-			var history = new TransactionHistoryForm(userId);
-			history.FormClosed += (s, args) => this.Show();
-			history.Show();
-		}
+        private void btnTransactionHistory_Click(object sender, EventArgs e)
+        {
+            this.Hide();
+            var history = new TransactionHistoryForm(userId);
+            history.FormClosed += (s, args) => this.Show();
+            history.Show();
+        }
 
-		private void pnlOptionA_Paint(object sender, PaintEventArgs e)
-		{
+        private void pnlOptionA_Paint(object sender, PaintEventArgs e)
+        {
 
-		}
-	}
+        }
+
+        private void DashboardForm_Load(object sender, EventArgs e)
+        {
+
+        }
+    }
 }

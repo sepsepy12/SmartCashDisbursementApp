@@ -34,7 +34,10 @@ namespace SmartCashDisbursementApp
         private void button3_Click(object sender, EventArgs e)
         {
             // C. Counseling hub placeholder
-            MessageBox.Show("Counseling Hub & Resources - coming soon");
+            this.Hide();
+            var counselinghubForm = new CounselingHub_Resources(userId);
+            counselinghubForm.FormClosed += (s, args) => this.Show();
+            counselinghubForm.Show();
         }
 
         private void button5_Click(object sender, EventArgs e)
