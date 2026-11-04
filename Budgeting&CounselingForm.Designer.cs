@@ -360,17 +360,15 @@ namespace SmartCashDisbursementApp
             // 
             btnConfirm.Location = new Point(660, 12);
             btnConfirm.Name = "btnConfirm";
-            btnConfirm.Size = new Size(100, 36);
+            btnConfirm.Size = new Size(128, 36);
             btnConfirm.TabIndex = 2;
             btnConfirm.Text = "CONFIRM";
             btnConfirm.Click += button5_Click;
             // 
             // BudgetingCounselingForm
             // 
-            AutoScaleDimensions = new SizeF(7F, 15F);
+            AutoScaleDimensions = new SizeF(12F, 30F);
             AutoScaleMode = AutoScaleMode.Font;
-            // Larger default font for fullscreen
-            this.Font = new System.Drawing.Font("Segoe UI", 16F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             ClientSize = new Size(800, 520);
             Controls.Add(pnlMain);
             Controls.Add(lblInstruction);
@@ -378,12 +376,13 @@ namespace SmartCashDisbursementApp
             Controls.Add(lblTitle);
             Controls.Add(pnlHeader);
             Controls.Add(pnlFooter);
+            Font = new Font("Segoe UI", 16F);
+            FormBorderStyle = FormBorderStyle.None;
             Name = "BudgetingCounselingForm";
             Text = "Budgeting & Counseling";
-            // Start in borderless fullscreen (kiosk) mode
-            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
-            this.WindowState = System.Windows.Forms.FormWindowState.Maximized;
-            this.TopMost = true;
+            TopMost = true;
+            WindowState = FormWindowState.Maximized;
+            Load += BudgetingCounselingForm_Load_1;
             pnlHeader.ResumeLayout(false);
             pnlHeader.PerformLayout();
             pnlMain.ResumeLayout(false);

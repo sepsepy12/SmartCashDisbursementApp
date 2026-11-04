@@ -58,5 +58,10 @@ namespace SmartCashDisbursementApp
         {
 
         }
+
+        private void BudgetingCounselingForm_Load_1(object sender, EventArgs e)
+        {
+
+        }
     }
 }
