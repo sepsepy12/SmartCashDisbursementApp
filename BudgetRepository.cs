@@ -62,6 +62,139 @@ namespace SmartCashDisbursementApp
             }
         }
 
+        public int? FindCategoryId(int userId, string categoryName)
+        {
+            using (var conn = DatabaseHelper.GetConnection())
+            {
+                conn.Open();
+                const string sql = "SELECT id FROM budget_categories WHERE user_id = @userId AND category_name = @name";
+                using (var cmd = new MySqlCommand(sql, conn))
+                {
+                    cmd.Parameters.AddWithValue("@userId", userId);
+                    cmd.Parameters.AddWithValue("@name", categoryName);
+                    var result = cmd.ExecuteScalar();
+                    return result == null || result == System.DBNull.Value ? null : System.Convert.ToInt32(result);
+                }
+            }
+        }
+
+        public decimal GetCategoryBalance(int userId, string categoryName)
+        {
+            int? categoryId = FindCategoryId(userId, categoryName);
+            if (!categoryId.HasValue)
+                return 0;
+
+            using (var conn = DatabaseHelper.GetConnection())
+            {
+                conn.Open();
+                return GetCategoryBalance(userId, categoryId.Value, conn, null);
+            }
+        }
+
+        public bool TryWithdraw(int userId, string categoryName, decimal amount, out decimal remainingBalance, out string failureReason)
+        {
+            remainingBalance = 0;
+            failureReason = null;
+
+            if (amount <= 0)
+            {
+                failureReason = "The withdrawal amount must be greater than zero.";
+                return false;
+            }
+
+            if (amount != decimal.Round(amount, 2))
+            {
+                failureReason = "The withdrawal amount must not have more than two decimal places.";
+                return false;
+            }
+
+            using (var conn = DatabaseHelper.GetConnection())
+            {
+                conn.Open();
+                using (var transaction = conn.BeginTransaction())
+                {
+                    try
+                    {
+                        const string categorySql = @"
+                            SELECT id
+                            FROM budget_categories
+                            WHERE user_id = @userId AND category_name = @categoryName
+                            FOR UPDATE";
+
+                        int categoryId;
+                        using (var categoryCommand = new MySqlCommand(categorySql, conn, transaction))
+                        {
+                            categoryCommand.Parameters.AddWithValue("@userId", userId);
+                            categoryCommand.Parameters.AddWithValue("@categoryName", categoryName);
+                            var result = categoryCommand.ExecuteScalar();
+                            if (result == null || result == System.DBNull.Value)
+                            {
+                                transaction.Rollback();
+                                failureReason = "The selected category does not exist for this user.";
+                                return false;
+                            }
+
+                            categoryId = System.Convert.ToInt32(result);
+                        }
+
+                        remainingBalance = GetCategoryBalance(userId, categoryId, conn, transaction);
+                        if (amount > remainingBalance)
+                        {
+                            transaction.Rollback();
+                            failureReason = "The requested amount is greater than the selected category balance.";
+                            return false;
+                        }
+
+                        const string insertSql = @"
+                            INSERT INTO transactions (user_id, category_id, type, amount)
+                            VALUES (@userId, @categoryId, 'withdrawal', @amount)";
+                        using (var insertCommand = new MySqlCommand(insertSql, conn, transaction))
+                        {
+                            insertCommand.Parameters.AddWithValue("@userId", userId);
+                            insertCommand.Parameters.AddWithValue("@categoryId", categoryId);
+                            insertCommand.Parameters.AddWithValue("@amount", amount);
+                            insertCommand.ExecuteNonQuery();
+                        }
+
+                        transaction.Commit();
+                        remainingBalance -= amount;
+                        return true;
+                    }
+                    catch
+                    {
+                        try
+                        {
+                            transaction.Rollback();
+                        }
+                        catch
+                        {
+                        }
+
+                        throw;
+                    }
+                }
+            }
+        }
+
+        private decimal GetCategoryBalance(int userId, int categoryId, MySqlConnection conn, MySqlTransaction transaction)
+        {
+            const string sql = @"
+                SELECT
+                    COALESCE(SUM(CASE WHEN type = 'deposit' THEN amount ELSE 0 END), 0) -
+                    COALESCE(SUM(CASE WHEN type = 'withdrawal' THEN amount ELSE 0 END), 0)
+                FROM transactions
+                WHERE user_id = @userId AND category_id = @categoryId";
+
+            using (var cmd = transaction == null
+                ? new MySqlCommand(sql, conn)
+                : new MySqlCommand(sql, conn, transaction))
+            {
+                cmd.Parameters.AddWithValue("@userId", userId);
+                cmd.Parameters.AddWithValue("@categoryId", categoryId);
+                return System.Convert.ToDecimal(cmd.ExecuteScalar());
+            }
+        }
+
         public void SaveGoal(int userId, int categoryId, decimal targetAmount, System.DateTime targetDate)
         {
             using (var conn = DatabaseHelper.GetConnection())

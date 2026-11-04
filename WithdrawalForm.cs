@@ -1,6 +1,5 @@
 using System;
 using System.Windows.Forms;
-using MySql.Data.MySqlClient;
 
 namespace SmartCashDisbursementApp
 {
@@ -11,6 +10,7 @@ namespace SmartCashDisbursementApp
 		private string selectedCategory;
 		private decimal pendingAmount;
 		private decimal availableBalance;
+		private bool hasReviewedWithdrawal;
 		private bool isSaving;
 
 		public WithdrawalForm(int userId)
@@ -29,7 +29,20 @@ namespace SmartCashDisbursementApp
 		private void SelectCategory(string category)
 		{
 			selectedCategory = category;
-			lblReview.Text = $"Selected category: {category}. Enter an amount and click REVIEW WITHDRAWAL.";
+			pendingAmount = 0;
+			hasReviewedWithdrawal = false;
+			try
+			{
+				RefreshSelectedCategoryBalance();
+				lblReview.Text = $"Selected category: {category}. Available balance: ₱{availableBalance:F2}. Enter an amount and click REVIEW WITHDRAWAL.";
+			}
+			catch (Exception)
+			{
+				availableBalance = 0;
+				lblAvailableBalance.Text = "Available balance: unavailable";
+				lblReview.Text = $"Selected category: {category}. The balance could not be checked.";
+				MessageBox.Show("The selected category balance could not be loaded. Please try again.", "Balance Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+			}
 		}
 
 		private void button5_Click(object sender, EventArgs e)
@@ -48,22 +61,26 @@ namespace SmartCashDisbursementApp
 
 			try
 			{
-				availableBalance = GetAvailableBalance();
-				lblAvailableBalance.Text = $"Available balance: ₱{availableBalance:F2}";
+				RefreshSelectedCategoryBalance();
 
 				if (amount > availableBalance)
 				{
 					pendingAmount = 0;
+					hasReviewedWithdrawal = false;
 					lblReview.Text = "The requested amount is greater than the available balance.";
 					MessageBox.Show("Insufficient balance.", "Withdrawal Declined", MessageBoxButtons.OK, MessageBoxIcon.Warning);
 					return;
 				}
 
 				pendingAmount = amount;
+				hasReviewedWithdrawal = true;
 				lblReview.Text = $"Review: Withdraw ₱{pendingAmount:F2} from {selectedCategory}. Click CONFIRM to save.";
 			}
 			catch (Exception)
 			{
+				pendingAmount = 0;
+				hasReviewedWithdrawal = false;
+				lblReview.Text = "The balance could not be verified. Please review the withdrawal again.";
 				MessageBox.Show("The available balance could not be checked. Please try again.", "Balance Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
 			}
 		}
@@ -73,7 +90,7 @@ namespace SmartCashDisbursementApp
 			if (isSaving)
 				return;
 
-			if (pendingAmount <= 0 || string.IsNullOrEmpty(selectedCategory))
+			if (!hasReviewedWithdrawal || pendingAmount <= 0 || string.IsNullOrEmpty(selectedCategory))
 			{
 				MessageBox.Show("Please select a category and review a valid withdrawal before confirming.", "Withdrawal Required", MessageBoxButtons.OK, MessageBoxIcon.Warning);
 				return;
@@ -84,37 +101,24 @@ namespace SmartCashDisbursementApp
 
 			try
 			{
-				using (var conn = DatabaseHelper.GetConnection())
+				decimal amount = pendingAmount;
+				if (budgetRepo.TryWithdraw(userId, selectedCategory, amount, out decimal remainingBalance, out string failureReason))
 				{
-					conn.Open();
-					decimal currentBalance = GetAvailableBalance(conn);
-					if (pendingAmount > currentBalance)
-					{
-						pendingAmount = 0;
-						lblAvailableBalance.Text = $"Available balance: ₱{currentBalance:F2}";
-						lblReview.Text = "The available balance changed. Please review the withdrawal again.";
-						MessageBox.Show("Insufficient balance.", "Withdrawal Declined", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-						return;
-					}
-
-					int categoryId = budgetRepo.GetOrCreateCategoryId(userId, selectedCategory, conn);
-					const string insertSql =
-						"INSERT INTO transactions (user_id, category_id, type, amount) " +
-						"VALUES (@userId, @categoryId, 'withdrawal', @amount)";
-
-					using (var cmd = new MySqlCommand(insertSql, conn))
-					{
-						cmd.Parameters.AddWithValue("@userId", userId);
-						cmd.Parameters.AddWithValue("@categoryId", categoryId);
-						cmd.Parameters.AddWithValue("@amount", pendingAmount);
-						cmd.ExecuteNonQuery();
-					}
+					availableBalance = remainingBalance;
+					lblAvailableBalance.Text = $"Available balance: ₱{availableBalance:F2}";
+					MessageBox.Show(
+						$"Withdrawal successful!\n\nAmount: ₱{amount:F2}\nCategory: {selectedCategory}",
+						"Withdrawal Successful", MessageBoxButtons.OK, MessageBoxIcon.Information);
+					ResetWithdrawal();
+					return;
 				}
 
-				MessageBox.Show(
-					$"Withdrawal successful!\n\nAmount: ₱{pendingAmount:F2}\nCategory: {selectedCategory}",
-					"Withdrawal Successful", MessageBoxButtons.OK, MessageBoxIcon.Information);
-				ResetWithdrawal();
+				availableBalance = remainingBalance;
+				lblAvailableBalance.Text = $"Available balance: ₱{availableBalance:F2}";
+				pendingAmount = 0;
+				hasReviewedWithdrawal = false;
+				lblReview.Text = failureReason ?? "The withdrawal was declined. Please review it again.";
+				MessageBox.Show(failureReason ?? "The withdrawal was declined.", "Withdrawal Declined", MessageBoxButtons.OK, MessageBoxIcon.Warning);
 			}
 			catch (Exception)
 			{
@@ -140,59 +144,23 @@ namespace SmartCashDisbursementApp
 
 		private void LoadAvailableBalance()
 		{
-			try
-			{
-				availableBalance = GetAvailableBalance();
-				lblAvailableBalance.Text = $"Available balance: ₱{availableBalance:F2}";
-			}
-			catch (Exception)
-			{
-				lblAvailableBalance.Text = "Available balance: unavailable";
-				MessageBox.Show("The available balance could not be loaded. Please try again.", "Balance Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-			}
+			availableBalance = 0;
+			lblAvailableBalance.Text = "Available balance: select a category";
 		}
 
-		private decimal GetAvailableBalance()
+		private void RefreshSelectedCategoryBalance()
 		{
-			using (var conn = DatabaseHelper.GetConnection())
-			{
-				conn.Open();
-				return GetAvailableBalance(conn);
-			}
-		}
-
-		private decimal GetAvailableBalance(MySqlConnection conn)
-		{
-			const string sql = @"
-				SELECT
-					COALESCE(SUM(CASE WHEN type = 'deposit' THEN amount ELSE 0 END), 0),
-					COALESCE(SUM(CASE WHEN type = 'withdrawal' THEN amount ELSE 0 END), 0)
-				FROM transactions
-				WHERE user_id = @userId";
-
-			using (var cmd = new MySqlCommand(sql, conn))
-			{
-				cmd.Parameters.AddWithValue("@userId", userId);
-				using (var reader = cmd.ExecuteReader())
-				{
-					if (!reader.Read())
-						return 0;
-
-					decimal deposits = Convert.ToDecimal(reader.GetValue(0));
-					decimal withdrawals = Convert.ToDecimal(reader.GetValue(1));
-					return Math.Max(0, deposits - withdrawals);
-				}
-			}
+			availableBalance = budgetRepo.GetCategoryBalance(userId, selectedCategory);
+			lblAvailableBalance.Text = $"Available balance: ₱{availableBalance:F2}";
 		}
 
 		private void ResetWithdrawal()
 		{
-			availableBalance -= pendingAmount;
 			txtAmount.Text = "0.00";
-			selectedCategory = null;
 			pendingAmount = 0;
+			hasReviewedWithdrawal = false;
 			lblAvailableBalance.Text = $"Available balance: ₱{availableBalance:F2}";
-			lblReview.Text = "Select a category and review your withdrawal before confirming.";
+			lblReview.Text = $"Selected category: {selectedCategory}. Enter an amount and click REVIEW WITHDRAWAL.";
 		}
 
 		private void label2_Click(object sender, EventArgs e)
