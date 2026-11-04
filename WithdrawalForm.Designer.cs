@@ -32,8 +32,6 @@ namespace SmartCashDisbursementApp
 			button1 = new Button();
 			button2 = new Button();
 			button3 = new Button();
-			button4 = new Button();
-			button5 = new Button();
 			pnlFooter = new Panel();
 			lblFooter = new Label();
 			btnBack = new Button();
@@ -147,7 +145,7 @@ namespace SmartCashDisbursementApp
 			lblReview.ForeColor = Color.FromArgb(45, 65, 85);
 			lblReview.Location = new Point(130, 395);
 			lblReview.Size = new Size(540, 25);
-			lblReview.Text = "Select a category and review your withdrawal before confirming.";
+			lblReview.Text = "Enter an amount and select a category to continue.";
 			//
 			// button1
 			//
@@ -196,8 +194,6 @@ namespace SmartCashDisbursementApp
 			pnlFooter.BackColor = Color.FromArgb(8, 80, 145);
 			pnlFooter.Controls.Add(lblFooter);
 			pnlFooter.Controls.Add(btnBack);
-			pnlFooter.Controls.Add(button5);
-			pnlFooter.Controls.Add(button4);
 			pnlFooter.Dock = DockStyle.Bottom;
 			pnlFooter.Size = new Size(800, 60);
 			//
@@ -222,31 +218,6 @@ namespace SmartCashDisbursementApp
 			btnBack.UseVisualStyleBackColor = false;
 			btnBack.Click += btnBack_Click;
 			//
-			// button5
-			//
-			button5.BackColor = Color.FromArgb(55, 105, 145);
-			button5.FlatAppearance.BorderSize = 0;
-			button5.FlatStyle = FlatStyle.Flat;
-			button5.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
-			button5.ForeColor = Color.White;
-			button5.Location = new Point(485, 13);
-			button5.Size = new Size(145, 34);
-			button5.Text = "REVIEW WITHDRAWAL";
-			button5.UseVisualStyleBackColor = false;
-			button5.Click += button5_Click;
-			//
-			// button4
-			//
-			button4.BackColor = Color.FromArgb(170, 170, 170);
-			button4.FlatAppearance.BorderSize = 0;
-			button4.FlatStyle = FlatStyle.Flat;
-			button4.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
-			button4.ForeColor = Color.White;
-			button4.Location = new Point(650, 13);
-			button4.Size = new Size(125, 34);
-			button4.Text = "CONFIRM";
-			button4.UseVisualStyleBackColor = false;
-			button4.Click += button4_Click;
 			//
 			// WithdrawalForm
 			//
@@ -299,8 +270,6 @@ namespace SmartCashDisbursementApp
 		private Button button1;
 		private Button button2;
 		private Button button3;
-		private Button button4;
-		private Button button5;
 		private Panel pnlFooter;
 		private Label lblFooter;
 		private Button btnBack;
