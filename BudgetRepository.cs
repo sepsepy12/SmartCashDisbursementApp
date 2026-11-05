@@ -17,7 +17,9 @@ namespace SmartCashDisbursementApp
                            COALESCE(SUM(CASE WHEN t.type = 'deposit' THEN t.amount ELSE 0 END), 0) AS allocated,
                            COALESCE(SUM(CASE WHEN t.type = 'withdrawal' THEN t.amount ELSE 0 END), 0) AS spent
                     FROM budget_categories bc
-                    LEFT JOIN transactions t ON t.category_id = bc.id
+                    LEFT JOIN transactions t
+                        ON t.category_id = bc.id
+                       AND t.user_id = bc.user_id
                     WHERE bc.user_id = @userId
                     GROUP BY bc.id, bc.category_name";
 

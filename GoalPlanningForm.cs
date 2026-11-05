@@ -138,6 +138,9 @@ namespace SmartCashDisbursementApp
 
 		private void GoalPlanningForm_KeyDown(object sender, KeyEventArgs e)
 		{
+			if (textBox1.Focused || datePicker.Focused)
+				return;
+
 			switch (e.KeyCode)
 			{
 				case Keys.A:
