@@ -1,206 +1,298 @@
-using System;
 using System.ComponentModel;
 using System.Drawing;
 using System.Windows.Forms;
 
 namespace SmartCashDisbursementApp
 {
-    partial class GoalPlanningForm
-    {
-        private IContainer components = null;
+	partial class GoalPlanningForm
+	{
+		private IContainer components = null;
+		private Panel pnlHeader;
+		private Label lblAppName;
+		private Label lblAppSubtitle;
+		private Panel pnlContent;
+		private Label lblTitle;
+		private Label lblSubtitle;
+		private Panel pnlStep1;
+		private Label lblStep1;
+		private Label lblChooseCategory;
+		private FlowLayoutPanel categoryLayout;
+		private Panel pnlStep2;
+		private Label lblStep2;
+		private TableLayoutPanel detailsLayout;
+		private Label lblAmount;
+		private Label lblDate;
+		private TextBox textBox1;
+		private DateTimePicker datePicker;
+		private Label lblValidation;
+		private FlowLayoutPanel actionLayout;
+		private Button button4;
+		private Button button6;
+		private Button button5;
+		private Button button1;
+		private Button button2;
+		private Button button3;
+		private Panel pnlFooter;
+		private Label lblSecurity;
+		private Label lblDateTime;
+		private System.Windows.Forms.Timer clockTimer;
 
-        protected override void Dispose(bool disposing)
-        {
-            if (disposing && (components != null))
-            {
-                components.Dispose();
-            }
-            base.Dispose(disposing);
-        }
+		protected override void Dispose(bool disposing)
+		{
+			if (disposing)
+			{
+				clockTimer?.Dispose();
+				components?.Dispose();
+			}
+
+			base.Dispose(disposing);
+		}
 
 		private void InitializeComponent()
 		{
-			button1 = new Button();
-			button4 = new Button();
-			button5 = new Button();
-			button6 = new Button();
+			components = new Container();
+			pnlHeader = new Panel();
+			lblAppName = new Label();
+			lblAppSubtitle = new Label();
+			pnlContent = new Panel();
+			lblTitle = new Label();
+			lblSubtitle = new Label();
+			pnlStep1 = new Panel();
+			lblStep1 = new Label();
+			lblChooseCategory = new Label();
+			categoryLayout = new FlowLayoutPanel();
+			button1 = CreateCategoryButton("A\nSAVINGS", Color.FromArgb(43, 125, 55));
+			button2 = CreateCategoryButton("B\nWANTS", Color.FromArgb(29, 109, 190));
+			button3 = CreateCategoryButton("C\nNEEDS", Color.FromArgb(239, 124, 9));
+			pnlStep2 = new Panel();
+			lblStep2 = new Label();
+			detailsLayout = new TableLayoutPanel();
+			lblAmount = new Label();
+			lblDate = new Label();
 			textBox1 = new TextBox();
-			textBox2 = new TextBox();
-			button2 = new Button();
-			button3 = new Button();
-			textBox3 = new TextBox();
-			textBox4 = new TextBox();
-			textBox5 = new TextBox();
-			textBox6 = new TextBox();
-			textBox7 = new TextBox();
-			textBox8 = new TextBox();
+			datePicker = new DateTimePicker();
+			lblValidation = new Label();
+			actionLayout = new FlowLayoutPanel();
+			button4 = new Button();
+			button6 = new Button();
+			button5 = new Button();
+			pnlFooter = new Panel();
+			lblSecurity = new Label();
+			lblDateTime = new Label();
+			clockTimer = new System.Windows.Forms.Timer(components);
+			pnlHeader.SuspendLayout();
+			pnlContent.SuspendLayout();
+			pnlStep1.SuspendLayout();
+			categoryLayout.SuspendLayout();
+			pnlStep2.SuspendLayout();
+			detailsLayout.SuspendLayout();
+			actionLayout.SuspendLayout();
+			pnlFooter.SuspendLayout();
 			SuspendLayout();
-			// 
-			// button1
-			// 
-			button1.Location = new Point(195, 235);
-			button1.Name = "button1";
-			button1.Size = new Size(179, 125);
-			button1.TabIndex = 0;
-			button1.Text = "           A               Savings";
-			button1.Click += button1_Click;
-			// 
-			// button4
-			// 
-			button4.Location = new Point(20, 680);
-			button4.Name = "button4";
-			button4.Size = new Size(80, 36);
-			button4.TabIndex = 5;
-			button4.Text = "<- Back";
-			button4.Click += button4_Click;
-			// 
-			// button5
-			// 
-			button5.Location = new Point(1200, 680);
-			button5.Name = "button5";
-			button5.Size = new Size(100, 36);
-			button5.TabIndex = 6;
-			button5.Text = "Confirm";
-			button5.Click += button5_Click;
-			// 
-			// button6
-			// 
-			button6.Location = new Point(677, 680);
-			button6.Name = "button6";
-			button6.Size = new Size(100, 36);
-			button6.TabIndex = 7;
-			button6.Text = "Clear";
-			button6.Click += button6_Click;
-			// 
-			// textBox1
-			// 
-			textBox1.Location = new Point(258, 502);
-			textBox1.Name = "textBox1";
-			textBox1.Size = new Size(180, 36);
-			textBox1.TabIndex = 3;
-			textBox1.Text = "0.00";
-			// 
-			// textBox2
-			// 
-			textBox2.Location = new Point(887, 502);
-			textBox2.Name = "textBox2";
-			textBox2.Size = new Size(196, 36);
-			textBox2.TabIndex = 4;
-			textBox2.Text = "YYYY-MM-DD";
-			textBox2.TextChanged += textBox2_TextChanged;
-			// 
-			// button2
-			// 
-			button2.Location = new Point(632, 235);
-			button2.Name = "button2";
-			button2.Size = new Size(179, 125);
-			button2.TabIndex = 8;
-			button2.Text = "            B              Wants";
-			button2.Click += button2_Click_1;
-			// 
-			// button3
-			// 
-			button3.Location = new Point(1035, 235);
-			button3.Name = "button3";
-			button3.Size = new Size(179, 125);
-			button3.TabIndex = 9;
-			button3.Text = "            C              Needs";
-			// 
-			// textBox3
-			// 
-			textBox3.Location = new Point(614, 12);
-			textBox3.Name = "textBox3";
-			textBox3.Size = new Size(222, 36);
-			textBox3.TabIndex = 10;
-			textBox3.Text = "GOAL PLANNING HUB";
-			textBox3.TextChanged += textBox3_TextChanged_1;
-			// 
-			// textBox4
-			// 
-			textBox4.Font = new Font("Segoe UI", 11F);
-			textBox4.Location = new Point(632, 54);
-			textBox4.Name = "textBox4";
-			textBox4.Size = new Size(182, 27);
-			textBox4.TabIndex = 11;
-			textBox4.Text = "Set & Track Savings Target";
-			// 
-			// textBox5
-			// 
-			textBox5.Location = new Point(374, 146);
-			textBox5.Name = "textBox5";
-			textBox5.Size = new Size(659, 36);
-			textBox5.TabIndex = 12;
-			textBox5.Text = "                                    STEP 1: Select Category";
-			// 
-			// textBox6
-			// 
-			textBox6.Location = new Point(374, 396);
-			textBox6.Name = "textBox6";
-			textBox6.Size = new Size(659, 36);
-			textBox6.TabIndex = 13;
-			textBox6.Text = "                                      STEP 2: Enter Details";
-			// 
-			// textBox7
-			// 
-			textBox7.Font = new Font("Segoe UI", 11F);
-			textBox7.Location = new Point(256, 469);
-			textBox7.Name = "textBox7";
-			textBox7.Size = new Size(182, 27);
-			textBox7.TabIndex = 14;
-			textBox7.Text = "ENTER AMMOUNT (₱)";
-			textBox7.TextChanged += textBox7_TextChanged;
-			// 
-			// textBox8
-			// 
-			textBox8.Font = new Font("Segoe UI", 11F);
-			textBox8.Location = new Point(885, 469);
-			textBox8.Name = "textBox8";
-			textBox8.Size = new Size(198, 27);
-			textBox8.TabIndex = 15;
-			textBox8.Text = "ENTER DATE (YYYY-MM-DD)";
-			// 
-			// GoalPlanningForm
-			// 
-			ClientSize = new Size(1850, 728);
-			Controls.Add(textBox8);
-			Controls.Add(textBox7);
-			Controls.Add(textBox6);
-			Controls.Add(textBox5);
-			Controls.Add(textBox4);
-			Controls.Add(textBox3);
-			Controls.Add(button3);
-			Controls.Add(button2);
-			Controls.Add(button1);
-			Controls.Add(textBox1);
-			Controls.Add(textBox2);
-			Controls.Add(button4);
-			Controls.Add(button5);
-			Controls.Add(button6);
-			Font = new Font("Segoe UI", 16F);
+
+			pnlHeader.BackColor = Color.FromArgb(7, 57, 113);
+			pnlHeader.Controls.Add(lblAppSubtitle);
+			pnlHeader.Controls.Add(lblAppName);
+			pnlHeader.Dock = DockStyle.Top;
+			pnlHeader.Height = 76;
+			lblAppName.AutoSize = true;
+			lblAppName.Font = new Font("Segoe UI", 17F, FontStyle.Bold);
+			lblAppName.ForeColor = Color.White;
+			lblAppName.Location = new Point(96, 13);
+			lblAppName.Text = "SMART CASH DISBURSEMENT";
+			lblAppSubtitle.AutoSize = true;
+			lblAppSubtitle.Font = new Font("Segoe UI", 11F, FontStyle.Bold);
+			lblAppSubtitle.ForeColor = Color.FromArgb(164, 213, 255);
+			lblAppSubtitle.Location = new Point(98, 42);
+			lblAppSubtitle.Text = "BUDGETING MACHINE";
+
+			pnlContent.BackColor = Color.WhiteSmoke;
+			pnlContent.Controls.Add(actionLayout);
+			pnlContent.Controls.Add(pnlStep2);
+			pnlContent.Controls.Add(pnlStep1);
+			pnlContent.Controls.Add(lblSubtitle);
+			pnlContent.Controls.Add(lblTitle);
+			pnlContent.Dock = DockStyle.Fill;
+			lblTitle.Dock = DockStyle.Top;
+			lblTitle.Font = new Font("Segoe UI", 25F, FontStyle.Bold);
+			lblTitle.ForeColor = Color.FromArgb(8, 57, 113);
+			lblTitle.Height = 51;
+			lblTitle.Text = "GOAL PLANNING HUB";
+			lblTitle.TextAlign = ContentAlignment.BottomCenter;
+			lblSubtitle.Dock = DockStyle.Top;
+			lblSubtitle.Font = new Font("Segoe UI", 13F, FontStyle.Bold);
+			lblSubtitle.ForeColor = Color.FromArgb(20, 42, 78);
+			lblSubtitle.Height = 42;
+			lblSubtitle.Text = "SET & TRACK SAVINGS TARGETS";
+			lblSubtitle.TextAlign = ContentAlignment.MiddleCenter;
+
+			ConfigureSection(pnlStep1, lblStep1, "STEP 1: SELECT CATEGORY");
+			pnlStep1.Controls.Add(categoryLayout);
+			pnlStep1.Controls.Add(lblChooseCategory);
+			pnlStep1.Controls.Add(lblStep1);
+			pnlStep1.Dock = DockStyle.Top;
+			pnlStep1.Height = 270;
+			lblChooseCategory.Dock = DockStyle.Top;
+			lblChooseCategory.Font = new Font("Segoe UI", 13F, FontStyle.Bold);
+			lblChooseCategory.ForeColor = Color.FromArgb(20, 42, 78);
+			lblChooseCategory.Height = 48;
+			lblChooseCategory.Text = "CHOOSE A CATEGORY (PRESS A, B, OR C)";
+			lblChooseCategory.TextAlign = ContentAlignment.MiddleCenter;
+			categoryLayout.AutoSize = false;
+			categoryLayout.Dock = DockStyle.Fill;
+			categoryLayout.FlowDirection = FlowDirection.LeftToRight;
+			categoryLayout.Padding = new Padding(42, 20, 42, 20);
+			categoryLayout.WrapContents = false;
+			categoryLayout.Controls.Add(button1);
+			categoryLayout.Controls.Add(button2);
+			categoryLayout.Controls.Add(button3);
+
+			ConfigureSection(pnlStep2, lblStep2, "STEP 2: ENTER DETAILS");
+			pnlStep2.Controls.Add(detailsLayout);
+			pnlStep2.Controls.Add(lblStep2);
+			pnlStep2.Dock = DockStyle.Top;
+			pnlStep2.Height = 178;
+			detailsLayout.ColumnCount = 2;
+			detailsLayout.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
+			detailsLayout.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
+			detailsLayout.Dock = DockStyle.Fill;
+			detailsLayout.Padding = new Padding(28, 12, 28, 15);
+			detailsLayout.RowCount = 2;
+			detailsLayout.RowStyles.Add(new RowStyle(SizeType.Absolute, 29F));
+			detailsLayout.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
+			detailsLayout.Controls.Add(lblAmount, 0, 0);
+			detailsLayout.Controls.Add(lblDate, 1, 0);
+			detailsLayout.Controls.Add(textBox1, 0, 1);
+			detailsLayout.Controls.Add(datePicker, 1, 1);
+			ConfigureInputLabel(lblAmount, "ENTER AMOUNT (₱)");
+			ConfigureInputLabel(lblDate, "ENTER DATE (YYYY-MM-DD)");
+			textBox1.Dock = DockStyle.Fill;
+			textBox1.Font = new Font("Segoe UI", 14F);
+			textBox1.Margin = new Padding(0, 2, 18, 0);
+			textBox1.MaxLength = 18;
+			textBox1.PlaceholderText = "0.00";
+			datePicker.Dock = DockStyle.Fill;
+			datePicker.Font = new Font("Segoe UI", 13F);
+			datePicker.Format = DateTimePickerFormat.Custom;
+			datePicker.CustomFormat = "yyyy-MM-dd";
+			datePicker.Margin = new Padding(18, 2, 0, 0);
+			datePicker.MinDate = DateTime.Today.AddDays(1);
+
+			actionLayout.Controls.Add(button4);
+			actionLayout.Controls.Add(button6);
+			actionLayout.Controls.Add(button5);
+			actionLayout.Dock = DockStyle.Top;
+			actionLayout.FlowDirection = FlowDirection.LeftToRight;
+			actionLayout.Height = 74;
+			actionLayout.Padding = new Padding(28, 10, 28, 8);
+			actionLayout.WrapContents = false;
+			ConfigureActionButton(button4, "←  BACK", Color.FromArgb(110, 110, 110));
+			ConfigureActionButton(button6, "CLEAR", Color.FromArgb(247, 185, 10));
+			ConfigureActionButton(button5, "✓  CONFIRM", Color.FromArgb(39, 125, 48));
+
+			lblValidation.Dock = DockStyle.Bottom;
+			lblValidation.ForeColor = Color.Firebrick;
+			lblValidation.Height = 25;
+			lblValidation.TextAlign = ContentAlignment.MiddleCenter;
+			pnlContent.Controls.Add(lblValidation);
+
+			pnlFooter.BackColor = Color.FromArgb(7, 57, 113);
+			pnlFooter.Controls.Add(lblDateTime);
+			pnlFooter.Controls.Add(lblSecurity);
+			pnlFooter.Dock = DockStyle.Bottom;
+			pnlFooter.Height = 68;
+			lblSecurity.AutoSize = true;
+			lblSecurity.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
+			lblSecurity.ForeColor = Color.White;
+			lblSecurity.Location = new Point(30, 13);
+			lblSecurity.Text = "♙  SECURE SYSTEM\n    Your security is our priority.";
+			lblDateTime.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+			lblDateTime.Font = new Font("Segoe UI", 11F);
+			lblDateTime.ForeColor = Color.White;
+			lblDateTime.Location = new Point(650, 22);
+			lblDateTime.Size = new Size(420, 25);
+			lblDateTime.TextAlign = ContentAlignment.MiddleRight;
+			clockTimer.Interval = 1000;
+			clockTimer.Tick += clockTimer_Tick;
+
+			AutoScaleMode = AutoScaleMode.Font;
+			BackColor = Color.WhiteSmoke;
+			ClientSize = new Size(1152, 768);
+			Controls.Add(pnlContent);
+			Controls.Add(pnlFooter);
+			Controls.Add(pnlHeader);
+			Font = new Font("Segoe UI", 10F);
 			FormBorderStyle = FormBorderStyle.None;
+			KeyPreview = true;
 			Name = "GoalPlanningForm";
+			StartPosition = FormStartPosition.CenterScreen;
 			Text = "Goal Planning Hub";
-			TopMost = true;
 			WindowState = FormWindowState.Maximized;
 			Load += GoalPlanningForm_Load;
+			KeyDown += GoalPlanningForm_KeyDown;
+			Resize += GoalPlanningForm_Resize;
+			pnlHeader.ResumeLayout(false);
+			pnlHeader.PerformLayout();
+			pnlContent.ResumeLayout(false);
+			pnlStep1.ResumeLayout(false);
+			categoryLayout.ResumeLayout(false);
+			pnlStep2.ResumeLayout(false);
+			detailsLayout.ResumeLayout(false);
+			detailsLayout.PerformLayout();
+			actionLayout.ResumeLayout(false);
+			pnlFooter.ResumeLayout(false);
+			pnlFooter.PerformLayout();
 			ResumeLayout(false);
-			PerformLayout();
 		}
 
-		// Controls referenced by GoalPlanningForm.cs
-		private Button button1;
-        private Button button4;
-        private Button button5;
-        private Button button6;
-        private TextBox textBox1;
-        private TextBox textBox2;
-		private Button button2;
-		private Button button3;
-		private TextBox textBox3;
-		private TextBox textBox4;
-		private TextBox textBox5;
-		private TextBox textBox6;
-		private TextBox textBox7;
-		private TextBox textBox8;
+		private static Button CreateCategoryButton(string text, Color color)
+		{
+			return new Button
+			{
+				BackColor = Color.White,
+				FlatStyle = FlatStyle.Flat,
+				Font = new Font("Segoe UI", 18F, FontStyle.Bold),
+				ForeColor = color,
+				Margin = new Padding(8),
+				Size = new Size(280, 145),
+				Text = text,
+				UseVisualStyleBackColor = false
+			};
+		}
+
+		private static void ConfigureSection(Panel panel, Label label, string text)
+		{
+			panel.BackColor = Color.White;
+			panel.BorderStyle = BorderStyle.FixedSingle;
+			label.BackColor = Color.FromArgb(7, 57, 113);
+			label.Dock = DockStyle.Top;
+			label.Font = new Font("Segoe UI", 14F, FontStyle.Bold);
+			label.ForeColor = Color.White;
+			label.Height = 44;
+			label.Text = text;
+			label.TextAlign = ContentAlignment.MiddleCenter;
+		}
+
+		private static void ConfigureInputLabel(Label label, string text)
+		{
+			label.AutoSize = false;
+			label.Font = new Font("Segoe UI", 11F, FontStyle.Bold);
+			label.ForeColor = Color.FromArgb(20, 42, 78);
+			label.Text = text;
+			label.TextAlign = ContentAlignment.BottomLeft;
+		}
+
+		private static void ConfigureActionButton(Button button, string text, Color color)
+		{
+			button.BackColor = color;
+			button.FlatStyle = FlatStyle.Flat;
+			button.FlatAppearance.BorderSize = 0;
+			button.Font = new Font("Segoe UI", 14F, FontStyle.Bold);
+			button.ForeColor = Color.White;
+			button.Margin = new Padding(8, 0, 8, 0);
+			button.Size = new Size(280, 55);
+			button.Text = text;
+			button.UseVisualStyleBackColor = false;
+		}
 	}
 }

@@ -1,34 +1,40 @@
-﻿using System;
-using System.Linq;
+using System;
+using System.Globalization;
 using System.Windows.Forms;
 
 namespace SmartCashDisbursementApp
 {
 	public partial class GoalPlanningForm : Form
 	{
-		private int userId;
-		private string selectedCategory = null;
-		private BudgetRepository budgetRepo = new BudgetRepository();
+		private readonly int userId;
+		private readonly BudgetRepository budgetRepo = new BudgetRepository();
+		private string selectedCategory;
+		private Button selectedCategoryButton;
+		private bool saveInProgress;
 
 		public GoalPlanningForm(int userId)
 		{
 			InitializeComponent();
 			this.userId = userId;
+
+			button1.Click += button1_Click;
+			button2.Click += button2_Click;
+			button3.Click += button3_Click;
+			button4.Click += button4_Click;
+			button5.Click += button5_Click;
+			button6.Click += button6_Click;
 		}
 
-		// button1 = "A. Savings"
 		private void button1_Click(object sender, EventArgs e)
 		{
 			SelectCategory("Savings", button1);
 		}
 
-		// button2 = "B. Wants"
 		private void button2_Click(object sender, EventArgs e)
 		{
 			SelectCategory("Wants", button2);
 		}
 
-		// button3 = "C. Needs"
 		private void button3_Click(object sender, EventArgs e)
 		{
 			SelectCategory("Needs", button3);
@@ -37,80 +43,76 @@ namespace SmartCashDisbursementApp
 		private void SelectCategory(string categoryName, Button clickedButton)
 		{
 			selectedCategory = categoryName;
+			selectedCategoryButton = clickedButton;
 
-			button1.BackColor = SystemColors.Control;
-			button2.BackColor = SystemColors.Control;
-			button3.BackColor = SystemColors.Control;
+			ResetCategoryButton(button1, System.Drawing.Color.FromArgb(43, 125, 55));
+			ResetCategoryButton(button2, System.Drawing.Color.FromArgb(29, 109, 190));
+			ResetCategoryButton(button3, System.Drawing.Color.FromArgb(239, 124, 9));
 
-			clickedButton.BackColor = System.Drawing.Color.LightGreen;
+			clickedButton.BackColor = clickedButton.ForeColor;
+			clickedButton.ForeColor = System.Drawing.Color.White;
+			lblValidation.Text = $"Selected category: {categoryName.ToUpperInvariant()}";
+			lblValidation.ForeColor = System.Drawing.Color.FromArgb(43, 125, 55);
 		}
 
-		// textBox2 = date field, auto-formats digits into YYYY-MM-DD
-		private void textBox2_TextChanged(object sender, EventArgs e)
+		private static void ResetCategoryButton(Button button, System.Drawing.Color color)
 		{
-			string digitsOnly = new string(textBox2.Text.Where(char.IsDigit).ToArray());
-
-			if (digitsOnly.Length > 8)
-				digitsOnly = digitsOnly.Substring(0, 8);
-
-			string formatted = digitsOnly;
-			if (digitsOnly.Length > 4)
-				formatted = digitsOnly.Substring(0, 4) + "-" + digitsOnly.Substring(4);
-			if (digitsOnly.Length > 6)
-				formatted = digitsOnly.Substring(0, 4) + "-" + digitsOnly.Substring(4, 2) + "-" + digitsOnly.Substring(6);
-
-			if (textBox2.Text != formatted)
-			{
-				textBox2.TextChanged -= textBox2_TextChanged;
-				textBox2.Text = formatted;
-				textBox2.SelectionStart = textBox2.Text.Length;
-				textBox2.TextChanged += textBox2_TextChanged;
-			}
+			button.BackColor = System.Drawing.Color.White;
+			button.ForeColor = color;
 		}
 
-		// button5 = "Confirm ->"
 		private void button5_Click(object sender, EventArgs e)
 		{
-			if (selectedCategory == null)
+			if (saveInProgress)
+				return;
+
+			if (string.IsNullOrEmpty(selectedCategory))
 			{
-				MessageBox.Show("Please select a category (A, B, or C) first.");
+				ShowValidation("Please select a category (A, B, or C).");
 				return;
 			}
 
-			if (!decimal.TryParse(textBox1.Text.Trim(), out decimal amount) || amount <= 0)
+			if (!decimal.TryParse(textBox1.Text.Trim(), NumberStyles.Number, CultureInfo.CurrentCulture, out decimal amount) || amount <= 0)
 			{
-				MessageBox.Show("Please enter a valid amount.");
+				ShowValidation("Please enter an amount greater than zero.");
+				textBox1.Focus();
 				return;
 			}
 
-			string dateText = textBox2.Text.Trim();
-			if (!DateTime.TryParseExact(dateText, "yyyy-MM-dd",
-					System.Globalization.CultureInfo.InvariantCulture,
-					System.Globalization.DateTimeStyles.None,
-					out DateTime targetDate))
-			{
-				MessageBox.Show("Please enter a valid date (digits only, e.g. 20261225).");
-				return;
-			}
-
+			DateTime targetDate = datePicker.Value.Date;
 			if (targetDate <= DateTime.Today)
 			{
-				MessageBox.Show("Target date must be in the future.");
+				ShowValidation("Target date must be in the future.");
+				datePicker.Focus();
 				return;
 			}
 
-			using (var conn = DatabaseHelper.GetConnection())
+			saveInProgress = true;
+			button5.Enabled = false;
+			try
 			{
-				conn.Open();
-				int categoryId = budgetRepo.GetOrCreateCategoryId(userId, selectedCategory, conn);
-				budgetRepo.SaveGoal(userId, categoryId, amount, targetDate);
-			}
+				textBox1.Text = amount.ToString("0.##", CultureInfo.CurrentCulture);
+				using (var conn = DatabaseHelper.GetConnection())
+				{
+					conn.Open();
+					int categoryId = budgetRepo.GetOrCreateCategoryId(userId, selectedCategory, conn);
+					budgetRepo.SaveGoal(userId, categoryId, amount, targetDate);
+				}
 
-			MessageBox.Show($"Goal set: ₱{amount:F2} for {selectedCategory} by {targetDate:yyyy-MM-dd}");
-			ClearForm();
+				MessageBox.Show("Goal saved successfully!", "Goal Planning", MessageBoxButtons.OK, MessageBoxIcon.Information);
+				ClearForm();
+			}
+			catch (Exception)
+			{
+				ShowValidation("The goal could not be saved. Please check the database connection and try again.");
+			}
+			finally
+			{
+				saveInProgress = false;
+				button5.Enabled = true;
+			}
 		}
 
-		// button6 = "D. Clear"
 		private void button6_Click(object sender, EventArgs e)
 		{
 			ClearForm();
@@ -119,47 +121,67 @@ namespace SmartCashDisbursementApp
 		private void ClearForm()
 		{
 			selectedCategory = null;
+			selectedCategoryButton = null;
 			textBox1.Clear();
-			textBox2.Clear();
-			button1.BackColor = SystemColors.Control;
-			button2.BackColor = SystemColors.Control;
-			button3.BackColor = SystemColors.Control;
+			datePicker.Value = DateTime.Today.AddDays(1);
+			ResetCategoryButton(button1, System.Drawing.Color.FromArgb(43, 125, 55));
+			ResetCategoryButton(button2, System.Drawing.Color.FromArgb(29, 109, 190));
+			ResetCategoryButton(button3, System.Drawing.Color.FromArgb(239, 124, 9));
+			lblValidation.Text = string.Empty;
+			lblValidation.ForeColor = System.Drawing.Color.Firebrick;
 		}
 
-		// button4 = "<- Back"
 		private void button4_Click(object sender, EventArgs e)
 		{
-			this.Close();
+			Close();
 		}
 
-		private void label5_Click(object sender, EventArgs e)
+		private void GoalPlanningForm_KeyDown(object sender, KeyEventArgs e)
 		{
-
-		}
-
-		private void textBox3_TextChanged(object sender, EventArgs e)
-		{
-
-		}
-
-		private void button2_Click_1(object sender, EventArgs e)
-		{
-
-		}
-
-		private void textBox3_TextChanged_1(object sender, EventArgs e)
-		{
-
-		}
-
-		private void textBox7_TextChanged(object sender, EventArgs e)
-		{
-
+			switch (e.KeyCode)
+			{
+				case Keys.A:
+					SelectCategory("Savings", button1);
+					e.Handled = true;
+					break;
+				case Keys.B:
+					SelectCategory("Wants", button2);
+					e.Handled = true;
+					break;
+				case Keys.C:
+					SelectCategory("Needs", button3);
+					e.Handled = true;
+					break;
+			}
 		}
 
 		private void GoalPlanningForm_Load(object sender, EventArgs e)
 		{
+			datePicker.MinDate = DateTime.Today.AddDays(1);
+			datePicker.Value = datePicker.MinDate;
+			UpdateClock();
+			clockTimer.Start();
+		}
 
+		private void clockTimer_Tick(object sender, EventArgs e)
+		{
+			UpdateClock();
+		}
+
+		private void UpdateClock()
+		{
+			lblDateTime.Text = $"◷  {DateTime.Now:MMM dd, yyyy | hh:mm tt}";
+		}
+
+		private void GoalPlanningForm_Resize(object sender, EventArgs e)
+		{
+			lblDateTime.Location = new System.Drawing.Point(Math.Max(0, ClientSize.Width - 450), 22);
+		}
+
+		private void ShowValidation(string message)
+		{
+			lblValidation.ForeColor = System.Drawing.Color.Firebrick;
+			lblValidation.Text = message;
 		}
 	}
 }
