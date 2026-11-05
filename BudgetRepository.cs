@@ -42,10 +42,12 @@ namespace SmartCashDisbursementApp
             return categories;
         }
 
-        public int GetOrCreateCategoryId(int userId, string categoryName, MySqlConnection conn)
+        public int GetOrCreateCategoryId(int userId, string categoryName, MySqlConnection conn, MySqlTransaction transaction = null)
         {
             string selectSql = "SELECT id FROM budget_categories WHERE user_id = @userId AND category_name = @name";
-            using (var cmd = new MySqlCommand(selectSql, conn))
+            using (var cmd = transaction == null
+                ? new MySqlCommand(selectSql, conn)
+                : new MySqlCommand(selectSql, conn, transaction))
             {
                 cmd.Parameters.AddWithValue("@userId", userId);
                 cmd.Parameters.AddWithValue("@name", categoryName);
@@ -54,7 +56,9 @@ namespace SmartCashDisbursementApp
             }
 
             string insertSql = "INSERT INTO budget_categories (user_id, category_name, allocated_amount) VALUES (@userId, @name, 0); SELECT LAST_INSERT_ID();";
-            using (var cmd = new MySqlCommand(insertSql, conn))
+            using (var cmd = transaction == null
+                ? new MySqlCommand(insertSql, conn)
+                : new MySqlCommand(insertSql, conn, transaction))
             {
                 cmd.Parameters.AddWithValue("@userId", userId);
                 cmd.Parameters.AddWithValue("@name", categoryName);

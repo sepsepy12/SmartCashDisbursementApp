@@ -93,16 +93,36 @@ namespace SmartCashDisbursementApp
                 using (var conn = DatabaseHelper.GetConnection())
                 {
                     conn.Open();
-                    foreach (var allocation in allocations)
+                    using (var transaction = conn.BeginTransaction())
                     {
-                        int categoryId = budgetRepo.GetOrCreateCategoryId(userId, allocation.Key, conn);
-                        const string sql = "INSERT INTO transactions (user_id, category_id, type, amount) VALUES (@userId, @categoryId, 'deposit', @amount)";
-                        using (var cmd = new MySqlCommand(sql, conn))
+                        try
                         {
-                            cmd.Parameters.AddWithValue("@userId", userId);
-                            cmd.Parameters.AddWithValue("@categoryId", categoryId);
-                            cmd.Parameters.AddWithValue("@amount", allocation.Value);
-                            cmd.ExecuteNonQuery();
+                            foreach (var allocation in allocations)
+                            {
+                                int categoryId = budgetRepo.GetOrCreateCategoryId(userId, allocation.Key, conn, transaction);
+                                const string sql = "INSERT INTO transactions (user_id, category_id, type, amount) VALUES (@userId, @categoryId, 'deposit', @amount)";
+                                using (var cmd = new MySqlCommand(sql, conn, transaction))
+                                {
+                                    cmd.Parameters.AddWithValue("@userId", userId);
+                                    cmd.Parameters.AddWithValue("@categoryId", categoryId);
+                                    cmd.Parameters.AddWithValue("@amount", allocation.Value);
+                                    cmd.ExecuteNonQuery();
+                                }
+                            }
+
+                            transaction.Commit();
+                        }
+                        catch
+                        {
+                            try
+                            {
+                                transaction.Rollback();
+                            }
+                            catch
+                            {
+                            }
+
+                            throw;
                         }
                     }
                 }
