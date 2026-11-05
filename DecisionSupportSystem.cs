@@ -11,6 +11,15 @@ namespace SmartCashDisbursementApp
         public decimal Remaining => Allocated - Spent;
     }
 
+    public class SavedGoal
+    {
+        public int Id { get; set; }
+        public string CategoryName { get; set; }
+        public decimal TargetAmount { get; set; }
+        public DateTime TargetDate { get; set; }
+        public decimal CurrentBalance { get; set; }
+    }
+
     public class DecisionSupportSystem
     {
         public Dictionary<string, decimal> AutoAllocate(decimal totalAmount)

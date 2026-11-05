@@ -1,5 +1,6 @@
 using System;
 using System.Globalization;
+using System.Drawing;
 using System.Windows.Forms;
 
 namespace SmartCashDisbursementApp
@@ -23,6 +24,7 @@ namespace SmartCashDisbursementApp
 			button4.Click += button4_Click;
 			button5.Click += button5_Click;
 			button6.Click += button6_Click;
+			savedGoalsGrid.CellPainting += savedGoalsGrid_CellPainting;
 		}
 
 		private void button1_Click(object sender, EventArgs e)
@@ -99,6 +101,7 @@ namespace SmartCashDisbursementApp
 					budgetRepo.SaveGoal(userId, categoryId, amount, targetDate);
 				}
 
+				LoadSavedGoals();
 				MessageBox.Show("Goal saved successfully!", "Goal Planning", MessageBoxButtons.OK, MessageBoxIcon.Information);
 				ClearForm();
 			}
@@ -163,7 +166,113 @@ namespace SmartCashDisbursementApp
 			datePicker.MinDate = DateTime.Today.AddDays(1);
 			datePicker.Value = datePicker.MinDate;
 			UpdateClock();
+			LoadSavedGoals();
 			clockTimer.Start();
+		}
+
+		private void LoadSavedGoals()
+		{
+			try
+			{
+				var goals = budgetRepo.GetGoalsForUser(userId);
+				savedGoalsGrid.Rows.Clear();
+
+				if (goals.Count == 0)
+				{
+					savedGoalsGrid.Visible = false;
+					lblNoGoals.Text = "No saved goals yet.";
+					lblNoGoals.Visible = true;
+					return;
+				}
+
+				savedGoalsGrid.Visible = true;
+				lblNoGoals.Visible = false;
+				foreach (SavedGoal goal in goals)
+				{
+					decimal progress = CalculateProgress(goal.CurrentBalance, goal.TargetAmount);
+					decimal remaining = Math.Max(0, goal.TargetAmount - Math.Max(0, goal.CurrentBalance));
+					string status = GetGoalStatus(goal);
+
+					int rowIndex = savedGoalsGrid.Rows.Add(
+						goal.CategoryName,
+						FormatCurrency(goal.TargetAmount),
+						FormatCurrency(goal.CurrentBalance),
+						progress,
+						FormatCurrency(remaining),
+						goal.TargetDate.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture),
+						status);
+					savedGoalsGrid.Rows[rowIndex].Cells["Progress"].Style.Format = "0.#'%'";
+					savedGoalsGrid.Rows[rowIndex].Cells["Status"].Style.ForeColor = GetStatusColor(status);
+				}
+			}
+			catch (Exception)
+			{
+				savedGoalsGrid.Rows.Clear();
+				savedGoalsGrid.Visible = false;
+				lblNoGoals.Text = "Saved goals could not be loaded. Please check the database connection.";
+				lblNoGoals.Visible = true;
+			}
+		}
+
+		private static decimal CalculateProgress(decimal currentBalance, decimal targetAmount)
+		{
+			if (currentBalance <= 0 || targetAmount <= 0)
+				return 0;
+
+			return Math.Min(100, currentBalance / targetAmount * 100);
+		}
+
+		private static string GetGoalStatus(SavedGoal goal)
+		{
+			if (goal.TargetAmount > 0 && goal.CurrentBalance >= goal.TargetAmount)
+				return "Completed";
+
+			if (goal.TargetDate.Date < DateTime.Today)
+				return "Overdue";
+
+			return "In Progress";
+		}
+
+		private static string FormatCurrency(decimal amount)
+		{
+			return $"₱{amount:N0}";
+		}
+
+		private static Color GetStatusColor(string status)
+		{
+			return status switch
+			{
+				"Completed" => Color.FromArgb(43, 125, 55),
+				"Overdue" => Color.Firebrick,
+				_ => Color.FromArgb(29, 109, 190)
+			};
+		}
+
+		private void savedGoalsGrid_CellPainting(object sender, DataGridViewCellPaintingEventArgs e)
+		{
+			if (e.RowIndex < 0 || e.ColumnIndex < 0 || savedGoalsGrid.Columns[e.ColumnIndex].Name != "Progress")
+				return;
+
+			if (!decimal.TryParse(Convert.ToString(e.Value, CultureInfo.InvariantCulture), NumberStyles.Number, CultureInfo.InvariantCulture, out decimal progress))
+				return;
+
+			e.PaintBackground(e.CellBounds, true);
+			Rectangle barBounds = new Rectangle(e.CellBounds.X + 4, e.CellBounds.Y + 7, e.CellBounds.Width - 8, e.CellBounds.Height - 14);
+			using (var backgroundBrush = new SolidBrush(Color.FromArgb(232, 238, 245)))
+			using (var progressBrush = new SolidBrush(Color.FromArgb(43, 125, 55)))
+			using (var textBrush = new SolidBrush(Color.FromArgb(20, 42, 78)))
+			{
+				e.Graphics.FillRectangle(backgroundBrush, barBounds);
+				int progressWidth = (int)Math.Round(barBounds.Width * progress / 100m);
+				if (progressWidth > 0)
+					e.Graphics.FillRectangle(progressBrush, new Rectangle(barBounds.X, barBounds.Y, progressWidth, barBounds.Height));
+
+				string text = $"{progress:0.#}%";
+				using (var format = new StringFormat { Alignment = StringAlignment.Center, LineAlignment = StringAlignment.Center })
+					e.Graphics.DrawString(text, e.CellStyle.Font, textBrush, e.CellBounds, format);
+			}
+
+			e.Handled = true;
 		}
 
 		private void clockTimer_Tick(object sender, EventArgs e)

@@ -36,6 +36,10 @@ namespace SmartCashDisbursementApp
 		private Label lblSecurity;
 		private Label lblDateTime;
 		private System.Windows.Forms.Timer clockTimer;
+		private Panel pnlSavedGoals;
+		private Label lblSavedGoals;
+		private Label lblNoGoals;
+		private DataGridView savedGoalsGrid;
 
 		protected override void Dispose(bool disposing)
 		{
@@ -80,6 +84,10 @@ namespace SmartCashDisbursementApp
 			lblSecurity = new Label();
 			lblDateTime = new Label();
 			clockTimer = new System.Windows.Forms.Timer(components);
+			pnlSavedGoals = new Panel();
+			lblSavedGoals = new Label();
+			lblNoGoals = new Label();
+			savedGoalsGrid = new DataGridView();
 			pnlHeader.SuspendLayout();
 			pnlContent.SuspendLayout();
 			pnlStep1.SuspendLayout();
@@ -88,6 +96,7 @@ namespace SmartCashDisbursementApp
 			detailsLayout.SuspendLayout();
 			actionLayout.SuspendLayout();
 			pnlFooter.SuspendLayout();
+			((ISupportInitialize)savedGoalsGrid).BeginInit();
 			SuspendLayout();
 
 			pnlHeader.BackColor = Color.FromArgb(7, 57, 113);
@@ -107,12 +116,56 @@ namespace SmartCashDisbursementApp
 			lblAppSubtitle.Text = "BUDGETING MACHINE";
 
 			pnlContent.BackColor = Color.WhiteSmoke;
+			pnlContent.AutoScroll = true;
+			pnlContent.Controls.Add(pnlSavedGoals);
 			pnlContent.Controls.Add(actionLayout);
 			pnlContent.Controls.Add(pnlStep2);
 			pnlContent.Controls.Add(pnlStep1);
 			pnlContent.Controls.Add(lblSubtitle);
 			pnlContent.Controls.Add(lblTitle);
 			pnlContent.Dock = DockStyle.Fill;
+			pnlSavedGoals.BackColor = Color.White;
+			pnlSavedGoals.BorderStyle = BorderStyle.FixedSingle;
+			pnlSavedGoals.Dock = DockStyle.Top;
+			pnlSavedGoals.Height = 250;
+			pnlSavedGoals.Padding = new Padding(12, 0, 12, 12);
+			pnlSavedGoals.Controls.Add(savedGoalsGrid);
+			pnlSavedGoals.Controls.Add(lblNoGoals);
+			pnlSavedGoals.Controls.Add(lblSavedGoals);
+			lblSavedGoals.BackColor = Color.FromArgb(7, 57, 113);
+			lblSavedGoals.Dock = DockStyle.Top;
+			lblSavedGoals.Font = new Font("Segoe UI", 14F, FontStyle.Bold);
+			lblSavedGoals.ForeColor = Color.White;
+			lblSavedGoals.Height = 44;
+			lblSavedGoals.Text = "SAVED GOALS & PROGRESS";
+			lblSavedGoals.TextAlign = ContentAlignment.MiddleCenter;
+			lblNoGoals.Dock = DockStyle.Fill;
+			lblNoGoals.Font = new Font("Segoe UI", 12F, FontStyle.Bold);
+			lblNoGoals.ForeColor = Color.FromArgb(20, 42, 78);
+			lblNoGoals.Text = "No saved goals yet.";
+			lblNoGoals.TextAlign = ContentAlignment.MiddleCenter;
+			savedGoalsGrid.AllowUserToAddRows = false;
+			savedGoalsGrid.AllowUserToDeleteRows = false;
+			savedGoalsGrid.AllowUserToResizeRows = false;
+			savedGoalsGrid.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+			savedGoalsGrid.BackgroundColor = Color.White;
+			savedGoalsGrid.BorderStyle = BorderStyle.None;
+			savedGoalsGrid.ColumnHeadersDefaultCellStyle.BackColor = Color.FromArgb(20, 42, 78);
+			savedGoalsGrid.ColumnHeadersDefaultCellStyle.ForeColor = Color.White;
+			savedGoalsGrid.ColumnHeadersDefaultCellStyle.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
+			savedGoalsGrid.ColumnHeadersHeight = 32;
+			savedGoalsGrid.Dock = DockStyle.Fill;
+			savedGoalsGrid.EnableHeadersVisualStyles = false;
+			savedGoalsGrid.ReadOnly = true;
+			savedGoalsGrid.RowHeadersVisible = false;
+			savedGoalsGrid.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
+			savedGoalsGrid.Columns.Add("Category", "Category");
+			savedGoalsGrid.Columns.Add("Target", "Target Amount");
+			savedGoalsGrid.Columns.Add("Balance", "Current Balance");
+			savedGoalsGrid.Columns.Add("Progress", "Progress");
+			savedGoalsGrid.Columns.Add("Remaining", "Remaining");
+			savedGoalsGrid.Columns.Add("TargetDate", "Target Date");
+			savedGoalsGrid.Columns.Add("Status", "Status");
 			lblTitle.Dock = DockStyle.Top;
 			lblTitle.Font = new Font("Segoe UI", 25F, FontStyle.Bold);
 			lblTitle.ForeColor = Color.FromArgb(8, 57, 113);
@@ -242,6 +295,7 @@ namespace SmartCashDisbursementApp
 			actionLayout.ResumeLayout(false);
 			pnlFooter.ResumeLayout(false);
 			pnlFooter.PerformLayout();
+			((ISupportInitialize)savedGoalsGrid).EndInit();
 			ResumeLayout(false);
 		}
 

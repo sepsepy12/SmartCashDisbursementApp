@@ -201,6 +201,54 @@ namespace SmartCashDisbursementApp
             }
         }
 
+        public List<SavedGoal> GetGoalsForUser(int userId)
+        {
+            var goals = new List<SavedGoal>();
+
+            using (var conn = DatabaseHelper.GetConnection())
+            {
+                conn.Open();
+                const string sql = @"
+                    SELECT g.id,
+                           bc.category_name,
+                           g.target_amount,
+                           g.target_date,
+                           COALESCE(SUM(CASE WHEN t.type = 'deposit' THEN t.amount ELSE 0 END), 0)
+                           - COALESCE(SUM(CASE WHEN t.type = 'withdrawal' THEN t.amount ELSE 0 END), 0) AS current_balance
+                    FROM goals g
+                    INNER JOIN budget_categories bc
+                        ON bc.id = g.category_id
+                       AND bc.user_id = g.user_id
+                    LEFT JOIN transactions t
+                        ON t.category_id = bc.id
+                       AND t.user_id = bc.user_id
+                    WHERE g.user_id = @userId
+                    GROUP BY g.id, bc.category_name, g.target_amount, g.target_date
+                    ORDER BY g.target_date, g.id";
+
+                using (var cmd = new MySqlCommand(sql, conn))
+                {
+                    cmd.Parameters.AddWithValue("@userId", userId);
+                    using (var reader = cmd.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            goals.Add(new SavedGoal
+                            {
+                                Id = reader.GetInt32("id"),
+                                CategoryName = reader.GetString("category_name"),
+                                TargetAmount = reader.GetDecimal("target_amount"),
+                                TargetDate = reader.GetDateTime("target_date"),
+                                CurrentBalance = reader.GetDecimal("current_balance")
+                            });
+                        }
+                    }
+                }
+            }
+
+            return goals;
+        }
+
         public void SaveGoal(int userId, int categoryId, decimal targetAmount, System.DateTime targetDate)
         {
             using (var conn = DatabaseHelper.GetConnection())
