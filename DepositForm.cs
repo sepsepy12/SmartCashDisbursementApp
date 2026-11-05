@@ -13,6 +13,7 @@ namespace SmartCashDisbursementApp
         private Dictionary<string, decimal> pendingAllocation;
         private string pendingSpecificCategory;
         private decimal pendingSpecificAmount;
+        private decimal pendingDepositAmount;
         private string selectedMethod;
         private bool isSaving;
 
@@ -29,9 +30,9 @@ namespace SmartCashDisbursementApp
             pendingAllocation = dss.AutoAllocate(amount);
             pendingSpecificCategory = null;
             pendingSpecificAmount = 0;
+            pendingDepositAmount = amount;
             selectedMethod = "Automated";
-            cmbCategory.Visible = false;
-            lblCategory.Visible = false;
+            pnlCategorySelection.Visible = false;
 
             MessageBox.Show(
                 $"Total Deposit: ₱{amount:F2}\n\nNeeds: ₱{pendingAllocation["Needs"]:F2}\nWants: ₱{pendingAllocation["Wants"]:F2}\nSavings: ₱{pendingAllocation["Savings"]:F2}\n\nClick CONFIRM to save this deposit.",
@@ -44,10 +45,10 @@ namespace SmartCashDisbursementApp
 
             pendingAllocation = null;
             pendingSpecificAmount = amount;
+            pendingDepositAmount = amount;
             selectedMethod = "Specific";
-            cmbCategory.Visible = true;
-            lblCategory.Visible = true;
-            pendingSpecificCategory = cmbCategory.SelectedItem as string;
+            pnlCategorySelection.Visible = true;
+            SelectSpecificCategory(null);
             UpdateSpecificPreview();
         }
 
@@ -61,6 +62,8 @@ namespace SmartCashDisbursementApp
                 MessageBox.Show("Please choose a deposit method (A or B) first.", "Deposit Method Required", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
+
+            if (!TryValidatePendingAmount()) return;
 
             if (selectedMethod == "Automated")
             {
@@ -134,10 +137,53 @@ namespace SmartCashDisbursementApp
             return total;
         }
 
-        private void cmbCategory_SelectedIndexChanged(object sender, EventArgs e)
+        private bool TryValidatePendingAmount()
         {
-            pendingSpecificCategory = cmbCategory.SelectedItem as string;
-            if (selectedMethod == "Specific") UpdateSpecificPreview();
+            if (!TryGetDepositAmount(out decimal currentAmount))
+            {
+                ClearPendingDepositState();
+                return false;
+            }
+
+            if (currentAmount == pendingDepositAmount) return true;
+
+            ClearPendingDepositState();
+            MessageBox.Show(
+                "The deposit amount has changed. Please select the deposit method again.",
+                "Deposit Method Required", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            return false;
+        }
+
+        public void SelectSpecificCategory(string category)
+        {
+            if (category != null && category != "Needs" && category != "Wants" && category != "Savings") return;
+
+            pendingSpecificCategory = category;
+            UpdateSpecificPreview();
+            UpdateCategoryButtonStyles();
+        }
+
+        private void CategoryButton_Click(object sender, EventArgs e)
+        {
+            if (sender is Button button && button.Tag is string category)
+            {
+                SelectSpecificCategory(category);
+            }
+        }
+
+        private void UpdateCategoryButtonStyles()
+        {
+            SetCategoryButtonStyle(btnNeeds, "Needs");
+            SetCategoryButtonStyle(btnWants, "Wants");
+            SetCategoryButtonStyle(btnSavings, "Savings");
+        }
+
+        private void SetCategoryButtonStyle(Button button, string category)
+        {
+            bool isSelected = pendingSpecificCategory == category;
+            button.BackColor = isSelected ? System.Drawing.Color.FromArgb(8, 80, 145) : System.Drawing.Color.WhiteSmoke;
+            button.ForeColor = isSelected ? System.Drawing.Color.White : System.Drawing.Color.Black;
+            button.FlatAppearance.BorderColor = isSelected ? System.Drawing.Color.FromArgb(8, 80, 145) : System.Drawing.Color.Gray;
         }
 
         private void UpdateSpecificPreview()
@@ -150,13 +196,18 @@ namespace SmartCashDisbursementApp
         private void ResetPendingDeposit()
         {
             txtAmountDisplay.Text = "0.00";
+            ClearPendingDepositState();
+        }
+
+        private void ClearPendingDepositState()
+        {
             selectedMethod = null;
             pendingAllocation = null;
             pendingSpecificCategory = null;
             pendingSpecificAmount = 0;
-            cmbCategory.SelectedIndex = -1;
-            cmbCategory.Visible = false;
-            lblCategory.Visible = false;
+            pendingDepositAmount = 0;
+            pnlCategorySelection.Visible = false;
+            UpdateCategoryButtonStyles();
             lblSpecificDesc.Text = "(Select a specific budget category)";
         }
 
