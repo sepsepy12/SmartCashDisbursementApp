@@ -1,10 +1,190 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using MySql.Data.MySqlClient;
 
 namespace SmartCashDisbursementApp
 {
+    public sealed class AnalyticsCategory
+    {
+        public string Name { get; set; } = string.Empty;
+        public decimal MonthlyWithdrawals { get; set; }
+        public decimal AvailableBalance { get; set; }
+    }
+
+    public sealed class DailySpending
+    {
+        public DateTime Date { get; set; }
+        public decimal Amount { get; set; }
+    }
+
+    public sealed class RecentTransaction
+    {
+        public int Id { get; set; }
+        public string Type { get; set; } = string.Empty;
+        public string CategoryName { get; set; } = "Uncategorized";
+        public decimal Amount { get; set; }
+        public DateTime CreatedAt { get; set; }
+    }
+
     public class BudgetRepository
     {
+        public decimal GetMonthlyTransactionTotal(int userId, string type, DateTime monthStart, DateTime nextMonthStart)
+        {
+            using (var conn = DatabaseHelper.GetConnection())
+            {
+                conn.Open();
+                const string sql = @"
+                    SELECT COALESCE(SUM(amount), 0)
+                    FROM transactions
+                    WHERE user_id = @userId
+                      AND type = @type
+                      AND created_at >= @monthStart
+                      AND created_at < @nextMonthStart";
+                using (var cmd = new MySqlCommand(sql, conn))
+                {
+                    cmd.Parameters.AddWithValue("@userId", userId);
+                    cmd.Parameters.AddWithValue("@type", type);
+                    cmd.Parameters.AddWithValue("@monthStart", monthStart);
+                    cmd.Parameters.AddWithValue("@nextMonthStart", nextMonthStart);
+                    return Convert.ToDecimal(cmd.ExecuteScalar());
+                }
+            }
+        }
+
+        public decimal GetOverallBalance(int userId)
+        {
+            using (var conn = DatabaseHelper.GetConnection())
+            {
+                conn.Open();
+                const string sql = @"
+                    SELECT COALESCE(SUM(CASE WHEN type = 'deposit' THEN amount ELSE -amount END), 0)
+                    FROM transactions
+                    WHERE user_id = @userId";
+                using (var cmd = new MySqlCommand(sql, conn))
+                {
+                    cmd.Parameters.AddWithValue("@userId", userId);
+                    return Convert.ToDecimal(cmd.ExecuteScalar());
+                }
+            }
+        }
+
+        public List<AnalyticsCategory> GetAnalyticsCategories(int userId, DateTime monthStart, DateTime nextMonthStart)
+        {
+            var categories = new List<AnalyticsCategory>();
+            using (var conn = DatabaseHelper.GetConnection())
+            {
+                conn.Open();
+                const string sql = @"
+                    SELECT bc.category_name,
+                           COALESCE(SUM(CASE WHEN t.type = 'withdrawal'
+                                              AND t.created_at >= @monthStart
+                                              AND t.created_at < @nextMonthStart
+                                             THEN t.amount ELSE 0 END), 0) AS monthly_withdrawals,
+                           COALESCE(SUM(CASE WHEN t.type = 'deposit' THEN t.amount ELSE -t.amount END), 0) AS available_balance
+                    FROM budget_categories bc
+                    LEFT JOIN transactions t
+                      ON t.category_id = bc.id
+                     AND t.user_id = bc.user_id
+                    WHERE bc.user_id = @userId
+                    GROUP BY bc.id, bc.category_name
+                    ORDER BY bc.id";
+                using (var cmd = new MySqlCommand(sql, conn))
+                {
+                    cmd.Parameters.AddWithValue("@userId", userId);
+                    cmd.Parameters.AddWithValue("@monthStart", monthStart);
+                    cmd.Parameters.AddWithValue("@nextMonthStart", nextMonthStart);
+                    using (var reader = cmd.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            categories.Add(new AnalyticsCategory
+                            {
+                                Name = reader.GetString("category_name"),
+                                MonthlyWithdrawals = reader.GetDecimal("monthly_withdrawals"),
+                                AvailableBalance = reader.GetDecimal("available_balance")
+                            });
+                        }
+                    }
+                }
+            }
+            return categories;
+        }
+
+        public List<DailySpending> GetDailyWithdrawals(int userId, DateTime monthStart, DateTime nextMonthStart)
+        {
+            var spending = new List<DailySpending>();
+            using (var conn = DatabaseHelper.GetConnection())
+            {
+                conn.Open();
+                const string sql = @"
+                    SELECT DATE(created_at) AS spending_date, COALESCE(SUM(amount), 0) AS daily_amount
+                    FROM transactions
+                    WHERE user_id = @userId
+                      AND type = 'withdrawal'
+                      AND created_at >= @monthStart
+                      AND created_at < @nextMonthStart
+                    GROUP BY DATE(created_at)
+                    ORDER BY spending_date";
+                using (var cmd = new MySqlCommand(sql, conn))
+                {
+                    cmd.Parameters.AddWithValue("@userId", userId);
+                    cmd.Parameters.AddWithValue("@monthStart", monthStart);
+                    cmd.Parameters.AddWithValue("@nextMonthStart", nextMonthStart);
+                    using (var reader = cmd.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            spending.Add(new DailySpending
+                            {
+                                Date = reader.GetDateTime("spending_date"),
+                                Amount = reader.GetDecimal("daily_amount")
+                            });
+                        }
+                    }
+                }
+            }
+            return spending;
+        }
+
+        public List<RecentTransaction> GetRecentTransactions(int userId, int limit = 6)
+        {
+            var transactions = new List<RecentTransaction>();
+            using (var conn = DatabaseHelper.GetConnection())
+            {
+                conn.Open();
+                const string sql = @"
+                    SELECT t.id, t.type, t.amount, t.created_at,
+                           COALESCE(bc.category_name, 'Uncategorized') AS category_name
+                    FROM transactions t
+                    LEFT JOIN budget_categories bc
+                      ON bc.id = t.category_id
+                     AND bc.user_id = t.user_id
+                    WHERE t.user_id = @userId
+                    ORDER BY t.created_at DESC, t.id DESC
+                    LIMIT @limit";
+                using (var cmd = new MySqlCommand(sql, conn))
+                {
+                    cmd.Parameters.AddWithValue("@userId", userId);
+                    cmd.Parameters.AddWithValue("@limit", limit);
+                    using (var reader = cmd.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            transactions.Add(new RecentTransaction
+                            {
+                                Id = reader.GetInt32("id"),
+                                Type = reader.GetString("type"),
+                                CategoryName = reader.GetString("category_name"),
+                                Amount = reader.GetDecimal("amount"),
+                                CreatedAt = reader.GetDateTime("created_at")
+                            });
+                        }
+                    }
+                }
+            }
+            return transactions;
+        }
+
         public List<BudgetCategory> GetCategoriesForUser(int userId)
         {
             var categories = new List<BudgetCategory>();
