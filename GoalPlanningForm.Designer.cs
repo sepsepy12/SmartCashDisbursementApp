@@ -23,7 +23,7 @@ namespace SmartCashDisbursementApp
 		private Label lblAmount;
 		private Label lblDate;
 		private TextBox textBox1;
-		private DateTimePicker datePicker;
+		private TextBox txtTargetDate;
 		private Label lblValidation;
 		private TableLayoutPanel actionLayout;
 		private Button button4;
@@ -74,7 +74,7 @@ namespace SmartCashDisbursementApp
 			lblAmount = new Label();
 			lblDate = new Label();
 			textBox1 = new TextBox();
-			datePicker = new DateTimePicker();
+			txtTargetDate = new TextBox();
 			lblValidation = new Label();
 		actionLayout = new TableLayoutPanel();
 			button4 = new Button();
@@ -216,7 +216,7 @@ namespace SmartCashDisbursementApp
 			detailsLayout.Controls.Add(lblAmount, 0, 0);
 			detailsLayout.Controls.Add(lblDate, 1, 0);
 			detailsLayout.Controls.Add(textBox1, 0, 1);
-			detailsLayout.Controls.Add(datePicker, 1, 1);
+			detailsLayout.Controls.Add(txtTargetDate, 1, 1);
 			ConfigureInputLabel(lblAmount, "ENTER AMOUNT (₱)");
 			ConfigureInputLabel(lblDate, "ENTER DATE (YYYY-MM-DD)");
 			textBox1.Dock = DockStyle.Fill;
@@ -224,12 +224,11 @@ namespace SmartCashDisbursementApp
 			textBox1.Margin = new Padding(0, 2, 18, 0);
 			textBox1.MaxLength = 18;
 			textBox1.PlaceholderText = "0.00";
-			datePicker.Dock = DockStyle.Fill;
-			datePicker.Font = new Font("Segoe UI", 13F);
-			datePicker.Format = DateTimePickerFormat.Custom;
-			datePicker.CustomFormat = "yyyy-MM-dd";
-			datePicker.Margin = new Padding(18, 2, 0, 0);
-			datePicker.MinDate = DateTime.Today.AddDays(1);
+			txtTargetDate.Dock = DockStyle.Fill;
+			txtTargetDate.Font = new Font("Segoe UI", 14F);
+			txtTargetDate.Margin = new Padding(18, 2, 0, 0);
+			txtTargetDate.MaxLength = 10;
+			txtTargetDate.PlaceholderText = "YYYY-MM-DD";
 
 			actionLayout.ColumnCount = 3;
 			actionLayout.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 25F));
@@ -238,8 +237,9 @@ namespace SmartCashDisbursementApp
 			actionLayout.Controls.Add(button4, 0, 0);
 			actionLayout.Controls.Add(button6, 1, 0);
 			actionLayout.Controls.Add(button5, 2, 0);
-			actionLayout.Dock = DockStyle.Top;
-			actionLayout.Height = 74;
+			actionLayout.BackColor = Color.FromArgb(8, 52, 105);
+			actionLayout.Dock = DockStyle.Bottom;
+			actionLayout.Height = 56;
 			actionLayout.Padding = new Padding(28, 0, 28, 0);
 			actionLayout.RowCount = 1;
 			actionLayout.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
@@ -250,13 +250,13 @@ namespace SmartCashDisbursementApp
 			button4.BackColor = Color.FromArgb(90, 100, 115);
 			button4.Cursor = Cursors.Hand;
 			button4.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
-			button4.Margin = new Padding(0, 18, 0, 0);
+			button4.Margin = new Padding(0, 9, 0, 0);
 			button4.Size = new Size(110, 38);
 			button5.Anchor = AnchorStyles.Right | AnchorStyles.Top;
 			button5.BackColor = Color.FromArgb(10, 125, 55);
 			button5.Cursor = Cursors.Hand;
 			button5.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
-			button5.Margin = new Padding(0, 18, 0, 0);
+			button5.Margin = new Padding(0, 9, 0, 0);
 			button5.Size = new Size(150, 38);
 			button6.Anchor = AnchorStyles.None;
 
@@ -266,20 +266,20 @@ namespace SmartCashDisbursementApp
 			lblValidation.TextAlign = ContentAlignment.MiddleCenter;
 			pnlContent.Controls.Add(lblValidation);
 
-			pnlFooter.BackColor = Color.FromArgb(7, 57, 113);
+			pnlFooter.BackColor = Color.FromArgb(8, 52, 105);
 			pnlFooter.Controls.Add(lblDateTime);
 			pnlFooter.Controls.Add(lblSecurity);
 			pnlFooter.Dock = DockStyle.Bottom;
-			pnlFooter.Height = 68;
+			pnlFooter.Height = 56;
 			lblSecurity.AutoSize = true;
 			lblSecurity.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
 			lblSecurity.ForeColor = Color.White;
-			lblSecurity.Location = new Point(30, 13);
-			lblSecurity.Text = "♙  SECURE SYSTEM\n    Your security is our priority.";
+			lblSecurity.Location = new Point(24, 16);
+			lblSecurity.Text = "SECURE SYSTEM - Your security is our priority.";
 			lblDateTime.Anchor = AnchorStyles.Top | AnchorStyles.Right;
 			lblDateTime.Font = new Font("Segoe UI", 11F);
 			lblDateTime.ForeColor = Color.White;
-			lblDateTime.Location = new Point(650, 22);
+			lblDateTime.Location = new Point(650, 16);
 			lblDateTime.Size = new Size(420, 25);
 			lblDateTime.TextAlign = ContentAlignment.MiddleRight;
 			clockTimer.Interval = 1000;
@@ -289,6 +289,7 @@ namespace SmartCashDisbursementApp
 			BackColor = Color.WhiteSmoke;
 			ClientSize = new Size(1152, 768);
 			Controls.Add(pnlContent);
+			Controls.Add(actionLayout);
 			Controls.Add(pnlFooter);
 			Controls.Add(pnlHeader);
 			Font = new Font("Segoe UI", 10F);

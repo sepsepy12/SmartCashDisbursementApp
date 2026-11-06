@@ -25,13 +25,12 @@ namespace SmartCashDisbursementApp
 			pnlHeader.Controls.Add(lblTitle); pnlHeader.Controls.Add(lblSubtitle);
 			pnlOverview = Section("1. OVERVIEW SUMMARY", 20, 95, 700, 130);
 			pnlCategories = Section("2. SPENDING BY SECTION", 20, 240, 700, 300);
-			pnlTrend = Section("3. SPENDING TREND (THIS MONTH)", 20, 555, 700, 280);
+			pnlTrend = Section("3. SPENDING TREND (LAST 14 DAYS)", 20, 555, 700, 280);
 			pnlRecent = Section("4. RECENT TRANSACTIONS", 740, 95, 320, 390);
 			pnlInsights = Section("5. INSIGHTS", 740, 500, 320, 335);
 			lblMonthlyCashIn = CardLabel("TOTAL CASH IN", 15, 40, Color.FromArgb(35, 112, 205), pnlOverview);
 			lblMonthlyWithdrawn = CardLabel("TOTAL WITHDRAWN", 185, 40, Color.FromArgb(80, 160, 45), pnlOverview);
-			lblCurrentBalance = CardLabel("CURRENT BALANCE", 355, 40, Color.FromArgb(245, 140, 20), pnlOverview);
-			lblDailyAverage = CardLabel("DAILY AVERAGE SPENT", 525, 40, Color.FromArgb(116, 75, 180), pnlOverview);
+			lblDailyAverage = CardLabel("DAILY AVERAGE SPENT", 355, 40, Color.FromArgb(116, 75, 180), pnlOverview);
 			pieChart = ChartPanel(15, 45, 300, 235, pnlCategories, pieChart_Paint);
 			categoryGrid = new DataGridView();
 			ConfigureGrid(categoryGrid, 330, 50, 350, 190, pnlCategories);
@@ -49,8 +48,14 @@ namespace SmartCashDisbursementApp
 			insightsList.MeasureItem += insightsList_MeasureItem;
 			insightsList.DrawItem += insightsList_DrawItem;
 			pnlInsights.Controls.Add(insightsList);
-			pnlFooter = new Panel { Location = new Point(0, 855), Size = new Size(1080, 65), BackColor = Color.FromArgb(8, 55, 115), Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right };
-			btnBack = ActionButton("BACK", 24, 14, 110, pnlFooter, btnBack_Click);
+			pnlFooter = new Panel { Dock = DockStyle.Bottom, Height = 108, BackColor = Color.FromArgb(8, 52, 105) };
+			actionBar = new Panel { Dock = DockStyle.Top, Height = 52, BackColor = Color.FromArgb(8, 52, 105) };
+			lblSecurity = new Label { Text = "SECURE SYSTEM - Your security is our priority.", Location = new Point(24, 72), AutoSize = true, Font = new Font("Segoe UI", 9, FontStyle.Bold), ForeColor = Color.White };
+			lblDateTime = new Label { Location = new Point(850, 76), AutoSize = true, Font = new Font("Segoe UI", 9), ForeColor = Color.White, Anchor = AnchorStyles.Right | AnchorStyles.Bottom };
+			pnlFooter.Controls.Add(lblSecurity);
+			pnlFooter.Controls.Add(lblDateTime);
+			pnlFooter.Controls.Add(actionBar);
+			btnBack = ActionButton("BACK", 24, 7, 110, actionBar, btnBack_Click);
 			btnBack.Anchor = AnchorStyles.Left | AnchorStyles.Top;
 			btnBack.BackColor = Color.FromArgb(90, 100, 115);
 			btnBack.Cursor = Cursors.Hand;
@@ -58,11 +63,14 @@ namespace SmartCashDisbursementApp
 			btnBack.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
 			btnBack.Size = new Size(110, 38);
 			btnBack.UseVisualStyleBackColor = false;
-			btnExport = ActionButton("EXPORT REPORT", 880, 14, 170, pnlFooter, btnExport_Click);
-			pnlScroll.Controls.AddRange(new Control[] { pnlHeader, pnlOverview, pnlCategories, pnlTrend, pnlRecent, pnlInsights, pnlFooter });
+			btnExport = ActionButton("EXPORT REPORT", 880, 7, 170, actionBar, btnExport_Click);
+			btnExport.BackColor = Color.FromArgb(10, 125, 55);
+			btnExport.Anchor = AnchorStyles.Right | AnchorStyles.Top;
+			pnlScroll.Controls.AddRange(new Control[] { pnlHeader, pnlOverview, pnlCategories, pnlTrend, pnlRecent, pnlInsights });
 			BackColor = Color.FromArgb(245, 247, 250);
 			ClientSize = new Size(1100, 760);
 			Controls.Add(pnlScroll);
+			Controls.Add(pnlFooter);
 			FormBorderStyle = FormBorderStyle.None;
 			WindowState = FormWindowState.Maximized;
 			Name = "SpendingAnalyticsForm";
@@ -106,8 +114,9 @@ namespace SmartCashDisbursementApp
 			grid.Location = new Point(x, y); grid.Size = new Size(width, height); grid.AllowUserToAddRows = false; grid.AllowUserToDeleteRows = false; grid.ReadOnly = true; grid.RowHeadersVisible = false; grid.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill; grid.BackgroundColor = Color.White; grid.SelectionMode = DataGridViewSelectionMode.FullRowSelect; parent.Controls.Add(grid);
 		}
 
-		private Panel pnlScroll, pnlHeader, pnlFooter, pnlOverview, pnlCategories, pnlTrend, pnlRecent, pnlInsights;
-		private Label lblTitle, lblSubtitle, lblMonthlyCashIn, lblMonthlyWithdrawn, lblCurrentBalance, lblDailyAverage, lblTotalSpent, lblCategoryEmpty, lblTransactionEmpty;
+		private Panel pnlScroll, pnlHeader, pnlFooter, actionBar, pnlOverview, pnlCategories, pnlTrend, pnlRecent, pnlInsights;
+		private Label lblTitle, lblSubtitle, lblMonthlyCashIn, lblMonthlyWithdrawn, lblDailyAverage, lblTotalSpent, lblCategoryEmpty, lblTransactionEmpty;
+		private Label lblSecurity, lblDateTime;
 		private DataGridView categoryGrid, transactionGrid;
 		private Panel pieChart, trendChart;
 		private ListBox insightsList;

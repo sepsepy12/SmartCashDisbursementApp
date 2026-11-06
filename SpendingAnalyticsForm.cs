@@ -16,17 +16,19 @@ namespace SmartCashDisbursementApp
 		private readonly BudgetRepository budgetRepo = new BudgetRepository();
 		private decimal monthlyCashIn;
 		private decimal monthlyWithdrawn;
-		private decimal currentBalance;
 		private decimal dailyAverage;
 		private List<AnalyticsCategory> categories = new List<AnalyticsCategory>();
 		private List<DailySpending> dailySpending = new List<DailySpending>();
 		private List<RecentTransaction> recentTransactions = new List<RecentTransaction>();
 		private DateTime monthStart;
+		private DateTime trendStart;
+		private DateTime trendEnd;
 
 		public SpendingAnalyticsForm(int userId)
 		{
 			InitializeComponent();
 			this.userId = userId;
+			lblDateTime.Text = DateTime.Now.ToString("MMM d, yyyy | h:mm tt");
 		}
 
 		private void SpendingAnalyticsForm_Load(object sender, EventArgs e)
@@ -61,11 +63,11 @@ namespace SmartCashDisbursementApp
 			pnlRecent.Width = rightWidth;
 			pnlInsights.Location = new Point(rightX, pnlInsights.Top);
 			pnlInsights.Width = rightWidth;
-			pnlFooter.Width = pnlScroll.ClientSize.Width;
-			btnExport.Left = Math.Max(margin, pnlFooter.ClientSize.Width - margin - btnExport.Width);
+			btnExport.Left = Math.Max(margin, actionBar.ClientSize.Width - margin - btnExport.Width);
+			lblDateTime.Location = new Point(Math.Max(24, pnlFooter.ClientSize.Width - lblDateTime.Width - 24), 76);
 
-			int cardWidth = Math.Max(1, (pnlOverview.ClientSize.Width - 30 - 45) / 4);
-			Control[] cards = { lblMonthlyCashIn.Parent, lblMonthlyWithdrawn.Parent, lblCurrentBalance.Parent, lblDailyAverage.Parent };
+			int cardWidth = Math.Max(1, (pnlOverview.ClientSize.Width - 30 - 30) / 3);
+			Control[] cards = { lblMonthlyCashIn.Parent, lblMonthlyWithdrawn.Parent, lblDailyAverage.Parent };
 			for (int i = 0; i < cards.Length; i++)
 			{
 				cards[i].Left = 15 + i * (cardWidth + 15);
@@ -120,14 +122,14 @@ namespace SmartCashDisbursementApp
 			{
 				monthStart = new DateTime(DateTime.Today.Year, DateTime.Today.Month, 1);
 				DateTime nextMonthStart = monthStart.AddMonths(1);
-				DateTime trendEnd = DateTime.Today.AddDays(1);
+				trendStart = DateTime.Today.AddDays(-13);
+				trendEnd = DateTime.Today.AddDays(1);
 				monthlyCashIn = budgetRepo.GetMonthlyTransactionTotal(userId, "deposit", monthStart, nextMonthStart);
 				monthlyWithdrawn = budgetRepo.GetMonthlyTransactionTotal(userId, "withdrawal", monthStart, nextMonthStart);
-				currentBalance = budgetRepo.GetOverallBalance(userId);
 				dailyAverage = monthlyWithdrawn / DateTime.Today.Day;
 				categories = budgetRepo.GetAnalyticsCategories(userId, monthStart, nextMonthStart);
-				List<DailySpending> recordedDailySpending = budgetRepo.GetDailyWithdrawals(userId, monthStart, trendEnd);
-				dailySpending = EachDay(monthStart, trendEnd)
+				List<DailySpending> recordedDailySpending = budgetRepo.GetDailyWithdrawals(userId, trendStart, trendEnd);
+				dailySpending = EachDay(trendStart, trendEnd)
 					.Select(date => new DailySpending
 					{
 						Date = date,
@@ -147,7 +149,6 @@ namespace SmartCashDisbursementApp
 		{
 			lblMonthlyCashIn.Text = FormatMoney(monthlyCashIn);
 			lblMonthlyWithdrawn.Text = FormatMoney(monthlyWithdrawn);
-			lblCurrentBalance.Text = FormatMoney(currentBalance);
 			lblDailyAverage.Text = FormatMoney(dailyAverage);
 			lblTotalSpent.Text = $"Total spent this month: {FormatMoney(monthlyWithdrawn)}";
 
@@ -201,10 +202,6 @@ namespace SmartCashDisbursementApp
 			AnalyticsCategory noBalance = categories.FirstOrDefault(c => c.AvailableBalance <= 0);
 			if (noBalance != null)
 				insights.Add($"{noBalance.Name} has no available balance based on recorded deposits and withdrawals.");
-			if (currentBalance < 0)
-				insights.Add($"Overall balance is negative at {FormatMoney(currentBalance)}.");
-			else if (currentBalance > 0)
-				insights.Add($"Overall remaining balance is {FormatMoney(currentBalance)}.");
 			if (insights.Count == 0)
 				insights.Add("There is not enough transaction data to generate additional insights.");
 
@@ -236,7 +233,6 @@ namespace SmartCashDisbursementApp
 				report.AppendLine("Metric,Amount");
 				report.AppendLine($"Monthly cash in,{Csv(monthlyCashIn.ToString(CultureInfo.InvariantCulture))}");
 				report.AppendLine($"Monthly withdrawn,{Csv(monthlyWithdrawn.ToString(CultureInfo.InvariantCulture))}");
-				report.AppendLine($"Current balance,{Csv(currentBalance.ToString(CultureInfo.InvariantCulture))}");
 				report.AppendLine($"Daily average spent,{Csv(dailyAverage.ToString(CultureInfo.InvariantCulture))}");
 				report.AppendLine();
 				report.AppendLine("Category,Monthly Withdrawals,Percentage,Available Balance");
@@ -244,7 +240,7 @@ namespace SmartCashDisbursementApp
 					report.AppendLine(string.Join(",", Csv(category.Name), Csv(category.MonthlyWithdrawals.ToString(CultureInfo.InvariantCulture)), Csv((monthlyWithdrawn == 0 ? 0 : category.MonthlyWithdrawals / monthlyWithdrawn * 100).ToString("0.0", CultureInfo.InvariantCulture)), Csv(category.AvailableBalance.ToString(CultureInfo.InvariantCulture))));
 				report.AppendLine();
 				report.AppendLine("Daily spending date,Amount");
-				foreach (DateTime date in EachDay(monthStart, DateTime.Today.AddDays(1)))
+				foreach (DateTime date in EachDay(trendStart, trendEnd))
 					report.AppendLine($"{date:yyyy-MM-dd},{Csv((dailySpending.FirstOrDefault(d => d.Date.Date == date)?.Amount ?? 0).ToString(CultureInfo.InvariantCulture))}");
 				report.AppendLine();
 				report.AppendLine("Type,Section,Amount,Date and Time");
@@ -306,9 +302,9 @@ namespace SmartCashDisbursementApp
 			}
 			var points = dailySpending.Select(item => new { day = item.Date, amount = item.Amount }).ToList();
 			decimal max = Math.Max(1, points.Max(p => p.amount));
-			if (monthlyWithdrawn <= 0 || !points.Any(point => point.amount > 0))
+			if (!points.Any(point => point.amount > 0))
 			{
-				e.Graphics.DrawString("No withdrawals recorded this month", Font, Brushes.Gray, plot.Left + 20, plot.Top + plot.Height / 2 - 10);
+				e.Graphics.DrawString("No withdrawals recorded in the last 14 days", Font, Brushes.Gray, plot.Left + 20, plot.Top + plot.Height / 2 - 10);
 				return;
 			}
 			if (points.Count > 1)

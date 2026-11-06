@@ -140,6 +140,12 @@ namespace SmartCashDisbursementApp
 
         private void backButton_Click(object? sender, EventArgs e) => Close();
 
+        private void CounselingHub_Resources_Shown(object? sender, EventArgs e)
+        {
+            WindowState = FormWindowState.Normal;
+            Bounds = Screen.FromControl(this).Bounds;
+        }
+
         private void CounselingHub_Resources_FormClosed(object? sender, FormClosedEventArgs e) => footerClockTimer.Stop();
 
         private void CounselingHub_Resources_KeyDown(object? sender, KeyEventArgs e)

@@ -11,6 +11,7 @@ namespace SmartCashDisbursementApp
         {
             InitializeComponent();
             this.userId = userId;
+            dateTimeLabel.Text = DateTime.Now.ToString("MMM d, yyyy | h:mm tt");
         }
 
         private void button1_Click(object sender, EventArgs e)

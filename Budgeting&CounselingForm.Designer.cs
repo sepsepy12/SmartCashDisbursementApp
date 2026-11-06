@@ -46,7 +46,9 @@ namespace SmartCashDisbursementApp
             lblCTitle = new Label();
             lblCDesc = new Label();
             pnlFooter = new Panel();
+            actionBar = new Panel();
             lblFooter = new Label();
+            dateTimeLabel = new Label();
             btnBack = new Button();
             btnConfirm = new Button();
             pnlHeader.SuspendLayout();
@@ -325,27 +327,35 @@ namespace SmartCashDisbursementApp
             // 
             // pnlFooter
             // 
-            pnlFooter.BackColor = Color.FromArgb(8, 80, 145);
+            pnlFooter.BackColor = Color.FromArgb(8, 52, 105);
+            pnlFooter.Controls.Add(dateTimeLabel);
             pnlFooter.Controls.Add(lblFooter);
-            pnlFooter.Controls.Add(btnBack);
-            pnlFooter.Controls.Add(btnConfirm);
+            pnlFooter.Controls.Add(actionBar);
             pnlFooter.Dock = DockStyle.Bottom;
-            pnlFooter.Location = new Point(0, 460);
             pnlFooter.Name = "pnlFooter";
-            pnlFooter.Padding = new Padding(8);
-            pnlFooter.Size = new Size(800, 60);
+            pnlFooter.Height = 108;
             pnlFooter.TabIndex = 5;
+            actionBar.BackColor = Color.FromArgb(8, 52, 105);
+            actionBar.Controls.Add(btnBack);
+            actionBar.Controls.Add(btnConfirm);
+            actionBar.Dock = DockStyle.Top;
+            actionBar.Height = 52;
             // 
             // lblFooter
             // 
             lblFooter.AutoSize = true;
             lblFooter.Font = new Font("Segoe UI", 9F);
             lblFooter.ForeColor = Color.White;
-            lblFooter.Location = new Point(140, 20);
+            lblFooter.Location = new Point(24, 72);
             lblFooter.Name = "lblFooter";
             lblFooter.Size = new Size(249, 15);
             lblFooter.TabIndex = 0;
             lblFooter.Text = "SECURE SYSTEM - Your security is our priority.";
+            dateTimeLabel.Anchor = AnchorStyles.Right | AnchorStyles.Bottom;
+            dateTimeLabel.AutoSize = true;
+            dateTimeLabel.Font = new Font("Segoe UI", 9F);
+            dateTimeLabel.ForeColor = Color.White;
+            dateTimeLabel.Location = new Point(620, 76);
             // 
             // btnBack
             // 
@@ -356,7 +366,7 @@ namespace SmartCashDisbursementApp
             btnBack.FlatStyle = FlatStyle.Flat;
             btnBack.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
             btnBack.ForeColor = Color.White;
-            btnBack.Location = new Point(24, 11);
+            btnBack.Location = new Point(24, 7);
             btnBack.Name = "btnBack";
             btnBack.Size = new Size(110, 38);
             btnBack.TabIndex = 1;
@@ -373,7 +383,7 @@ namespace SmartCashDisbursementApp
             btnConfirm.FlatStyle = FlatStyle.Flat;
             btnConfirm.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
             btnConfirm.ForeColor = Color.White;
-            btnConfirm.Location = new Point(626, 11);
+            btnConfirm.Location = new Point(626, 7);
             btnConfirm.Name = "btnConfirm";
             btnConfirm.Size = new Size(150, 38);
             btnConfirm.TabIndex = 2;
@@ -413,6 +423,7 @@ namespace SmartCashDisbursementApp
             ((ISupportInitialize)pbC).EndInit();
             pnlFooter.ResumeLayout(false);
             pnlFooter.PerformLayout();
+            actionBar.ResumeLayout(false);
             ResumeLayout(false);
             PerformLayout();
         }
@@ -439,7 +450,9 @@ namespace SmartCashDisbursementApp
         private Label lblCTitle;
         private Label lblCDesc;
         private Panel pnlFooter;
+        private Panel actionBar;
         private Label lblFooter;
+        private Label dateTimeLabel;
         private Button btnBack;
         private Button btnConfirm;
         private Label label1;

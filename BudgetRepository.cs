@@ -400,6 +400,13 @@ namespace SmartCashDisbursementApp
                     INNER JOIN budget_categories bc
                         ON bc.id = g.category_id
                        AND bc.user_id = g.user_id
+                    INNER JOIN (
+                        SELECT user_id, category_id, MAX(id) AS latest_goal_id
+                        FROM goals
+                        WHERE user_id = @userId
+                        GROUP BY user_id, category_id
+                    ) latest
+                        ON latest.latest_goal_id = g.id
                     LEFT JOIN transactions t
                         ON t.category_id = bc.id
                        AND t.user_id = bc.user_id
@@ -432,17 +439,82 @@ namespace SmartCashDisbursementApp
 
         public void SaveGoal(int userId, int categoryId, decimal targetAmount, System.DateTime targetDate)
         {
+            SaveGoalAndGetCreated(userId, categoryId, targetAmount, targetDate);
+        }
+
+        public bool SaveGoalAndGetCreated(int userId, int categoryId, decimal targetAmount, System.DateTime targetDate)
+        {
             using (var conn = DatabaseHelper.GetConnection())
             {
                 conn.Open();
-                string sql = "INSERT INTO goals (user_id, category_id, target_amount, target_date) VALUES (@userId, @categoryId, @amount, @date)";
-                using (var cmd = new MySqlCommand(sql, conn))
+                using (var transaction = conn.BeginTransaction())
                 {
-                    cmd.Parameters.AddWithValue("@userId", userId);
-                    cmd.Parameters.AddWithValue("@categoryId", categoryId);
-                    cmd.Parameters.AddWithValue("@amount", targetAmount);
-                    cmd.Parameters.AddWithValue("@date", targetDate);
-                    cmd.ExecuteNonQuery();
+                    try
+                    {
+                        const string findSql = @"
+                            SELECT id
+                            FROM goals
+                            WHERE user_id = @userId AND category_id = @categoryId
+                            ORDER BY id DESC
+                            LIMIT 1
+                            FOR UPDATE";
+                        int? goalId;
+                        using (var findCommand = new MySqlCommand(findSql, conn, transaction))
+                        {
+                            findCommand.Parameters.AddWithValue("@userId", userId);
+                            findCommand.Parameters.AddWithValue("@categoryId", categoryId);
+                            var result = findCommand.ExecuteScalar();
+                            goalId = result == null || result == System.DBNull.Value
+                                ? null
+                                : System.Convert.ToInt32(result);
+                        }
+
+                        if (goalId.HasValue)
+                        {
+                            const string updateSql = @"
+                                UPDATE goals
+                                SET target_amount = @amount, target_date = @date
+                                WHERE id = @goalId AND user_id = @userId AND category_id = @categoryId";
+                            using (var updateCommand = new MySqlCommand(updateSql, conn, transaction))
+                            {
+                                updateCommand.Parameters.AddWithValue("@amount", targetAmount);
+                                updateCommand.Parameters.AddWithValue("@date", targetDate.Date);
+                                updateCommand.Parameters.AddWithValue("@goalId", goalId.Value);
+                                updateCommand.Parameters.AddWithValue("@userId", userId);
+                                updateCommand.Parameters.AddWithValue("@categoryId", categoryId);
+                                updateCommand.ExecuteNonQuery();
+                            }
+                        }
+                        else
+                        {
+                            const string insertSql = @"
+                                INSERT INTO goals (user_id, category_id, target_amount, target_date)
+                                VALUES (@userId, @categoryId, @amount, @date)";
+                            using (var insertCommand = new MySqlCommand(insertSql, conn, transaction))
+                            {
+                                insertCommand.Parameters.AddWithValue("@userId", userId);
+                                insertCommand.Parameters.AddWithValue("@categoryId", categoryId);
+                                insertCommand.Parameters.AddWithValue("@amount", targetAmount);
+                                insertCommand.Parameters.AddWithValue("@date", targetDate.Date);
+                                insertCommand.ExecuteNonQuery();
+                            }
+                        }
+
+                        transaction.Commit();
+                        return !goalId.HasValue;
+                    }
+                    catch
+                    {
+                        try
+                        {
+                            transaction.Rollback();
+                        }
+                        catch
+                        {
+                        }
+
+                        throw;
+                    }
                 }
             }
         }
