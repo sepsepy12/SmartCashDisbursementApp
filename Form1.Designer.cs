@@ -66,7 +66,7 @@
 			// 
 			// txtPin
 			// 
-			txtPin.Location = new Point(342, 199);
+			txtPin.Location = new Point(354, 199);
 			txtPin.MaxLength = 4;
 			txtPin.Name = "txtPin";
 			txtPin.PasswordChar = '*';
@@ -77,7 +77,7 @@
 			// btnLogin
 			// 
 			btnLogin.Font = new Font("Georgia", 12F, FontStyle.Bold, GraphicsUnit.Point, 0);
-			btnLogin.Location = new Point(332, 349);
+			btnLogin.Location = new Point(363, 352);
 			btnLogin.Name = "btnLogin";
 			btnLogin.Size = new Size(75, 23);
 			btnLogin.TabIndex = 4;
