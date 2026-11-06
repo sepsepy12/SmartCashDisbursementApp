@@ -70,7 +70,7 @@ namespace SmartCashDisbursementApp
 
 		private Label CardLabel(string title, int x, int y, Color color, Control parent)
 		{
-			var panel = new Panel { Location = new Point(x, y), Size = new Size(220, 75), BackColor = Color.FromArgb(248, 249, 251), BorderStyle = BorderStyle.FixedSingle };
+			var panel = new Panel { Location = new Point(x, y), Size = new Size(155, 75), BackColor = Color.FromArgb(248, 249, 251), BorderStyle = BorderStyle.FixedSingle, Anchor = AnchorStyles.Top | AnchorStyles.Left };
 			panel.Controls.Add(new Label { Text = title, Location = new Point(12, 10), AutoSize = true, Font = new Font("Segoe UI", 8, FontStyle.Bold), ForeColor = color });
 			var value = new Label { Text = "₱0", Location = new Point(12, 32), AutoSize = true, Font = new Font("Segoe UI", 16, FontStyle.Bold), ForeColor = Color.FromArgb(30, 30, 30) };
 			panel.Controls.Add(value); parent.Controls.Add(panel); return value;
