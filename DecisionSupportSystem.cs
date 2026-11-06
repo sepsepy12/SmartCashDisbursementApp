@@ -24,11 +24,15 @@ namespace SmartCashDisbursementApp
     {
         public Dictionary<string, decimal> AutoAllocate(decimal totalAmount)
         {
+            decimal needs = Math.Round(totalAmount * 0.50m, 2);
+            decimal wants = Math.Round(totalAmount * 0.30m, 2);
+            decimal savings = totalAmount - needs - wants;
+
             return new Dictionary<string, decimal>
             {
-                { "Needs", Math.Round(totalAmount * 0.50m, 2) },
-                { "Wants", Math.Round(totalAmount * 0.30m, 2) },
-                { "Savings", Math.Round(totalAmount * 0.20m, 2) }
+                { "Needs", needs },
+                { "Wants", wants },
+                { "Savings", savings }
             };
         }
 
