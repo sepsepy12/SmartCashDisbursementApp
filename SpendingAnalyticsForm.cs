@@ -46,18 +46,20 @@ namespace SmartCashDisbursementApp
 
 			const int margin = 20;
 			const int gap = 20;
-			int contentWidth = Math.Max(0, pnlScroll.ClientSize.Width - margin * 2);
-			int columnWidth = Math.Max(0, contentWidth - gap);
+			int contentWidth = Math.Min(1500, Math.Max(0, pnlScroll.ClientSize.Width - 48));
+			int contentLeft = Math.Max(24, (pnlScroll.ClientSize.Width - contentWidth) / 2);
+			int columnWidth = Math.Max(0, contentWidth - margin * 2 - gap);
 			int leftWidth = (int)Math.Round(columnWidth * 0.68);
 			int rightWidth = columnWidth - leftWidth;
-			int rightX = margin + leftWidth + gap;
+			int leftX = contentLeft + margin;
+			int rightX = leftX + leftWidth + gap;
 
 			pnlHeader.Width = pnlScroll.ClientSize.Width;
-			pnlOverview.Location = new Point(margin, pnlOverview.Top);
+			pnlOverview.Location = new Point(leftX, pnlOverview.Top);
 			pnlOverview.Width = leftWidth;
-			pnlCategories.Location = new Point(margin, pnlCategories.Top);
+			pnlCategories.Location = new Point(leftX, pnlCategories.Top);
 			pnlCategories.Width = leftWidth;
-			pnlTrend.Location = new Point(margin, pnlTrend.Top);
+			pnlTrend.Location = new Point(leftX, pnlTrend.Top);
 			pnlTrend.Width = leftWidth;
 			pnlRecent.Location = new Point(rightX, pnlRecent.Top);
 			pnlRecent.Width = rightWidth;

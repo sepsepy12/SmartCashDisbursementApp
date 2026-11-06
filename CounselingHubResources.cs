@@ -57,8 +57,17 @@ namespace SmartCashDisbursementApp
         private void ResizeCards()
         {
             if (cardsPanel == null) return;
-            int width = Math.Max(240, (cardsPanel.ClientSize.Width - cardsPanel.Padding.Horizontal - 40) / 2);
+            int availableWidth = cardsPanel.ClientSize.Width;
+            int width = Math.Min(520, Math.Max(240, (availableWidth - 40) / 2));
+            int horizontalPadding = Math.Max(0, (availableWidth - (width * 2) - 40) / 2);
+            cardsPanel.Padding = new Padding(horizontalPadding, 10, horizontalPadding, 10);
             foreach (Control card in cardsPanel.Controls) card.Width = width;
+
+            if (contentView != null)
+            {
+                int contentPadding = Math.Max(32, (contentView.ClientSize.Width - 1400) / 2);
+                contentView.Padding = new Padding(contentPadding, 30, contentPadding, 20);
+            }
         }
 
         private void confirmButton_Click(object? sender, EventArgs e)

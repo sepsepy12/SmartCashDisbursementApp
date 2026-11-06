@@ -66,7 +66,7 @@
 			// 
 			// txtPin
 			// 
-			txtPin.Location = new Point(342, 189);
+			txtPin.Location = new Point(342, 199);
 			txtPin.MaxLength = 4;
 			txtPin.Name = "txtPin";
 			txtPin.PasswordChar = '*';

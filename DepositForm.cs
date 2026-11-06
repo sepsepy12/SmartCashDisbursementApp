@@ -22,6 +22,8 @@ namespace SmartCashDisbursementApp
             InitializeComponent();
             this.userId = userId;
             lblDateTime.Text = DateTime.Now.ToString("MMM d, yyyy | h:mm tt");
+            Resize += DepositForm_Resize;
+            ApplyResponsiveLayout();
         }
 
         private void button1_Click(object sender, EventArgs e)
@@ -285,6 +287,28 @@ namespace SmartCashDisbursementApp
         private void label1_Click(object sender, EventArgs e)
         {
 
+        }
+
+        private void DepositForm_Resize(object sender, EventArgs e)
+        {
+            ApplyResponsiveLayout();
+        }
+
+        private void ApplyResponsiveLayout()
+        {
+            if (pnlAmountBox == null)
+                return;
+
+            int contentLeft = Math.Max(24, (ClientSize.Width - pnlAmountBox.Width) / 2);
+            pnlAmountBox.Left = contentLeft;
+            pnlOptions.Left = contentLeft;
+            pnlCategorySelection.Left = contentLeft;
+            pnlSpecificReview.Left = contentLeft;
+            label1.Left = contentLeft;
+            lblChooseMethod.Left = contentLeft;
+            lblAmountHint.Left = contentLeft + Math.Max(0, (pnlAmountBox.Width - lblAmountHint.Width) / 2);
+            lblSectionTitle.Left = Math.Max(24, (ClientSize.Width - lblSectionTitle.Width) / 2);
+            lblSubTitle.Left = Math.Max(24, (ClientSize.Width - lblSubTitle.Width) / 2);
         }
     }
 }

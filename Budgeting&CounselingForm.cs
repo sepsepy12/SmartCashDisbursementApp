@@ -12,6 +12,8 @@ namespace SmartCashDisbursementApp
             InitializeComponent();
             this.userId = userId;
             dateTimeLabel.Text = DateTime.Now.ToString("MMM d, yyyy | h:mm tt");
+            Resize += BudgetingCounselingForm_Resize;
+            ApplyResponsiveLayout();
         }
 
         private void button1_Click(object sender, EventArgs e)
@@ -66,6 +68,22 @@ namespace SmartCashDisbursementApp
         private void BudgetingCounselingForm_Load_1(object sender, EventArgs e)
         {
 
+        }
+
+        private void BudgetingCounselingForm_Resize(object sender, EventArgs e)
+        {
+            ApplyResponsiveLayout();
+        }
+
+        private void ApplyResponsiveLayout()
+        {
+            if (pnlMain == null || lblTitle == null || lblSection == null || lblInstruction == null)
+                return;
+
+            pnlMain.Left = Math.Max(24, (ClientSize.Width - pnlMain.Width) / 2);
+            lblTitle.Left = Math.Max(24, (ClientSize.Width - lblTitle.Width) / 2);
+            lblSection.Left = Math.Max(24, (ClientSize.Width - lblSection.Width) / 2);
+            lblInstruction.Left = Math.Max(24, (ClientSize.Width - lblInstruction.Width) / 2);
         }
     }
 }

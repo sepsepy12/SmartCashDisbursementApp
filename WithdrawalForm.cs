@@ -1,4 +1,5 @@
 using System;
+using System.Drawing;
 using System.Windows.Forms;
 
 namespace SmartCashDisbursementApp
@@ -18,6 +19,8 @@ namespace SmartCashDisbursementApp
 			this.userId = userId;
 			dateTimeLabel.Text = DateTime.Now.ToString("MMM d, yyyy | h:mm tt");
 			LoadAvailableBalance();
+			Resize += WithdrawalForm_Resize;
+			ApplyResponsiveLayout();
 		}
 
 		private void button1_Click(object sender, EventArgs e) => SelectCategory("Needs");
@@ -180,6 +183,31 @@ namespace SmartCashDisbursementApp
 		private void btnBack_Click(object sender, EventArgs e)
 		{
 			Close();
+		}
+
+		private void WithdrawalForm_Resize(object sender, EventArgs e)
+		{
+			ApplyResponsiveLayout();
+		}
+
+		private void ApplyResponsiveLayout()
+		{
+			if (pnlAmount == null)
+				return;
+
+			int groupLeft = Math.Max(0, (ClientSize.Width - 800) / 2);
+			int amountLeft = Math.Max(24, (ClientSize.Width - pnlAmount.Width) / 2);
+			pnlAmount.Left = amountLeft;
+			lblReview.Location = new Point(amountLeft, lblReview.Top);
+			label3.Left = amountLeft;
+			label4.Left = groupLeft + 20;
+			button1.Left = groupLeft + 20;
+			button2.Left = groupLeft + 305;
+			button3.Left = groupLeft + 590;
+			lblAmountHint.Left = amountLeft + Math.Max(0, (pnlAmount.Width - lblAmountHint.Width) / 2);
+			lblAvailableBalance.Left = amountLeft + 400;
+			label1.Left = Math.Max(24, (ClientSize.Width - label1.Width) / 2);
+			label2.Left = Math.Max(24, (ClientSize.Width - label2.Width) / 2);
 		}
 	}
 }

@@ -23,6 +23,8 @@ namespace SmartCashDisbursementApp
 			InitializeComponent();
 			this.userId = userId;
 			dateTimeLabel.Text = DateTime.Now.ToString("MMM d, yyyy | h:mm tt");
+			Resize += TransactionHistoryForm_Resize;
+			ApplyResponsiveLayout();
 			LoadTransactions();
 		}
 
@@ -155,6 +157,7 @@ namespace SmartCashDisbursementApp
 			{
 				column.ReadOnly = true;
 				column.SortMode = DataGridViewColumnSortMode.NotSortable;
+				column.MinimumWidth = 90;
 			}
 
 			if (transactionGrid.Columns.Contains("TransactionId"))
@@ -165,6 +168,14 @@ namespace SmartCashDisbursementApp
 			transactionGrid.Columns["Category"].Width = 180;
 			transactionGrid.Columns["Amount"].Width = 140;
 			transactionGrid.Columns["Amount"].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleRight;
+			transactionGrid.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+			if (transactionGrid.Columns.Contains("TransactionId"))
+				transactionGrid.Columns["TransactionId"].FillWeight = 12;
+			if (transactionGrid.Columns.Contains("TransactionDate"))
+				transactionGrid.Columns["TransactionDate"].FillWeight = 22;
+			transactionGrid.Columns["TransactionType"].FillWeight = 15;
+			transactionGrid.Columns["Category"].FillWeight = 25;
+			transactionGrid.Columns["Amount"].FillWeight = 16;
 		}
 
 		private bool MatchesType(DataRow row, string selectedType)
@@ -268,6 +279,34 @@ namespace SmartCashDisbursementApp
 		private void btnBack_Click(object sender, EventArgs e)
 		{
 			Close();
+		}
+
+		private void TransactionHistoryForm_Resize(object sender, EventArgs e)
+		{
+			ApplyResponsiveLayout();
+		}
+
+		private void ApplyResponsiveLayout()
+		{
+			if (transactionGrid == null || pnlFooter == null)
+				return;
+
+			const int filterGroupWidth = 610;
+			int filterLeft = Math.Max(24, (ClientSize.Width - filterGroupWidth) / 2);
+			lblTitle.Left = Math.Max(24, (ClientSize.Width - lblTitle.Width) / 2);
+			lblType.Left = filterLeft;
+			typeFilter.Left = filterLeft + 45;
+			lblCategory.Left = filterLeft + 215;
+			categoryFilter.Left = filterLeft + 290;
+			btnRefresh.Left = filterLeft + 480;
+
+			int contentWidth = Math.Min(1400, Math.Max(0, ClientSize.Width - 48));
+			int contentLeft = Math.Max(24, (ClientSize.Width - contentWidth) / 2);
+			transactionGrid.Location = new Point(contentLeft, transactionGrid.Top);
+			transactionGrid.Width = contentWidth;
+			transactionGrid.Height = Math.Max(180, ClientSize.Height - pnlFooter.Height - transactionGrid.Top - 24);
+			lblEmpty.Left = Math.Max(contentLeft + 12, contentLeft + (contentWidth - lblEmpty.Width) / 2);
+			lblEmpty.Top = transactionGrid.Top + Math.Max(12, (transactionGrid.Height - lblEmpty.Height) / 2);
 		}
 	}
 }

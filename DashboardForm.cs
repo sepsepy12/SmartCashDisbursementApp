@@ -14,6 +14,8 @@ namespace SmartCashDisbursementApp
             this.userId = userId;
             this.fullName = fullName;
             lblSubtitle.Text = $"MAIN MENU - PLEASE SELECT AN OPTION  |  Welcome, {fullName}";
+            Resize += DashboardForm_Resize;
+            ApplyResponsiveLayout();
         }
 
         private void btnCashDeposit_Click(object sender, EventArgs e)
@@ -48,6 +50,21 @@ namespace SmartCashDisbursementApp
         private void DashboardForm_Load(object sender, EventArgs e)
         {
 
+        }
+
+        private void DashboardForm_Resize(object sender, EventArgs e)
+        {
+            ApplyResponsiveLayout();
+        }
+
+        private void ApplyResponsiveLayout()
+        {
+            if (pnlMain == null || lblTitle == null || lblSubtitle == null)
+                return;
+
+            pnlMain.Left = Math.Max(24, (ClientSize.Width - pnlMain.Width) / 2);
+            lblTitle.Left = Math.Max(24, (ClientSize.Width - lblTitle.Width) / 2);
+            lblSubtitle.Left = Math.Max(24, (ClientSize.Width - lblSubtitle.Width) / 2);
         }
     }
 }

@@ -292,6 +292,12 @@ namespace SmartCashDisbursementApp
 
 		private void GoalPlanningForm_Resize(object sender, EventArgs e)
 		{
+			if (pnlContent != null)
+			{
+				int horizontalPadding = Math.Max(24, (pnlContent.ClientSize.Width - 1200) / 2);
+				pnlContent.Padding = new Padding(horizontalPadding, 0, horizontalPadding, 0);
+			}
+
 			lblDateTime.Location = new System.Drawing.Point(Math.Max(0, ClientSize.Width - lblDateTime.Width - 24), 22);
 		}
 
