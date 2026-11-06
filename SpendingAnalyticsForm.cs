@@ -91,9 +91,19 @@ namespace SmartCashDisbursementApp
 			}
 			transactionGrid.Visible = recentTransactions.Count > 0;
 			lblTransactionEmpty.Visible = recentTransactions.Count == 0;
-			insightsList.Items.Clear();
+			insightsList.Controls.Clear();
 			foreach (string insight in BuildInsights())
-				insightsList.Items.Add(insight);
+			{
+				var insightLabel = new Label
+				{
+					Text = insight,
+					AutoSize = true,
+					Font = new Font("Segoe UI", 9),
+					Margin = new Padding(0, 0, 0, 12),
+					MaximumSize = new Size(Math.Max(180, insightsList.ClientSize.Width - insightsList.Padding.Horizontal - SystemInformation.VerticalScrollBarWidth - 4), 0)
+				};
+				insightsList.Controls.Add(insightLabel);
+			}
 
 			pieChart.Invalidate();
 			trendChart.Invalidate();
