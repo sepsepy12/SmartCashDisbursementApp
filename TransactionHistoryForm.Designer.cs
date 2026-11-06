@@ -28,7 +28,9 @@ namespace SmartCashDisbursementApp
 			transactionGrid = new DataGridView();
 			lblEmpty = new Label();
 			pnlFooter = new Panel();
+			actionBar = new Panel();
 			lblFooter = new Label();
+			dateTimeLabel = new Label();
 			btnBack = new Button();
 			pnlHeader.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)transactionGrid).BeginInit();
@@ -156,23 +158,32 @@ namespace SmartCashDisbursementApp
 			// 
 			// pnlFooter
 			// 
-			pnlFooter.BackColor = Color.FromArgb(8, 80, 145);
+			pnlFooter.BackColor = Color.FromArgb(8, 52, 105);
+			pnlFooter.Controls.Add(dateTimeLabel);
 			pnlFooter.Controls.Add(lblFooter);
-			pnlFooter.Controls.Add(btnBack);
+			pnlFooter.Controls.Add(actionBar);
 			pnlFooter.Dock = DockStyle.Bottom;
-			pnlFooter.Location = new Point(0, 460);
 			pnlFooter.Name = "pnlFooter";
-			pnlFooter.Size = new Size(900, 60);
+			pnlFooter.Height = 108;
 			pnlFooter.TabIndex = 7;
+			actionBar.BackColor = Color.FromArgb(8, 52, 105);
+			actionBar.Controls.Add(btnBack);
+			actionBar.Dock = DockStyle.Top;
+			actionBar.Height = 52;
 			// 
 			// lblFooter
 			// 
 			lblFooter.AutoSize = true;
 			lblFooter.Font = new Font("Segoe UI", 8F);
 			lblFooter.ForeColor = Color.White;
-			lblFooter.Location = new Point(150, 22);
+			lblFooter.Location = new Point(24, 72);
 			lblFooter.Name = "lblFooter";
 			lblFooter.Text = "SECURE SYSTEM - Your security is our priority.";
+			dateTimeLabel.Anchor = AnchorStyles.Right | AnchorStyles.Bottom;
+			dateTimeLabel.AutoSize = true;
+			dateTimeLabel.Font = new Font("Segoe UI", 9F);
+			dateTimeLabel.ForeColor = Color.White;
+			dateTimeLabel.Location = new Point(720, 76);
 			// 
 			// btnBack
 			// 
@@ -183,7 +194,7 @@ namespace SmartCashDisbursementApp
 			btnBack.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
 			btnBack.ForeColor = Color.White;
 			btnBack.Cursor = Cursors.Hand;
-			btnBack.Location = new Point(24, 11);
+			btnBack.Location = new Point(24, 7);
 			btnBack.Name = "btnBack";
 			btnBack.Size = new Size(110, 38);
 			btnBack.TabIndex = 1;
@@ -218,6 +229,7 @@ namespace SmartCashDisbursementApp
 			((System.ComponentModel.ISupportInitialize)transactionGrid).EndInit();
 			pnlFooter.ResumeLayout(false);
 			pnlFooter.PerformLayout();
+			actionBar.ResumeLayout(false);
 			ResumeLayout(false);
 			PerformLayout();
 		}
@@ -234,7 +246,9 @@ namespace SmartCashDisbursementApp
 		private DataGridView transactionGrid;
 		private Label lblEmpty;
 		private Panel pnlFooter;
+		private Panel actionBar;
 		private Label lblFooter;
+		private Label dateTimeLabel;
 		private Button btnBack;
 	}
 }

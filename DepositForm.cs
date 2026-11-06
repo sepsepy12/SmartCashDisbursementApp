@@ -21,6 +21,7 @@ namespace SmartCashDisbursementApp
         {
             InitializeComponent();
             this.userId = userId;
+            lblDateTime.Text = DateTime.Now.ToString("MMM d, yyyy | h:mm tt");
         }
 
         private void button1_Click(object sender, EventArgs e)
@@ -33,6 +34,8 @@ namespace SmartCashDisbursementApp
             pendingDepositAmount = amount;
             selectedMethod = "Automated";
             pnlCategorySelection.Visible = false;
+            pnlSpecificReview.Visible = false;
+            btnConfirm.Visible = true;
 
             MessageBox.Show(
                 $"Total Deposit: ₱{amount:F2}\n\nNeeds: ₱{pendingAllocation["Needs"]:F2}\nWants: ₱{pendingAllocation["Wants"]:F2}\nSavings: ₱{pendingAllocation["Savings"]:F2}\n\nClick CONFIRM to save this deposit.",
@@ -48,6 +51,8 @@ namespace SmartCashDisbursementApp
             pendingDepositAmount = amount;
             selectedMethod = "Specific";
             pnlCategorySelection.Visible = true;
+            pnlSpecificReview.Visible = false;
+            btnConfirm.Visible = false;
             SelectSpecificCategory(null);
             UpdateSpecificPreview();
         }
@@ -181,6 +186,20 @@ namespace SmartCashDisbursementApp
             pendingSpecificCategory = category;
             UpdateSpecificPreview();
             UpdateCategoryButtonStyles();
+            if (category != null && selectedMethod == "Specific")
+            {
+                lblSpecificReview.Text = $"Deposit amount: ₱{pendingSpecificAmount:F2}\r\nCategory: {pendingSpecificCategory}";
+                pnlCategorySelection.Visible = false;
+                pnlSpecificReview.Visible = true;
+                btnConfirm.Visible = true;
+            }
+        }
+
+        private void btnChangeCategory_Click(object sender, EventArgs e)
+        {
+            pnlSpecificReview.Visible = false;
+            pnlCategorySelection.Visible = true;
+            btnConfirm.Visible = false;
         }
 
         private void CategoryButton_Click(object sender, EventArgs e)
@@ -227,6 +246,8 @@ namespace SmartCashDisbursementApp
             pendingSpecificAmount = 0;
             pendingDepositAmount = 0;
             pnlCategorySelection.Visible = false;
+            pnlSpecificReview.Visible = false;
+            btnConfirm.Visible = false;
             UpdateCategoryButtonStyles();
             lblSpecificDesc.Text = "(Select a specific budget category)";
         }

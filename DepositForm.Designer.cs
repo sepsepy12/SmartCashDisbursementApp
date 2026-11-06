@@ -42,8 +42,14 @@ namespace SmartCashDisbursementApp
 			btnNeeds = new Button();
 			btnWants = new Button();
 			btnSavings = new Button();
+			pnlSpecificReview = new Panel();
+			lblSpecificReview = new Label();
+			btnChangeCategory = new Button();
+			lblAssistance = new Label();
 			pnlFooter = new Panel();
+			pnlActionBar = new Panel();
 			lblFooter = new Label();
+			lblDateTime = new Label();
 			btnBack = new Button();
 			btnConfirm = new Button();
 			label1 = new Label();
@@ -55,7 +61,9 @@ namespace SmartCashDisbursementApp
 			pnlSpecific.SuspendLayout();
 			((ISupportInitialize)pbSpecific).BeginInit();
 			pnlCategorySelection.SuspendLayout();
+			pnlSpecificReview.SuspendLayout();
 			pnlFooter.SuspendLayout();
+			pnlActionBar.SuspendLayout();
 			SuspendLayout();
 			// 
 			// pnlHeader
@@ -257,6 +265,41 @@ namespace SmartCashDisbursementApp
 			pnlCategorySelection.Size = new Size(520, 70);
 			pnlCategorySelection.TabIndex = 9;
 			pnlCategorySelection.Visible = false;
+			pnlSpecificReview.BackColor = Color.White;
+			pnlSpecificReview.BorderStyle = BorderStyle.FixedSingle;
+			pnlSpecificReview.Controls.Add(lblSpecificReview);
+			pnlSpecificReview.Controls.Add(btnChangeCategory);
+			pnlSpecificReview.Location = new Point(140, 420);
+			pnlSpecificReview.Name = "pnlSpecificReview";
+			pnlSpecificReview.Size = new Size(520, 70);
+			pnlSpecificReview.Visible = false;
+			lblSpecificReview.Dock = DockStyle.Top;
+			lblSpecificReview.Font = new Font("Segoe UI", 12F, FontStyle.Bold);
+			lblSpecificReview.Height = 40;
+			lblSpecificReview.ForeColor = Color.FromArgb(20, 42, 78);
+			lblSpecificReview.TextAlign = ContentAlignment.MiddleCenter;
+			btnChangeCategory.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
+			btnChangeCategory.BackColor = Color.FromArgb(90, 100, 115);
+			btnChangeCategory.FlatAppearance.BorderSize = 0;
+			btnChangeCategory.FlatStyle = FlatStyle.Flat;
+			btnChangeCategory.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
+			btnChangeCategory.ForeColor = Color.White;
+			btnChangeCategory.Location = new Point(360, 40);
+			btnChangeCategory.Name = "btnChangeCategory";
+			btnChangeCategory.Size = new Size(150, 26);
+			btnChangeCategory.Text = "CHANGE CATEGORY";
+			btnChangeCategory.UseVisualStyleBackColor = false;
+			btnChangeCategory.Click += btnChangeCategory_Click;
+			pnlHeader.Controls.Add(lblAssistance);
+			lblAssistance.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+			lblAssistance.AutoSize = false;
+			lblAssistance.Font = new Font("Segoe UI", 10F);
+			lblAssistance.ForeColor = Color.White;
+			lblAssistance.Location = new Point(320, 24);
+			lblAssistance.Name = "lblAssistance";
+			lblAssistance.Size = new Size(460, 24);
+			lblAssistance.Text = "Need assistance? Please ask the authorized system personnel.";
+			lblAssistance.TextAlign = ContentAlignment.MiddleRight;
 			// 
 			// btnNeeds
 			// 
@@ -302,27 +345,35 @@ namespace SmartCashDisbursementApp
 			// 
 			// pnlFooter
 			// 
-			pnlFooter.BackColor = Color.FromArgb(8, 80, 145);
+			pnlFooter.BackColor = Color.FromArgb(8, 52, 105);
+			pnlFooter.Controls.Add(lblDateTime);
 			pnlFooter.Controls.Add(lblFooter);
-			pnlFooter.Controls.Add(btnBack);
-			pnlFooter.Controls.Add(btnConfirm);
+			pnlFooter.Controls.Add(pnlActionBar);
 			pnlFooter.Dock = DockStyle.Bottom;
-			pnlFooter.Location = new Point(0, 460);
 			pnlFooter.Name = "pnlFooter";
-			pnlFooter.Padding = new Padding(8);
-			pnlFooter.Size = new Size(800, 60);
+			pnlFooter.Height = 108;
 			pnlFooter.TabIndex = 7;
+			pnlActionBar.BackColor = Color.FromArgb(8, 52, 105);
+			pnlActionBar.Controls.Add(btnBack);
+			pnlActionBar.Controls.Add(btnConfirm);
+			pnlActionBar.Dock = DockStyle.Top;
+			pnlActionBar.Height = 52;
 			// 
 			// lblFooter
 			// 
 			lblFooter.AutoSize = true;
 			lblFooter.Font = new Font("Segoe UI", 9F);
 			lblFooter.ForeColor = Color.White;
-			lblFooter.Location = new Point(140, 20);
+			lblFooter.Location = new Point(24, 72);
 			lblFooter.Name = "lblFooter";
 			lblFooter.Size = new Size(249, 15);
 			lblFooter.TabIndex = 0;
 			lblFooter.Text = "SECURE SYSTEM - Your security is our priority.";
+			lblDateTime.Anchor = AnchorStyles.Right | AnchorStyles.Bottom;
+			lblDateTime.AutoSize = true;
+			lblDateTime.Font = new Font("Segoe UI", 9F);
+			lblDateTime.ForeColor = Color.White;
+			lblDateTime.Location = new Point(620, 76);
 			// 
 			// btnBack
 			// 
@@ -333,7 +384,7 @@ namespace SmartCashDisbursementApp
 			btnBack.FlatStyle = FlatStyle.Flat;
 			btnBack.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
 			btnBack.ForeColor = Color.White;
-			btnBack.Location = new Point(24, 11);
+			btnBack.Location = new Point(24, 7);
 			btnBack.Name = "btnBack";
 			btnBack.Size = new Size(110, 38);
 			btnBack.TabIndex = 1;
@@ -350,11 +401,12 @@ namespace SmartCashDisbursementApp
 			btnConfirm.FlatStyle = FlatStyle.Flat;
 			btnConfirm.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
 			btnConfirm.ForeColor = Color.White;
-			btnConfirm.Location = new Point(626, 11);
+			btnConfirm.Location = new Point(626, 7);
 			btnConfirm.Name = "btnConfirm";
 			btnConfirm.Size = new Size(150, 38);
 			btnConfirm.TabIndex = 2;
 			btnConfirm.Text = "CONFIRM";
+			btnConfirm.Visible = false;
 			btnConfirm.UseVisualStyleBackColor = false;
 			btnConfirm.Click += button4_Click;
 			// 
@@ -377,6 +429,7 @@ namespace SmartCashDisbursementApp
 			Controls.Add(label1);
 			Controls.Add(pnlOptions);
 			Controls.Add(pnlCategorySelection);
+			Controls.Add(pnlSpecificReview);
 			Controls.Add(lblChooseMethod);
 			Controls.Add(lblAmountHint);
 			Controls.Add(pnlAmountBox);
@@ -401,8 +454,10 @@ namespace SmartCashDisbursementApp
 			pnlSpecific.ResumeLayout(false);
 			((ISupportInitialize)pbSpecific).EndInit();
 			pnlCategorySelection.ResumeLayout(false);
+			pnlSpecificReview.ResumeLayout(false);
 			pnlFooter.ResumeLayout(false);
 			pnlFooter.PerformLayout();
+			pnlActionBar.ResumeLayout(false);
 			ResumeLayout(false);
 			PerformLayout();
 		}
@@ -429,10 +484,16 @@ namespace SmartCashDisbursementApp
 		private Button btnNeeds;
 		private Button btnWants;
 		private Button btnSavings;
+		private Panel pnlSpecificReview;
+		private Label lblSpecificReview;
+		private Button btnChangeCategory;
+		private Label lblAssistance;
         private Panel pnlFooter;
+		private Panel pnlActionBar;
         private Button btnBack;
         private Button btnConfirm;
         private Label lblFooter;
+		private Label lblDateTime;
         private Label label1;
     }
 }

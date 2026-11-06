@@ -81,11 +81,17 @@ namespace SmartCashDisbursementApp
 				return;
 			}
 
-			DateTime targetDate = datePicker.Value.Date;
-			if (targetDate <= DateTime.Today)
+			if (!DateTime.TryParseExact(txtTargetDate.Text.Trim(), "yyyy-MM-dd", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime targetDate))
+			{
+				ShowValidation("Please enter a valid target date (YYYY-MM-DD).");
+				txtTargetDate.Focus();
+				return;
+			}
+
+			if (targetDate.Date <= DateTime.Today)
 			{
 				ShowValidation("Target date must be in the future.");
-				datePicker.Focus();
+				txtTargetDate.Focus();
 				return;
 			}
 
@@ -98,11 +104,11 @@ namespace SmartCashDisbursementApp
 				{
 					conn.Open();
 					int categoryId = budgetRepo.GetOrCreateCategoryId(userId, selectedCategory, conn);
-					budgetRepo.SaveGoal(userId, categoryId, amount, targetDate);
+					bool created = budgetRepo.SaveGoalAndGetCreated(userId, categoryId, amount, targetDate);
+					LoadSavedGoals();
+					MessageBox.Show(created ? "Goal created successfully!" : "Goal updated successfully!", "Goal Planning", MessageBoxButtons.OK, MessageBoxIcon.Information);
 				}
 
-				LoadSavedGoals();
-				MessageBox.Show("Goal saved successfully!", "Goal Planning", MessageBoxButtons.OK, MessageBoxIcon.Information);
 				ClearForm();
 			}
 			catch (Exception)
@@ -126,7 +132,7 @@ namespace SmartCashDisbursementApp
 			selectedCategory = null;
 			selectedCategoryButton = null;
 			textBox1.Clear();
-			datePicker.Value = DateTime.Today.AddDays(1);
+			txtTargetDate.Clear();
 			ResetCategoryButton(button1, System.Drawing.Color.FromArgb(43, 125, 55));
 			ResetCategoryButton(button2, System.Drawing.Color.FromArgb(29, 109, 190));
 			ResetCategoryButton(button3, System.Drawing.Color.FromArgb(239, 124, 9));
@@ -141,7 +147,7 @@ namespace SmartCashDisbursementApp
 
 		private void GoalPlanningForm_KeyDown(object sender, KeyEventArgs e)
 		{
-			if (textBox1.Focused || datePicker.Focused)
+			if (textBox1.Focused || txtTargetDate.Focused)
 				return;
 
 			switch (e.KeyCode)
@@ -163,8 +169,7 @@ namespace SmartCashDisbursementApp
 
 		private void GoalPlanningForm_Load(object sender, EventArgs e)
 		{
-			datePicker.MinDate = DateTime.Today.AddDays(1);
-			datePicker.Value = datePicker.MinDate;
+			txtTargetDate.Clear();
 			UpdateClock();
 			LoadSavedGoals();
 			clockTimer.Start();
@@ -287,7 +292,7 @@ namespace SmartCashDisbursementApp
 
 		private void GoalPlanningForm_Resize(object sender, EventArgs e)
 		{
-			lblDateTime.Location = new System.Drawing.Point(Math.Max(0, ClientSize.Width - 450), 22);
+			lblDateTime.Location = new System.Drawing.Point(Math.Max(0, ClientSize.Width - lblDateTime.Width - 24), 22);
 		}
 
 		private void ShowValidation(string message)

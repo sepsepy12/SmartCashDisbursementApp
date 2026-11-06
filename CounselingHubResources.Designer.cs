@@ -194,14 +194,15 @@ namespace SmartCashDisbursementApp
             Controls.Add(footerPanel);
             Controls.Add(headerPanel);
             AutoScaleMode = AutoScaleMode.Font;
+            FormBorderStyle = FormBorderStyle.None;
             BackColor = Color.FromArgb(248, 249, 252);
             ClientSize = new Size(1100, 700);
-            MinimumSize = new Size(760, 560);
             Name = "CounselingHub_Resources";
-            StartPosition = FormStartPosition.CenterScreen;
+            StartPosition = FormStartPosition.Manual;
             Text = "Counseling Hub & Resources";
-            WindowState = FormWindowState.Maximized;
+            WindowState = FormWindowState.Normal;
             KeyPreview = true;
+            Shown += CounselingHub_Resources_Shown;
             KeyDown += CounselingHub_Resources_KeyDown;
             FormClosed += CounselingHub_Resources_FormClosed;
             footerClockTimer.Interval = 1000;
