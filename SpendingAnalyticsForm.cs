@@ -48,7 +48,7 @@ namespace SmartCashDisbursementApp
 
 			pnlHeader.Width = pnlScroll.ClientSize.Width;
 			pnlOverview.Location = new Point(margin, pnlOverview.Top);
-			pnlOverview.Width = contentWidth;
+			pnlOverview.Width = leftWidth;
 			pnlCategories.Location = new Point(margin, pnlCategories.Top);
 			pnlCategories.Width = leftWidth;
 			pnlTrend.Location = new Point(margin, pnlTrend.Top);
@@ -60,7 +60,7 @@ namespace SmartCashDisbursementApp
 			pnlFooter.Width = pnlScroll.ClientSize.Width;
 			btnExport.Left = Math.Max(margin, pnlFooter.ClientSize.Width - margin - btnExport.Width);
 
-			int cardWidth = Math.Max(110, (pnlOverview.ClientSize.Width - 30 - 45) / 4);
+			int cardWidth = Math.Max(1, (pnlOverview.ClientSize.Width - 30 - 45) / 4);
 			Control[] cards = { lblMonthlyCashIn.Parent, lblMonthlyWithdrawn.Parent, lblCurrentBalance.Parent, lblDailyAverage.Parent };
 			for (int i = 0; i < cards.Length; i++)
 			{
@@ -80,13 +80,14 @@ namespace SmartCashDisbursementApp
 			transactionGrid.ColumnHeadersDefaultCellStyle.WrapMode = DataGridViewTriState.True;
 			transactionGrid.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
 			int transactionWidth = transactionGrid.ClientSize.Width;
-			int dateWidth = Math.Min(180, Math.Max(125, (int)(transactionWidth * 0.38)));
-			int typeWidth = Math.Min(85, Math.Max(65, (int)(transactionWidth * 0.21)));
-			int amountWidth = Math.Min(100, Math.Max(85, (int)(transactionWidth * 0.23)));
+			int typeWidth = Math.Min(70, Math.Max(55, (int)(transactionWidth * 0.20)));
+			int amountWidth = Math.Min(80, Math.Max(70, (int)(transactionWidth * 0.24)));
+			int dateWidth = Math.Min(125, Math.Max(100, (int)(transactionWidth * 0.36)));
+			int sectionWidth = Math.Max(1, transactionWidth - typeWidth - amountWidth - dateWidth);
 			transactionGrid.Columns["Type"].Width = typeWidth;
+			transactionGrid.Columns["Section"].Width = sectionWidth;
 			transactionGrid.Columns["Amount"].Width = amountWidth;
 			transactionGrid.Columns["Date"].Width = dateWidth;
-			transactionGrid.Columns["Section"].Width = Math.Max(50, transactionWidth - typeWidth - amountWidth - dateWidth);
 			lblTransactionEmpty.Left = Math.Max(15, (pnlRecent.ClientSize.Width - lblTransactionEmpty.Width) / 2);
 			btnViewAll.Width = Math.Max(120, pnlRecent.ClientSize.Width - 30);
 			insightsList.Width = Math.Max(120, pnlInsights.ClientSize.Width - 30);
@@ -169,7 +170,7 @@ namespace SmartCashDisbursementApp
 					transaction.Type.Equals("deposit", StringComparison.OrdinalIgnoreCase) ? "CASH IN" : "WITHDRAW",
 					transaction.CategoryName,
 					FormatMoney(transaction.Amount),
-					transaction.CreatedAt.ToString("MMM d, yyyy h:mm tt"));
+					transaction.CreatedAt.ToString("MMM d, yy h:mm tt"));
 			}
 			transactionGrid.Visible = recentTransactions.Count > 0;
 			lblTransactionEmpty.Visible = recentTransactions.Count == 0;
