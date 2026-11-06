@@ -90,7 +90,7 @@
             // 
             // pnlMain
             // 
-            pnlMain.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            pnlMain.Anchor = AnchorStyles.Top | AnchorStyles.Left;
             pnlMain.Controls.Add(pnlCashDeposit);
             pnlMain.Controls.Add(pnlCashWithdrawal);
             pnlMain.Controls.Add(pnlBudgeting);
