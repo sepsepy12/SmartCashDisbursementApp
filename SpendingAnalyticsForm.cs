@@ -29,7 +29,11 @@ namespace SmartCashDisbursementApp
 			this.userId = userId;
 		}
 
-		private void SpendingAnalyticsForm_Load(object sender, EventArgs e) => RefreshAnalytics();
+		private void SpendingAnalyticsForm_Load(object sender, EventArgs e)
+		{
+			ApplyResponsiveLayout();
+			RefreshAnalytics();
+		}
 
 		private void SpendingAnalyticsForm_Resize(object sender, EventArgs e) => ApplyResponsiveLayout();
 
@@ -76,18 +80,14 @@ namespace SmartCashDisbursementApp
 			lblTotalSpent.Left = categoryGrid.Left;
 			trendChart.Width = Math.Max(120, pnlTrend.ClientSize.Width - 30);
 			transactionGrid.Width = Math.Max(120, pnlRecent.ClientSize.Width - 30);
-			transactionGrid.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.None;
+			transactionGrid.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+			transactionGrid.Columns["Type"].FillWeight = 18;
+			transactionGrid.Columns["Section"].FillWeight = 34;
+			transactionGrid.Columns["Amount"].FillWeight = 20;
+			transactionGrid.Columns["Date"].FillWeight = 28;
+			transactionGrid.Columns["Date"].MinimumWidth = 105;
 			transactionGrid.ColumnHeadersDefaultCellStyle.WrapMode = DataGridViewTriState.True;
 			transactionGrid.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-			int transactionWidth = transactionGrid.ClientSize.Width;
-			int typeWidth = Math.Min(70, Math.Max(55, (int)(transactionWidth * 0.20)));
-			int amountWidth = Math.Min(80, Math.Max(70, (int)(transactionWidth * 0.24)));
-			int dateWidth = Math.Min(125, Math.Max(100, (int)(transactionWidth * 0.36)));
-			int sectionWidth = Math.Max(1, transactionWidth - typeWidth - amountWidth - dateWidth);
-			transactionGrid.Columns["Type"].Width = typeWidth;
-			transactionGrid.Columns["Section"].Width = sectionWidth;
-			transactionGrid.Columns["Amount"].Width = amountWidth;
-			transactionGrid.Columns["Date"].Width = dateWidth;
 			lblTransactionEmpty.Left = Math.Max(15, (pnlRecent.ClientSize.Width - lblTransactionEmpty.Width) / 2);
 			btnViewAll.Width = Math.Max(120, pnlRecent.ClientSize.Width - 30);
 			insightsList.Width = Math.Max(120, pnlInsights.ClientSize.Width - 30);
