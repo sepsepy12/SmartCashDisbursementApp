@@ -18,6 +18,7 @@ namespace SmartCashDisbursementApp
             SelectOption('A');
             selectedOption = null;
             UpdateCardStyles();
+            footerClockTimer.Start();
         }
 
         public void SelectOption(char option)
@@ -56,7 +57,7 @@ namespace SmartCashDisbursementApp
         private void ResizeCards()
         {
             if (cardsPanel == null) return;
-            int width = Math.Max(280, (cardsPanel.ClientSize.Width - 55) / 2);
+            int width = Math.Max(240, (cardsPanel.ClientSize.Width - cardsPanel.Padding.Horizontal - 40) / 2);
             foreach (Control card in cardsPanel.Controls) card.Width = width;
         }
 
@@ -114,9 +115,10 @@ namespace SmartCashDisbursementApp
             {
                 var now = DateTime.Now;
                 var categories = budgetRepository.GetAnalyticsCategories(userId, new DateTime(now.Year, now.Month, 1), new DateTime(now.Year, now.Month, 1).AddMonths(1));
-                if (categories.Count > 0)
+                var spendingCategories = categories.Where(c => c.MonthlyWithdrawals > 0).ToList();
+                if (spendingCategories.Count > 0)
                 {
-                    var highest = categories.OrderByDescending(c => c.MonthlyWithdrawals).First();
+                    var highest = spendingCategories.OrderByDescending(c => c.MonthlyWithdrawals).First();
                     var advice = $"This month's highest withdrawal category is {highest.Name}. Review its recent transactions before making another withdrawal.";
                     var depleted = categories.Where(c => c.AvailableBalance <= 0).Select(c => c.Name).ToList();
                     if (depleted.Count > 0) advice += $"\r\n\r\nAvailable balance is at or below zero for: {string.Join(", ", depleted)}. Consider pausing non-essential spending in these categories.";
@@ -137,6 +139,8 @@ namespace SmartCashDisbursementApp
         }
 
         private void backButton_Click(object? sender, EventArgs e) => Close();
+
+        private void CounselingHub_Resources_FormClosed(object? sender, FormClosedEventArgs e) => footerClockTimer.Stop();
 
         private void CounselingHub_Resources_KeyDown(object? sender, KeyEventArgs e)
         {

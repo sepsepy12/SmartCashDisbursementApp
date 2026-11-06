@@ -10,17 +10,22 @@ namespace SmartCashDisbursementApp
         private Label appNameLabel;
         private Label subtitleLabel;
         private Panel selectionView;
-        private Label instructionLabel;
+        private Label selectionTitleLabel;
+        private Label selectionSubtitleLabel;
+        private Label keyboardInstructionLabel;
         private FlowLayoutPanel cardsPanel;
         private Panel contentView;
         private Label contentTitleLabel;
         private RichTextBox contentTextBox;
         private Panel footerPanel;
+        private Panel actionBar;
+        private Panel securityFooter;
         private Label securityLabel;
         private Label dateTimeLabel;
         private Button backButton;
         private Button confirmButton;
         private Button contentBackButton;
+        private System.Windows.Forms.Timer footerClockTimer;
 
         protected override void Dispose(bool disposing)
         {
@@ -36,17 +41,22 @@ namespace SmartCashDisbursementApp
             appNameLabel = new Label();
             subtitleLabel = new Label();
             selectionView = new Panel();
-            instructionLabel = new Label();
+            selectionTitleLabel = new Label();
+            selectionSubtitleLabel = new Label();
+            keyboardInstructionLabel = new Label();
             cardsPanel = new FlowLayoutPanel();
             contentView = new Panel();
             contentTitleLabel = new Label();
             contentTextBox = new RichTextBox();
             footerPanel = new Panel();
+            actionBar = new Panel();
+            securityFooter = new Panel();
             securityLabel = new Label();
             dateTimeLabel = new Label();
             backButton = new Button();
             confirmButton = new Button();
             contentBackButton = new Button();
+            footerClockTimer = new System.Windows.Forms.Timer(components);
             SuspendLayout();
 
             headerPanel.BackColor = Color.FromArgb(8, 52, 105);
@@ -68,15 +78,29 @@ namespace SmartCashDisbursementApp
             subtitleLabel.Height = 28;
 
             selectionView.Dock = DockStyle.Fill;
-            selectionView.Padding = new Padding(35, 18, 35, 12);
+            selectionView.Padding = new Padding(35, 12, 35, 12);
             selectionView.Controls.Add(cardsPanel);
-            selectionView.Controls.Add(instructionLabel);
-            instructionLabel.Dock = DockStyle.Top;
-            instructionLabel.Font = new Font("Segoe UI", 13F, FontStyle.Bold);
-            instructionLabel.ForeColor = Color.FromArgb(13, 49, 108);
-            instructionLabel.Height = 48;
-            instructionLabel.Text = "COUNSELING HUB & RESOURCES\r\nREQUEST ADVICE & ACCESS HELPFUL RESOURCES\r\n\r\nSELECT AN OPTION (PRESS A, B, C, OR D)";
-            instructionLabel.TextAlign = ContentAlignment.MiddleCenter;
+            selectionView.Controls.Add(keyboardInstructionLabel);
+            selectionView.Controls.Add(selectionSubtitleLabel);
+            selectionView.Controls.Add(selectionTitleLabel);
+            selectionTitleLabel.Dock = DockStyle.Top;
+            selectionTitleLabel.Font = new Font("Segoe UI", 15F, FontStyle.Bold);
+            selectionTitleLabel.ForeColor = Color.FromArgb(13, 49, 108);
+            selectionTitleLabel.Height = 34;
+            selectionTitleLabel.Text = "COUNSELING HUB & RESOURCES";
+            selectionTitleLabel.TextAlign = ContentAlignment.MiddleCenter;
+            selectionSubtitleLabel.Dock = DockStyle.Top;
+            selectionSubtitleLabel.Font = new Font("Segoe UI", 11F);
+            selectionSubtitleLabel.ForeColor = Color.FromArgb(55, 75, 105);
+            selectionSubtitleLabel.Height = 30;
+            selectionSubtitleLabel.Text = "REQUEST ADVICE & ACCESS HELPFUL RESOURCES";
+            selectionSubtitleLabel.TextAlign = ContentAlignment.MiddleCenter;
+            keyboardInstructionLabel.Dock = DockStyle.Top;
+            keyboardInstructionLabel.Font = new Font("Segoe UI", 11F, FontStyle.Bold);
+            keyboardInstructionLabel.ForeColor = Color.FromArgb(13, 49, 108);
+            keyboardInstructionLabel.Height = 32;
+            keyboardInstructionLabel.Text = "SELECT AN OPTION (PRESS A, B, C, OR D)";
+            keyboardInstructionLabel.TextAlign = ContentAlignment.MiddleCenter;
             cardsPanel.Dock = DockStyle.Fill;
             cardsPanel.AutoScroll = true;
             cardsPanel.FlowDirection = FlowDirection.LeftToRight;
@@ -107,29 +131,36 @@ namespace SmartCashDisbursementApp
 
             footerPanel.BackColor = Color.FromArgb(8, 52, 105);
             footerPanel.Dock = DockStyle.Bottom;
-            footerPanel.Height = 64;
-            footerPanel.Controls.Add(securityLabel);
-            footerPanel.Controls.Add(dateTimeLabel);
-            footerPanel.Controls.Add(contentBackButton);
-            footerPanel.Controls.Add(confirmButton);
-            footerPanel.Controls.Add(backButton);
+            footerPanel.Height = 116;
+            footerPanel.Controls.Add(securityFooter);
+            footerPanel.Controls.Add(actionBar);
+            actionBar.Dock = DockStyle.Top;
+            actionBar.Height = 52;
+            actionBar.Controls.Add(contentBackButton);
+            actionBar.Controls.Add(confirmButton);
+            actionBar.Controls.Add(backButton);
+            securityFooter.Dock = DockStyle.Fill;
+            securityFooter.Controls.Add(securityLabel);
+            securityFooter.Controls.Add(dateTimeLabel);
             securityLabel.AutoSize = true;
             securityLabel.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
             securityLabel.ForeColor = Color.White;
-            securityLabel.Location = new Point(24, 12);
+            securityLabel.Anchor = AnchorStyles.Left | AnchorStyles.Bottom;
+            securityLabel.Location = new Point(24, 10);
             securityLabel.Text = "SECURE SYSTEM\r\nYour security is our priority.";
-            dateTimeLabel.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            dateTimeLabel.Anchor = AnchorStyles.Right | AnchorStyles.Bottom;
             dateTimeLabel.AutoSize = true;
             dateTimeLabel.Font = new Font("Segoe UI", 10F);
             dateTimeLabel.ForeColor = Color.White;
-            dateTimeLabel.Location = new Point(800, 22);
+            dateTimeLabel.Location = new Point(800, 21);
             dateTimeLabel.TextAlign = ContentAlignment.MiddleRight;
             backButton.BackColor = Color.FromArgb(90, 100, 115);
+            backButton.Anchor = AnchorStyles.Left | AnchorStyles.Top;
             backButton.FlatStyle = FlatStyle.Flat;
             backButton.FlatAppearance.BorderSize = 0;
             backButton.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
             backButton.ForeColor = Color.White;
-            backButton.Location = new Point(250, 13);
+            backButton.Location = new Point(24, 7);
             backButton.Size = new Size(110, 38);
             backButton.Text = "←  BACK";
             backButton.Click += backButton_Click;
@@ -140,6 +171,7 @@ namespace SmartCashDisbursementApp
             confirmButton.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
             confirmButton.ForeColor = Color.White;
             confirmButton.Size = new Size(150, 38);
+            confirmButton.Location = new Point(926, 7);
             confirmButton.Text = "✓  CONFIRM";
             confirmButton.Click += confirmButton_Click;
             contentBackButton.BackColor = Color.FromArgb(90, 100, 115);
@@ -147,7 +179,8 @@ namespace SmartCashDisbursementApp
             contentBackButton.FlatAppearance.BorderSize = 0;
             contentBackButton.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
             contentBackButton.ForeColor = Color.White;
-            contentBackButton.Location = new Point(390, 13);
+            contentBackButton.Anchor = AnchorStyles.Left | AnchorStyles.Top;
+            contentBackButton.Location = new Point(24, 7);
             contentBackButton.Size = new Size(170, 38);
             contentBackButton.Text = "←  OPTIONS";
             contentBackButton.Visible = false;
@@ -164,10 +197,12 @@ namespace SmartCashDisbursementApp
             Name = "CounselingHub_Resources";
             StartPosition = FormStartPosition.CenterScreen;
             Text = "Counseling Hub & Resources";
-            TopMost = true;
             WindowState = FormWindowState.Maximized;
             KeyPreview = true;
             KeyDown += CounselingHub_Resources_KeyDown;
+            FormClosed += CounselingHub_Resources_FormClosed;
+            footerClockTimer.Interval = 1000;
+            footerClockTimer.Tick += (sender, e) => UpdateDateTime();
             Resize += CounselingHub_Resources_Resize;
             ResumeLayout(false);
         }
@@ -189,10 +224,10 @@ namespace SmartCashDisbursementApp
         private void CounselingHub_Resources_Resize(object sender, System.EventArgs e)
         {
             ResizeCards();
-            backButton.Location = new Point(24, 13);
-            contentBackButton.Location = new Point(24, 13);
-            confirmButton.Location = new Point(Math.Max(24, footerPanel.ClientSize.Width - confirmButton.Width - 24), 13);
-            dateTimeLabel.Location = new Point(Math.Max(400, footerPanel.ClientSize.Width - dateTimeLabel.Width - 24), 22);
+            backButton.Location = new Point(24, 7);
+            contentBackButton.Location = new Point(24, 7);
+            confirmButton.Location = new Point(Math.Max(24, actionBar.ClientSize.Width - confirmButton.Width - 24), 7);
+            dateTimeLabel.Location = new Point(Math.Max(24, securityFooter.ClientSize.Width - dateTimeLabel.Width - 24), Math.Max(0, securityFooter.ClientSize.Height - dateTimeLabel.Height - 10));
         }
     }
 }
