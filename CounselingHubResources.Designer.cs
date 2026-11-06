@@ -145,8 +145,8 @@ namespace SmartCashDisbursementApp
             securityLabel.AutoSize = true;
             securityLabel.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
             securityLabel.ForeColor = Color.White;
-            securityLabel.Anchor = AnchorStyles.Left | AnchorStyles.Bottom;
-            securityLabel.Location = new Point(24, 10);
+            securityLabel.Anchor = AnchorStyles.Left | AnchorStyles.Top;
+            securityLabel.Location = new Point(24, 8);
             securityLabel.Text = "SECURE SYSTEM\r\nYour security is our priority.";
             dateTimeLabel.Anchor = AnchorStyles.Right | AnchorStyles.Bottom;
             dateTimeLabel.AutoSize = true;
