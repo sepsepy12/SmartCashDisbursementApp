@@ -149,6 +149,7 @@ namespace SmartCashDisbursementApp
         public List<RecentTransaction> GetRecentTransactions(int userId, int limit = 6)
         {
             var transactions = new List<RecentTransaction>();
+            limit = Math.Max(1, limit);
             using (var conn = DatabaseHelper.GetConnection())
             {
                 conn.Open();
