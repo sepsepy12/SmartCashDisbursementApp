@@ -50,7 +50,14 @@ namespace SmartCashDisbursementApp
 			insightsList.DrawItem += insightsList_DrawItem;
 			pnlInsights.Controls.Add(insightsList);
 			pnlFooter = new Panel { Location = new Point(0, 855), Size = new Size(1080, 65), BackColor = Color.FromArgb(8, 55, 115), Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right };
-			btnBack = ActionButton("BACK", 20, 14, 140, pnlFooter, btnBack_Click);
+			btnBack = ActionButton("BACK", 24, 14, 110, pnlFooter, btnBack_Click);
+			btnBack.Anchor = AnchorStyles.Left | AnchorStyles.Top;
+			btnBack.BackColor = Color.FromArgb(90, 100, 115);
+			btnBack.Cursor = Cursors.Hand;
+			btnBack.FlatAppearance.BorderSize = 0;
+			btnBack.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
+			btnBack.Size = new Size(110, 38);
+			btnBack.UseVisualStyleBackColor = false;
 			btnExport = ActionButton("EXPORT REPORT", 880, 14, 170, pnlFooter, btnExport_Click);
 			pnlScroll.Controls.AddRange(new Control[] { pnlHeader, pnlOverview, pnlCategories, pnlTrend, pnlRecent, pnlInsights, pnlFooter });
 			BackColor = Color.FromArgb(245, 247, 250);

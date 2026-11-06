@@ -25,7 +25,7 @@ namespace SmartCashDisbursementApp
 		private TextBox textBox1;
 		private DateTimePicker datePicker;
 		private Label lblValidation;
-		private FlowLayoutPanel actionLayout;
+		private TableLayoutPanel actionLayout;
 		private Button button4;
 		private Button button6;
 		private Button button5;
@@ -76,7 +76,7 @@ namespace SmartCashDisbursementApp
 			textBox1 = new TextBox();
 			datePicker = new DateTimePicker();
 			lblValidation = new Label();
-			actionLayout = new FlowLayoutPanel();
+		actionLayout = new TableLayoutPanel();
 			button4 = new Button();
 			button6 = new Button();
 			button5 = new Button();
@@ -231,17 +231,34 @@ namespace SmartCashDisbursementApp
 			datePicker.Margin = new Padding(18, 2, 0, 0);
 			datePicker.MinDate = DateTime.Today.AddDays(1);
 
-			actionLayout.Controls.Add(button4);
-			actionLayout.Controls.Add(button6);
-			actionLayout.Controls.Add(button5);
+			actionLayout.ColumnCount = 3;
+			actionLayout.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 25F));
+			actionLayout.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
+			actionLayout.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 25F));
+			actionLayout.Controls.Add(button4, 0, 0);
+			actionLayout.Controls.Add(button6, 1, 0);
+			actionLayout.Controls.Add(button5, 2, 0);
 			actionLayout.Dock = DockStyle.Top;
-			actionLayout.FlowDirection = FlowDirection.LeftToRight;
 			actionLayout.Height = 74;
-			actionLayout.Padding = new Padding(28, 10, 28, 8);
-			actionLayout.WrapContents = false;
+			actionLayout.Padding = new Padding(28, 0, 28, 0);
+			actionLayout.RowCount = 1;
+			actionLayout.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
 			ConfigureActionButton(button4, "←  BACK", Color.FromArgb(110, 110, 110));
 			ConfigureActionButton(button6, "CLEAR", Color.FromArgb(247, 185, 10));
 			ConfigureActionButton(button5, "✓  CONFIRM", Color.FromArgb(39, 125, 48));
+			button4.Anchor = AnchorStyles.Left | AnchorStyles.Top;
+			button4.BackColor = Color.FromArgb(90, 100, 115);
+			button4.Cursor = Cursors.Hand;
+			button4.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
+			button4.Margin = new Padding(0, 18, 0, 0);
+			button4.Size = new Size(110, 38);
+			button5.Anchor = AnchorStyles.Right | AnchorStyles.Top;
+			button5.BackColor = Color.FromArgb(10, 125, 55);
+			button5.Cursor = Cursors.Hand;
+			button5.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
+			button5.Margin = new Padding(0, 18, 0, 0);
+			button5.Size = new Size(150, 38);
+			button6.Anchor = AnchorStyles.None;
 
 			lblValidation.Dock = DockStyle.Bottom;
 			lblValidation.ForeColor = Color.Firebrick;

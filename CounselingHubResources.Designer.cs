@@ -156,6 +156,7 @@ namespace SmartCashDisbursementApp
             dateTimeLabel.TextAlign = ContentAlignment.MiddleRight;
             backButton.BackColor = Color.FromArgb(90, 100, 115);
             backButton.Anchor = AnchorStyles.Left | AnchorStyles.Top;
+            backButton.Cursor = Cursors.Hand;
             backButton.FlatStyle = FlatStyle.Flat;
             backButton.FlatAppearance.BorderSize = 0;
             backButton.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
@@ -166,6 +167,7 @@ namespace SmartCashDisbursementApp
             backButton.Click += backButton_Click;
             confirmButton.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             confirmButton.BackColor = Color.FromArgb(10, 125, 55);
+            confirmButton.Cursor = Cursors.Hand;
             confirmButton.FlatStyle = FlatStyle.Flat;
             confirmButton.FlatAppearance.BorderSize = 0;
             confirmButton.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
@@ -180,6 +182,7 @@ namespace SmartCashDisbursementApp
             contentBackButton.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
             contentBackButton.ForeColor = Color.White;
             contentBackButton.Anchor = AnchorStyles.Left | AnchorStyles.Top;
+            contentBackButton.Cursor = Cursors.Hand;
             contentBackButton.Location = new Point(24, 7);
             contentBackButton.Size = new Size(170, 38);
             contentBackButton.Text = "←  OPTIONS";

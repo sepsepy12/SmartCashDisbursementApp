@@ -349,20 +349,36 @@ namespace SmartCashDisbursementApp
             // 
             // btnBack
             // 
-            btnBack.Location = new Point(20, 12);
+            btnBack.Anchor = AnchorStyles.Left | AnchorStyles.Top;
+            btnBack.BackColor = Color.FromArgb(90, 100, 115);
+            btnBack.Cursor = Cursors.Hand;
+            btnBack.FlatAppearance.BorderSize = 0;
+            btnBack.FlatStyle = FlatStyle.Flat;
+            btnBack.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
+            btnBack.ForeColor = Color.White;
+            btnBack.Location = new Point(24, 11);
             btnBack.Name = "btnBack";
-            btnBack.Size = new Size(100, 36);
+            btnBack.Size = new Size(110, 38);
             btnBack.TabIndex = 1;
             btnBack.Text = "<- BACK";
+            btnBack.UseVisualStyleBackColor = false;
             btnBack.Click += button4_Click;
             // 
             // btnConfirm
             // 
-            btnConfirm.Location = new Point(660, 12);
+            btnConfirm.Anchor = AnchorStyles.Right | AnchorStyles.Top;
+            btnConfirm.BackColor = Color.FromArgb(10, 125, 55);
+            btnConfirm.Cursor = Cursors.Hand;
+            btnConfirm.FlatAppearance.BorderSize = 0;
+            btnConfirm.FlatStyle = FlatStyle.Flat;
+            btnConfirm.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
+            btnConfirm.ForeColor = Color.White;
+            btnConfirm.Location = new Point(626, 11);
             btnConfirm.Name = "btnConfirm";
-            btnConfirm.Size = new Size(128, 36);
+            btnConfirm.Size = new Size(150, 38);
             btnConfirm.TabIndex = 2;
             btnConfirm.Text = "CONFIRM";
+            btnConfirm.UseVisualStyleBackColor = false;
             btnConfirm.Click += button5_Click;
             // 
             // BudgetingCounselingForm

@@ -207,13 +207,15 @@ namespace SmartCashDisbursementApp
 			//
 			// btnBack
 			//
-			btnBack.BackColor = Color.FromArgb(120, 120, 120);
+			btnBack.Anchor = AnchorStyles.Left | AnchorStyles.Top;
+			btnBack.BackColor = Color.FromArgb(90, 100, 115);
 			btnBack.FlatAppearance.BorderSize = 0;
 			btnBack.FlatStyle = FlatStyle.Flat;
 			btnBack.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
 			btnBack.ForeColor = Color.White;
-			btnBack.Location = new Point(20, 13);
-			btnBack.Size = new Size(100, 34);
+			btnBack.Cursor = Cursors.Hand;
+			btnBack.Location = new Point(24, 11);
+			btnBack.Size = new Size(110, 38);
 			btnBack.Text = "← BACK";
 			btnBack.UseVisualStyleBackColor = false;
 			btnBack.Click += btnBack_Click;
