@@ -45,7 +45,9 @@ namespace SmartCashDisbursementApp
 			transactionGrid.Columns.Add("Type", "Type"); transactionGrid.Columns.Add("Section", "Section"); transactionGrid.Columns.Add("Amount", "Amount"); transactionGrid.Columns.Add("Date", "Date and Time");
 			lblTransactionEmpty = EmptyLabel("No transactions available.", 80, 150, pnlRecent);
 			btnViewAll = ActionButton("VIEW ALL TRANSACTIONS", 15, 305, 290, pnlRecent, btnViewAll_Click);
-			insightsList = new ListBox { Location = new Point(15, 45), Size = new Size(290, 255), BorderStyle = BorderStyle.FixedSingle, Font = new Font("Segoe UI", 9), IntegralHeight = false };
+			insightsList = new ListBox { Location = new Point(15, 45), Size = new Size(290, 255), BorderStyle = BorderStyle.FixedSingle, Font = new Font("Segoe UI", 9), IntegralHeight = false, DrawMode = DrawMode.OwnerDrawVariable, HorizontalScrollbar = false, SelectionMode = SelectionMode.None };
+			insightsList.MeasureItem += insightsList_MeasureItem;
+			insightsList.DrawItem += insightsList_DrawItem;
 			pnlInsights.Controls.Add(insightsList);
 			pnlFooter = new Panel { Location = new Point(0, 855), Size = new Size(1080, 65), BackColor = Color.FromArgb(8, 55, 115), Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right };
 			btnBack = ActionButton("BACK", 20, 14, 140, pnlFooter, btnBack_Click);
@@ -59,6 +61,7 @@ namespace SmartCashDisbursementApp
 			Name = "SpendingAnalyticsForm";
 			Text = "Spending Analytics";
 			Load += SpendingAnalyticsForm_Load;
+			Resize += SpendingAnalyticsForm_Resize;
 		}
 
 		private Panel Section(string title, int x, int y, int width, int height)

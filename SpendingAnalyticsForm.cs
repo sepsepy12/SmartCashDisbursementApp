@@ -31,6 +31,88 @@ namespace SmartCashDisbursementApp
 
 		private void SpendingAnalyticsForm_Load(object sender, EventArgs e) => RefreshAnalytics();
 
+		private void SpendingAnalyticsForm_Resize(object sender, EventArgs e) => ApplyResponsiveLayout();
+
+		private void ApplyResponsiveLayout()
+		{
+			if (pnlScroll == null || pnlScroll.ClientSize.Width <= 0)
+				return;
+
+			const int margin = 20;
+			const int gap = 20;
+			int contentWidth = Math.Max(0, pnlScroll.ClientSize.Width - margin * 2);
+			int columnWidth = Math.Max(0, contentWidth - gap);
+			int leftWidth = (int)Math.Round(columnWidth * 0.68);
+			int rightWidth = columnWidth - leftWidth;
+			int rightX = margin + leftWidth + gap;
+
+			pnlHeader.Width = pnlScroll.ClientSize.Width;
+			pnlOverview.Location = new Point(margin, pnlOverview.Top);
+			pnlOverview.Width = contentWidth;
+			pnlCategories.Location = new Point(margin, pnlCategories.Top);
+			pnlCategories.Width = leftWidth;
+			pnlTrend.Location = new Point(margin, pnlTrend.Top);
+			pnlTrend.Width = leftWidth;
+			pnlRecent.Location = new Point(rightX, pnlRecent.Top);
+			pnlRecent.Width = rightWidth;
+			pnlInsights.Location = new Point(rightX, pnlInsights.Top);
+			pnlInsights.Width = rightWidth;
+			pnlFooter.Width = pnlScroll.ClientSize.Width;
+			btnExport.Left = Math.Max(margin, pnlFooter.ClientSize.Width - margin - btnExport.Width);
+
+			int cardWidth = Math.Max(110, (pnlOverview.ClientSize.Width - 30 - 45) / 4);
+			Control[] cards = { lblMonthlyCashIn.Parent, lblMonthlyWithdrawn.Parent, lblCurrentBalance.Parent, lblDailyAverage.Parent };
+			for (int i = 0; i < cards.Length; i++)
+			{
+				cards[i].Left = 15 + i * (cardWidth + 15);
+				cards[i].Width = cardWidth;
+			}
+
+			int chartWidth = Math.Min(300, Math.Max(180, (int)(leftWidth * 0.43)));
+			pieChart.Width = chartWidth;
+			categoryGrid.Left = pieChart.Right + 15;
+			categoryGrid.Width = Math.Max(120, pnlCategories.ClientSize.Width - categoryGrid.Left - 15);
+			lblCategoryEmpty.Left = categoryGrid.Left;
+			lblTotalSpent.Left = categoryGrid.Left;
+			trendChart.Width = Math.Max(120, pnlTrend.ClientSize.Width - 30);
+			transactionGrid.Width = Math.Max(120, pnlRecent.ClientSize.Width - 30);
+			transactionGrid.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.None;
+			transactionGrid.ColumnHeadersDefaultCellStyle.WrapMode = DataGridViewTriState.True;
+			transactionGrid.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+			int transactionWidth = transactionGrid.ClientSize.Width;
+			int dateWidth = Math.Min(180, Math.Max(125, (int)(transactionWidth * 0.38)));
+			int typeWidth = Math.Min(85, Math.Max(65, (int)(transactionWidth * 0.21)));
+			int amountWidth = Math.Min(100, Math.Max(85, (int)(transactionWidth * 0.23)));
+			transactionGrid.Columns["Type"].Width = typeWidth;
+			transactionGrid.Columns["Amount"].Width = amountWidth;
+			transactionGrid.Columns["Date"].Width = dateWidth;
+			transactionGrid.Columns["Section"].Width = Math.Max(50, transactionWidth - typeWidth - amountWidth - dateWidth);
+			lblTransactionEmpty.Left = Math.Max(15, (pnlRecent.ClientSize.Width - lblTransactionEmpty.Width) / 2);
+			btnViewAll.Width = Math.Max(120, pnlRecent.ClientSize.Width - 30);
+			insightsList.Width = Math.Max(120, pnlInsights.ClientSize.Width - 30);
+		}
+
+		private void insightsList_MeasureItem(object sender, MeasureItemEventArgs e)
+		{
+			if (e.Index < 0 || e.Index >= insightsList.Items.Count)
+				return;
+
+			int textWidth = Math.Max(1, insightsList.ClientSize.Width - 12);
+			Size measured = TextRenderer.MeasureText(insightsList.Items[e.Index].ToString(), insightsList.Font, new Size(textWidth, int.MaxValue), TextFormatFlags.WordBreak);
+			e.ItemHeight = Math.Max(32, measured.Height + 10);
+		}
+
+		private void insightsList_DrawItem(object sender, DrawItemEventArgs e)
+		{
+			if (e.Index < 0 || e.Index >= insightsList.Items.Count)
+				return;
+
+			e.DrawBackground();
+			Color textColor = (e.State & DrawItemState.Selected) == DrawItemState.Selected ? SystemColors.HighlightText : Color.FromArgb(30, 30, 30);
+			TextRenderer.DrawText(e.Graphics, insightsList.Items[e.Index].ToString(), insightsList.Font, new Rectangle(e.Bounds.Left + 6, e.Bounds.Top + 5, Math.Max(1, e.Bounds.Width - 12), Math.Max(1, e.Bounds.Height - 10)), textColor, TextFormatFlags.WordBreak);
+			e.DrawFocusRectangle();
+		}
+
 		private void RefreshAnalytics()
 		{
 			try
@@ -213,7 +295,7 @@ namespace SmartCashDisbursementApp
 		private void trendChart_Paint(object sender, PaintEventArgs e)
 		{
 			e.Graphics.SmoothingMode = SmoothingMode.AntiAlias;
-			Rectangle plot = new Rectangle(45, 15, trendChart.Width - 60, trendChart.Height - 45);
+			Rectangle plot = new Rectangle(55, 15, Math.Max(1, trendChart.Width - 90), Math.Max(1, trendChart.Height - 50));
 			using (var gridPen = new Pen(Color.Gainsboro))
 			using (var axisPen = new Pen(Color.Gray))
 			{
@@ -236,17 +318,25 @@ namespace SmartCashDisbursementApp
 				using (var labelBrush = new SolidBrush(Color.DimGray))
 				{
 					int labelStep = Math.Max(1, points.Count / 6);
-					for (int i = 0; i < points.Count; i += labelStep)
+					var labelIndexes = Enumerable.Range(0, points.Count).Where(i => i % labelStep == 0 || i == points.Count - 1).Distinct();
+					foreach (int i in labelIndexes)
 					{
-						float x = coordinates[i].X - 12;
-						e.Graphics.DrawString(points[i].day.ToString("MMM d"), Font, labelBrush, x, plot.Bottom + 5);
+						string dateLabel = points[i].day.ToString("MMM d");
+						float x = coordinates[i].X - e.Graphics.MeasureString(dateLabel, Font).Width / 2;
+						x = Math.Max(plot.Left, Math.Min(plot.Right - e.Graphics.MeasureString(dateLabel, Font).Width, x));
+						e.Graphics.DrawString(dateLabel, Font, labelBrush, x, plot.Bottom + 5);
 						if (points[i].amount > 0)
-							e.Graphics.DrawString($"₱{points[i].amount:N0}", Font, labelBrush, coordinates[i].X - 16, coordinates[i].Y - 18);
+						{
+							string amountLabel = $"₱{points[i].amount:N0}";
+							float amountX = coordinates[i].X - e.Graphics.MeasureString(amountLabel, Font).Width / 2;
+							amountX = Math.Max(plot.Left, Math.Min(plot.Right - e.Graphics.MeasureString(amountLabel, Font).Width, amountX));
+							e.Graphics.DrawString(amountLabel, Font, labelBrush, amountX, Math.Max(plot.Top, coordinates[i].Y - 18));
+						}
 					}
 				}
 			}
-			e.Graphics.DrawString($"₱{max:N0}", Font, Brushes.DimGray, 3, plot.Top - 5);
-			e.Graphics.DrawString("₱0", Font, Brushes.DimGray, 15, plot.Bottom - 8);
+			e.Graphics.DrawString($"₱{max:N0}", Font, Brushes.DimGray, 5, plot.Top - 5);
+			e.Graphics.DrawString("₱0", Font, Brushes.DimGray, 20, plot.Bottom - 8);
 		}
 	}
 }
