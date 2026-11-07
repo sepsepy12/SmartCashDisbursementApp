@@ -24,6 +24,7 @@ namespace SmartCashDisbursementApp
 			dateTimeTimer.Start();
 			LoadAvailableBalance();
 			Resize += WithdrawalForm_Resize;
+			pnlSecurityFooter.Resize += PnlSecurityFooter_Resize;
 			ApplyResponsiveLayout();
 		}
 
@@ -204,6 +205,16 @@ namespace SmartCashDisbursementApp
 		private void UpdateDateTimeLabel()
 		{
 			dateTimeLabel.Text = DateTime.Now.ToString("MMM dd, yyyy | hh:mm tt");
+			PositionDateTimeLabel();
+		}
+
+		private void PnlSecurityFooter_Resize(object sender, EventArgs e)
+		{
+			PositionDateTimeLabel();
+		}
+
+		private void PositionDateTimeLabel()
+		{
 			dateTimeLabel.Left = Math.Max(24, pnlSecurityFooter.ClientSize.Width - dateTimeLabel.Width - 24);
 		}
 
@@ -217,20 +228,39 @@ namespace SmartCashDisbursementApp
 			if (pnlAmount == null)
 				return;
 
-			int groupLeft = Math.Max(0, (ClientSize.Width - 800) / 2);
-			int amountLeft = Math.Max(24, (ClientSize.Width - pnlAmount.Width) / 2);
-			pnlAmount.Left = amountLeft;
-			lblReview.Location = new Point(amountLeft, lblReview.Top);
-			label3.Left = amountLeft;
-			label4.Left = groupLeft + 20;
-			button1.Left = groupLeft + 20;
-			button2.Left = groupLeft + 305;
-			button3.Left = groupLeft + 590;
-			lblAmountHint.Left = amountLeft + Math.Max(0, (pnlAmount.Width - lblAmountHint.Width) / 2);
-			lblAvailableBalance.Left = amountLeft + 400;
-			label1.Left = Math.Max(24, (ClientSize.Width - label1.Width) / 2);
-			label2.Left = Math.Max(24, (ClientSize.Width - label2.Width) / 2);
-			dateTimeLabel.Left = Math.Max(24, pnlSecurityFooter.ClientSize.Width - dateTimeLabel.Width - 24);
+			int contentWidth = Math.Min(760, Math.Max(0, ClientSize.Width - 48));
+			int contentLeft = (ClientSize.Width - contentWidth) / 2;
+			int y = pnlHeader.Bottom + 28;
+
+			label1.Location = new Point(contentLeft + (contentWidth - label1.Width) / 2, y);
+			y = label1.Bottom + 4;
+			label2.Location = new Point(contentLeft + (contentWidth - label2.Width) / 2, y);
+			y = label2.Bottom + 10;
+			label3.Location = new Point(contentLeft + (contentWidth - label3.Width) / 2, y);
+			y = label3.Bottom + 8;
+
+			int amountWidth = Math.Min(540, contentWidth);
+			pnlAmount.Bounds = new Rectangle(contentLeft + (contentWidth - amountWidth) / 2, y, amountWidth, 52);
+			y = pnlAmount.Bottom + 6;
+			lblAmountHint.Location = new Point(contentLeft + (contentWidth - lblAmountHint.Width) / 2, y);
+			y = lblAmountHint.Bottom + 8;
+
+			label4.Location = new Point(contentLeft, y);
+			int balanceWidth = Math.Min(310, contentWidth);
+			lblAvailableBalance.Bounds = new Rectangle(contentLeft + contentWidth - balanceWidth, y, balanceWidth, 22);
+			y = Math.Max(label4.Bottom, lblAvailableBalance.Bottom) + 10;
+
+			int categoryGap = Math.Min(24, Math.Max(12, contentWidth / 24));
+			int categoryButtonWidth = Math.Min(190, Math.Max(1, (contentWidth - categoryGap * 2) / 3));
+			int categoryGroupWidth = categoryButtonWidth * 3 + categoryGap * 2;
+			int categoryLeft = contentLeft + (contentWidth - categoryGroupWidth) / 2;
+			button1.Bounds = new Rectangle(categoryLeft, y, categoryButtonWidth, 90);
+			button2.Bounds = new Rectangle(categoryLeft + categoryButtonWidth + categoryGap, y, categoryButtonWidth, 90);
+			button3.Bounds = new Rectangle(categoryLeft + (categoryButtonWidth + categoryGap) * 2, y, categoryButtonWidth, 90);
+
+			y = button1.Bottom + 14;
+			lblReview.Bounds = new Rectangle(contentLeft, y, contentWidth, 44);
+			PositionDateTimeLabel();
 		}
 	}
 }
