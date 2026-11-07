@@ -71,6 +71,7 @@ namespace SmartCashDisbursementApp
 			pnlInsights.Location = new Point(rightX, pnlInsights.Top);
 			pnlInsights.Width = rightWidth;
 			btnExport.Left = Math.Max(margin, actionBar.ClientSize.Width - margin - btnExport.Width);
+			btnViewAll.Left = Math.Max(btnBack.Right + margin, btnExport.Left - 12 - btnViewAll.Width);
 			lblDateTime.Location = new Point(Math.Max(24, pnlSecurityFooter.ClientSize.Width - lblDateTime.Width - 24), Math.Max(0, (pnlSecurityFooter.ClientSize.Height - lblDateTime.Height) / 2));
 
 			int cardWidth = Math.Max(1, (pnlOverview.ClientSize.Width - 30 - 30) / 3);
@@ -98,9 +99,7 @@ namespace SmartCashDisbursementApp
 			transactionGrid.ColumnHeadersDefaultCellStyle.WrapMode = DataGridViewTriState.True;
 			transactionGrid.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
 			lblTransactionEmpty.Left = Math.Max(15, (pnlRecent.ClientSize.Width - lblTransactionEmpty.Width) / 2);
-			btnViewAll.Left = 15;
-			btnViewAll.Top = transactionGrid.Bottom + 15;
-			btnViewAll.Width = Math.Max(1, pnlRecent.ClientSize.Width - 30);
+			btnViewAll.Width = 220;
 			insightsList.Width = Math.Max(120, pnlInsights.ClientSize.Width - 30);
 		}
 
