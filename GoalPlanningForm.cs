@@ -287,7 +287,12 @@ namespace SmartCashDisbursementApp
 
 		private void UpdateClock()
 		{
-			lblDateTime.Text = $"◷  {DateTime.Now:MMM dd, yyyy | hh:mm tt}";
+			lblDateTime.Text = DateTime.Now.ToString("MMM dd, yyyy | hh:mm tt", CultureInfo.InvariantCulture);
+		}
+
+		private void GoalPlanningForm_FormClosed(object sender, FormClosedEventArgs e)
+		{
+			clockTimer.Stop();
 		}
 
 		private void GoalPlanningForm_Resize(object sender, EventArgs e)
@@ -298,7 +303,7 @@ namespace SmartCashDisbursementApp
 				pnlContent.Padding = new Padding(horizontalPadding, 0, horizontalPadding, 0);
 			}
 
-			lblDateTime.Location = new System.Drawing.Point(Math.Max(0, ClientSize.Width - lblDateTime.Width - 24), 22);
+			lblDateTime.Location = new System.Drawing.Point(Math.Max(0, ClientSize.Width - lblDateTime.Width - 24), 20);
 		}
 
 		private void ShowValidation(string message)
