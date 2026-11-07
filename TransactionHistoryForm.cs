@@ -288,25 +288,31 @@ namespace SmartCashDisbursementApp
 
 		private void ApplyResponsiveLayout()
 		{
-			if (transactionGrid == null || pnlFooter == null)
+			if (transactionGrid == null || pnlContent == null || pnlSecurityFooter == null)
 				return;
 
 			const int filterGroupWidth = 610;
-			int filterLeft = Math.Max(24, (ClientSize.Width - filterGroupWidth) / 2);
-			lblTitle.Left = Math.Max(24, (ClientSize.Width - lblTitle.Width) / 2);
+			int filterLeft = Math.Max(24, (pnlContent.ClientSize.Width - filterGroupWidth) / 2);
+			lblTitle.Location = new Point(0, 0);
+			lblTitle.Width = pnlContent.ClientSize.Width;
+			lblSubtitle.Location = new Point(0, 51);
+			lblSubtitle.Width = pnlContent.ClientSize.Width;
 			lblType.Left = filterLeft;
 			typeFilter.Left = filterLeft + 45;
 			lblCategory.Left = filterLeft + 215;
 			categoryFilter.Left = filterLeft + 290;
 			btnRefresh.Left = filterLeft + 480;
 
-			int contentWidth = Math.Min(1400, Math.Max(0, ClientSize.Width - 48));
-			int contentLeft = Math.Max(24, (ClientSize.Width - contentWidth) / 2);
+			int contentWidth = Math.Min(1400, Math.Max(0, pnlContent.ClientSize.Width - 48));
+			int contentLeft = Math.Max(24, (pnlContent.ClientSize.Width - contentWidth) / 2);
 			transactionGrid.Location = new Point(contentLeft, transactionGrid.Top);
 			transactionGrid.Width = contentWidth;
-			transactionGrid.Height = Math.Max(180, ClientSize.Height - pnlFooter.Height - transactionGrid.Top - 24);
+			transactionGrid.Height = Math.Max(120, pnlContent.ClientSize.Height - transactionGrid.Top - 20);
 			lblEmpty.Left = Math.Max(contentLeft + 12, contentLeft + (contentWidth - lblEmpty.Width) / 2);
 			lblEmpty.Top = transactionGrid.Top + Math.Max(12, (transactionGrid.Height - lblEmpty.Height) / 2);
+			dateTimeLabel.Location = new Point(
+				Math.Max(24, pnlSecurityFooter.ClientSize.Width - dateTimeLabel.Width - 24),
+				Math.Max(0, (pnlSecurityFooter.ClientSize.Height - dateTimeLabel.Height) / 2));
 		}
 	}
 }
