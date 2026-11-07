@@ -21,7 +21,8 @@ namespace SmartCashDisbursementApp
         {
             InitializeComponent();
             this.userId = userId;
-            lblDateTime.Text = DateTime.Now.ToString("MMM d, yyyy | h:mm tt");
+            UpdateDateTime();
+            clockTimer.Start();
             Resize += DepositForm_Resize;
             ApplyResponsiveLayout();
         }
@@ -294,12 +295,27 @@ namespace SmartCashDisbursementApp
             ApplyResponsiveLayout();
         }
 
+        private void clockTimer_Tick(object sender, EventArgs e)
+        {
+            UpdateDateTime();
+        }
+
+        private void DepositForm_FormClosed(object sender, FormClosedEventArgs e)
+        {
+            clockTimer.Stop();
+        }
+
+        private void UpdateDateTime()
+        {
+            lblDateTime.Text = DateTime.Now.ToString("MMM dd, yyyy | hh:mm tt");
+        }
+
         private void ApplyResponsiveLayout()
         {
             if (pnlAmountBox == null)
                 return;
 
-            int contentLeft = Math.Max(24, (ClientSize.Width - pnlAmountBox.Width) / 2);
+            int contentLeft = Math.Max(24, (pnlContent.ClientSize.Width - pnlAmountBox.Width) / 2);
             pnlAmountBox.Left = contentLeft;
             pnlOptions.Left = contentLeft;
             pnlCategorySelection.Left = contentLeft;
@@ -307,8 +323,7 @@ namespace SmartCashDisbursementApp
             label1.Left = contentLeft;
             lblChooseMethod.Left = contentLeft;
             lblAmountHint.Left = contentLeft + Math.Max(0, (pnlAmountBox.Width - lblAmountHint.Width) / 2);
-            lblSectionTitle.Left = Math.Max(24, (ClientSize.Width - lblSectionTitle.Width) / 2);
-            lblSubTitle.Left = Math.Max(24, (ClientSize.Width - lblSubTitle.Width) / 2);
+            lblSectionTitle.Left = Math.Max(24, (pnlContent.ClientSize.Width - lblSectionTitle.Width) / 2);
         }
     }
 }
