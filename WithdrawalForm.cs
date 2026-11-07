@@ -8,6 +8,7 @@ namespace SmartCashDisbursementApp
 	{
 		private readonly int userId;
 		private readonly BudgetRepository budgetRepo = new BudgetRepository();
+		private readonly System.Windows.Forms.Timer dateTimeTimer = new System.Windows.Forms.Timer();
 		private string selectedCategory;
 		private decimal pendingAmount;
 		private decimal availableBalance;
@@ -17,7 +18,10 @@ namespace SmartCashDisbursementApp
 		{
 			InitializeComponent();
 			this.userId = userId;
-			dateTimeLabel.Text = DateTime.Now.ToString("MMM d, yyyy | h:mm tt");
+			UpdateDateTimeLabel();
+			dateTimeTimer.Interval = 1000;
+			dateTimeTimer.Tick += DateTimeTimer_Tick;
+			dateTimeTimer.Start();
 			LoadAvailableBalance();
 			Resize += WithdrawalForm_Resize;
 			ApplyResponsiveLayout();
@@ -185,6 +189,24 @@ namespace SmartCashDisbursementApp
 			Close();
 		}
 
+		protected override void OnFormClosed(FormClosedEventArgs e)
+		{
+			dateTimeTimer.Stop();
+			dateTimeTimer.Dispose();
+			base.OnFormClosed(e);
+		}
+
+		private void DateTimeTimer_Tick(object sender, EventArgs e)
+		{
+			UpdateDateTimeLabel();
+		}
+
+		private void UpdateDateTimeLabel()
+		{
+			dateTimeLabel.Text = DateTime.Now.ToString("MMM dd, yyyy | hh:mm tt");
+			dateTimeLabel.Left = Math.Max(24, pnlSecurityFooter.ClientSize.Width - dateTimeLabel.Width - 24);
+		}
+
 		private void WithdrawalForm_Resize(object sender, EventArgs e)
 		{
 			ApplyResponsiveLayout();
@@ -208,6 +230,7 @@ namespace SmartCashDisbursementApp
 			lblAvailableBalance.Left = amountLeft + 400;
 			label1.Left = Math.Max(24, (ClientSize.Width - label1.Width) / 2);
 			label2.Left = Math.Max(24, (ClientSize.Width - label2.Width) / 2);
+			dateTimeLabel.Left = Math.Max(24, pnlSecurityFooter.ClientSize.Width - dateTimeLabel.Width - 24);
 		}
 	}
 }

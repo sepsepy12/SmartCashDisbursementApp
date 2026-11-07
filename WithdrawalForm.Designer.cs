@@ -33,37 +33,41 @@ namespace SmartCashDisbursementApp
 			button2 = new Button();
 			button3 = new Button();
 			pnlFooter = new Panel();
+			pnlSecurityFooter = new Panel();
 			actionBar = new Panel();
 			lblFooter = new Label();
+			lblFooterSubtitle = new Label();
 			dateTimeLabel = new Label();
 			btnBack = new Button();
 			pnlHeader.SuspendLayout();
 			pnlAmount.SuspendLayout();
 			pnlFooter.SuspendLayout();
+			pnlSecurityFooter.SuspendLayout();
+			actionBar.SuspendLayout();
 			SuspendLayout();
 			//
 			// pnlHeader
 			//
-			pnlHeader.BackColor = Color.FromArgb(8, 80, 145);
+			pnlHeader.BackColor = Color.FromArgb(8, 52, 105);
 			pnlHeader.Controls.Add(lblAppSubtitle);
 			pnlHeader.Controls.Add(lblAppName);
 			pnlHeader.Dock = DockStyle.Top;
-			pnlHeader.Size = new Size(800, 70);
+			pnlHeader.Size = new Size(800, 88);
 			//
 			// lblAppName
 			//
 			lblAppName.AutoSize = true;
-			lblAppName.Font = new Font("Segoe UI Semibold", 12F, FontStyle.Bold);
+			lblAppName.Font = new Font("Segoe UI", 18F, FontStyle.Bold);
 			lblAppName.ForeColor = Color.White;
-			lblAppName.Location = new Point(62, 15);
+			lblAppName.Location = new Point(32, 12);
 			lblAppName.Text = "SMART CASH DISBURSEMENT";
 			//
 			// lblAppSubtitle
 			//
 			lblAppSubtitle.AutoSize = true;
-			lblAppSubtitle.Font = new Font("Segoe UI", 8F);
+			lblAppSubtitle.Font = new Font("Segoe UI", 10F, FontStyle.Regular);
 			lblAppSubtitle.ForeColor = Color.FromArgb(215, 232, 245);
-			lblAppSubtitle.Location = new Point(63, 39);
+			lblAppSubtitle.Location = new Point(34, 52);
 			lblAppSubtitle.Text = "BUDGETING MACHINE";
 			//
 			// label1
@@ -71,8 +75,8 @@ namespace SmartCashDisbursementApp
 			label1.AutoSize = true;
 			label1.Font = new Font("Segoe UI", 16F);
 			label1.ForeColor = Color.FromArgb(35, 45, 60);
-			label1.Location = new Point(315, 80);
-			label1.Text = "DASHBOARD";
+			label1.Location = new Point(315, 90);
+			label1.Text = "CASH WITHDRAWAL";
 			//
 			// label2
 			//
@@ -93,7 +97,7 @@ namespace SmartCashDisbursementApp
 			//
 			label4.AutoSize = true;
 			label4.Font = new Font("Segoe UI", 12F, FontStyle.Bold);
-			label4.Location = new Point(230, 258);
+			label4.Location = new Point(230, 252);
 			label4.Text = "2. CHOOSE WHERE TO WITHDRAW FROM:";
 			label4.Click += label4_Click;
 			//
@@ -145,7 +149,7 @@ namespace SmartCashDisbursementApp
 			lblReview.AutoSize = false;
 			lblReview.Font = new Font("Segoe UI", 9F, FontStyle.Italic);
 			lblReview.ForeColor = Color.FromArgb(45, 65, 85);
-			lblReview.Location = new Point(130, 385);
+			lblReview.Location = new Point(130, 379);
 			lblReview.Size = new Size(540, 25);
 			lblReview.Text = "Enter an amount and select a category to continue.";
 			//
@@ -157,7 +161,7 @@ namespace SmartCashDisbursementApp
 			button1.FlatStyle = FlatStyle.Flat;
 			button1.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
 			button1.ForeColor = Color.FromArgb(20, 75, 115);
-			button1.Location = new Point(20, 292);
+			button1.Location = new Point(20, 286);
 			button1.Size = new Size(190, 90);
 			button1.Text = "A. NEEDS\n\n(WITHDRAWAL FOR\nESSENTIAL LIVING\nEXPENSES)";
 			button1.UseVisualStyleBackColor = false;
@@ -171,7 +175,7 @@ namespace SmartCashDisbursementApp
 			button2.FlatStyle = FlatStyle.Flat;
 			button2.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
 			button2.ForeColor = Color.FromArgb(20, 75, 115);
-			button2.Location = new Point(305, 292);
+			button2.Location = new Point(305, 286);
 			button2.Size = new Size(190, 90);
 			button2.Text = "B. WANTS\n\n(WITHDRAWAL FOR\nDISCRETIONARY OR\nLEISURE SPENDING)";
 			button2.UseVisualStyleBackColor = false;
@@ -185,7 +189,7 @@ namespace SmartCashDisbursementApp
 			button3.FlatStyle = FlatStyle.Flat;
 			button3.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
 			button3.ForeColor = Color.FromArgb(20, 75, 115);
-			button3.Location = new Point(590, 292);
+			button3.Location = new Point(590, 286);
 			button3.Size = new Size(190, 90);
 			button3.Text = "C. SAVINGS\n\n(WITHDRAWAL FROM\nEMERGENCY OR\nGOAL FUNDS)";
 			button3.UseVisualStyleBackColor = false;
@@ -194,11 +198,16 @@ namespace SmartCashDisbursementApp
 			// pnlFooter
 			//
 			pnlFooter.BackColor = Color.FromArgb(8, 52, 105);
-			pnlFooter.Controls.Add(dateTimeLabel);
-			pnlFooter.Controls.Add(lblFooter);
+			pnlFooter.Controls.Add(pnlSecurityFooter);
 			pnlFooter.Controls.Add(actionBar);
 			pnlFooter.Dock = DockStyle.Bottom;
-			pnlFooter.Height = 108;
+			pnlFooter.Height = 116;
+			pnlSecurityFooter.BackColor = Color.FromArgb(8, 52, 105);
+			pnlSecurityFooter.Controls.Add(dateTimeLabel);
+			pnlSecurityFooter.Controls.Add(lblFooterSubtitle);
+			pnlSecurityFooter.Controls.Add(lblFooter);
+			pnlSecurityFooter.Dock = DockStyle.Bottom;
+			pnlSecurityFooter.Height = 64;
 			actionBar.BackColor = Color.FromArgb(8, 52, 105);
 			actionBar.Controls.Add(btnBack);
 			actionBar.Dock = DockStyle.Top;
@@ -207,15 +216,20 @@ namespace SmartCashDisbursementApp
 			// lblFooter
 			//
 			lblFooter.AutoSize = true;
-			lblFooter.Font = new Font("Segoe UI", 8F);
+			lblFooter.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
 			lblFooter.ForeColor = Color.White;
-			lblFooter.Location = new Point(24, 72);
-			lblFooter.Text = "SECURE SYSTEM - Your security is our priority.";
-			dateTimeLabel.Anchor = AnchorStyles.Right | AnchorStyles.Bottom;
+			lblFooter.Location = new Point(24, 7);
+			lblFooter.Text = "SECURE SYSTEM";
+			lblFooterSubtitle.AutoSize = true;
+			lblFooterSubtitle.Font = new Font("Segoe UI", 9F, FontStyle.Regular);
+			lblFooterSubtitle.ForeColor = Color.White;
+			lblFooterSubtitle.Location = new Point(24, 31);
+			lblFooterSubtitle.Text = "Your security is our priority.";
+			dateTimeLabel.Anchor = AnchorStyles.Right | AnchorStyles.Top;
 			dateTimeLabel.AutoSize = true;
-			dateTimeLabel.Font = new Font("Segoe UI", 9F);
+			dateTimeLabel.Font = new Font("Segoe UI", 10F);
 			dateTimeLabel.ForeColor = Color.White;
-			dateTimeLabel.Location = new Point(620, 76);
+			dateTimeLabel.Location = new Point(620, 22);
 			//
 			// btnBack
 			//
@@ -263,7 +277,8 @@ namespace SmartCashDisbursementApp
 			pnlAmount.ResumeLayout(false);
 			pnlAmount.PerformLayout();
 			pnlFooter.ResumeLayout(false);
-			pnlFooter.PerformLayout();
+			pnlSecurityFooter.ResumeLayout(false);
+			pnlSecurityFooter.PerformLayout();
 			actionBar.ResumeLayout(false);
 			ResumeLayout(false);
 			PerformLayout();
@@ -286,8 +301,10 @@ namespace SmartCashDisbursementApp
 		private Button button2;
 		private Button button3;
 		private Panel pnlFooter;
+		private Panel pnlSecurityFooter;
 		private Panel actionBar;
 		private Label lblFooter;
+		private Label lblFooterSubtitle;
 		private Label dateTimeLabel;
 		private Button btnBack;
 	}
