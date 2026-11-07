@@ -11,7 +11,8 @@ namespace SmartCashDisbursementApp
         {
             InitializeComponent();
             this.userId = userId;
-            dateTimeLabel.Text = DateTime.Now.ToString("MMM d, yyyy | h:mm tt");
+            UpdateDateTime();
+            clockTimer.Start();
             Resize += BudgetingCounselingForm_Resize;
             ApplyResponsiveLayout();
         }
@@ -75,15 +76,31 @@ namespace SmartCashDisbursementApp
             ApplyResponsiveLayout();
         }
 
+        private void clockTimer_Tick(object sender, EventArgs e)
+        {
+            UpdateDateTime();
+        }
+
+        private void BudgetingCounselingForm_FormClosed(object sender, FormClosedEventArgs e)
+        {
+            clockTimer.Stop();
+        }
+
+        private void UpdateDateTime()
+        {
+            dateTimeLabel.Text = DateTime.Now.ToString("MMM dd, yyyy | hh:mm tt");
+        }
+
         private void ApplyResponsiveLayout()
         {
-            if (pnlMain == null || lblTitle == null || lblSection == null || lblInstruction == null)
+            if (pnlContent == null || pnlMain == null || lblTitle == null || lblSection == null || lblInstruction == null)
                 return;
 
-            pnlMain.Left = Math.Max(24, (ClientSize.Width - pnlMain.Width) / 2);
-            lblTitle.Left = Math.Max(24, (ClientSize.Width - lblTitle.Width) / 2);
-            lblSection.Left = Math.Max(24, (ClientSize.Width - lblSection.Width) / 2);
-            lblInstruction.Left = Math.Max(24, (ClientSize.Width - lblInstruction.Width) / 2);
+            int contentWidth = pnlContent.ClientSize.Width;
+            pnlMain.Left = Math.Max(24, (contentWidth - pnlMain.Width) / 2);
+            lblTitle.Left = Math.Max(24, (contentWidth - lblTitle.Width) / 2);
+            lblSection.Left = Math.Max(24, (contentWidth - lblSection.Width) / 2);
+            lblInstruction.Left = Math.Max(24, (contentWidth - lblInstruction.Width) / 2);
         }
     }
 }
