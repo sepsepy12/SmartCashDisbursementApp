@@ -28,11 +28,12 @@ namespace SmartCashDisbursementApp
 		{
 			InitializeComponent();
 			this.userId = userId;
-			lblDateTime.Text = DateTime.Now.ToString("MMM d, yyyy | h:mm tt");
 		}
 
 		private void SpendingAnalyticsForm_Load(object sender, EventArgs e)
 		{
+			UpdateDateTime();
+			clockTimer.Start();
 			ApplyResponsiveLayout();
 			RefreshAnalytics();
 		}
@@ -55,6 +56,10 @@ namespace SmartCashDisbursementApp
 			int rightX = leftX + leftWidth + gap;
 
 			pnlHeader.Width = pnlScroll.ClientSize.Width;
+			lblTitle.Location = new Point(contentLeft + margin, 84);
+			lblTitle.Width = Math.Max(1, contentWidth - margin * 2);
+			lblSubtitle.Location = new Point(contentLeft + margin, 120);
+			lblSubtitle.Width = Math.Max(1, contentWidth - margin * 2);
 			pnlOverview.Location = new Point(leftX, pnlOverview.Top);
 			pnlOverview.Width = leftWidth;
 			pnlCategories.Location = new Point(leftX, pnlCategories.Top);
@@ -66,7 +71,8 @@ namespace SmartCashDisbursementApp
 			pnlInsights.Location = new Point(rightX, pnlInsights.Top);
 			pnlInsights.Width = rightWidth;
 			btnExport.Left = Math.Max(margin, actionBar.ClientSize.Width - margin - btnExport.Width);
-			lblDateTime.Location = new Point(Math.Max(24, pnlFooter.ClientSize.Width - lblDateTime.Width - 24), 76);
+			btnViewAll.Left = Math.Max(btnBack.Right + margin, btnExport.Left - 12 - btnViewAll.Width);
+			lblDateTime.Location = new Point(Math.Max(24, pnlSecurityFooter.ClientSize.Width - lblDateTime.Width - 24), Math.Max(0, (pnlSecurityFooter.ClientSize.Height - lblDateTime.Height) / 2));
 
 			int cardWidth = Math.Max(1, (pnlOverview.ClientSize.Width - 30 - 30) / 3);
 			Control[] cards = { lblMonthlyCashIn.Parent, lblMonthlyWithdrawn.Parent, lblDailyAverage.Parent };
@@ -93,9 +99,15 @@ namespace SmartCashDisbursementApp
 			transactionGrid.ColumnHeadersDefaultCellStyle.WrapMode = DataGridViewTriState.True;
 			transactionGrid.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
 			lblTransactionEmpty.Left = Math.Max(15, (pnlRecent.ClientSize.Width - lblTransactionEmpty.Width) / 2);
-			btnViewAll.Width = Math.Max(120, pnlRecent.ClientSize.Width - 30);
+			btnViewAll.Width = 220;
 			insightsList.Width = Math.Max(120, pnlInsights.ClientSize.Width - 30);
 		}
+
+		private void clockTimer_Tick(object sender, EventArgs e) => UpdateDateTime();
+
+		private void SpendingAnalyticsForm_FormClosed(object sender, FormClosedEventArgs e) => clockTimer.Stop();
+
+		private void UpdateDateTime() => lblDateTime.Text = DateTime.Now.ToString("MMM dd, yyyy | hh:mm tt");
 
 		private void insightsList_MeasureItem(object sender, MeasureItemEventArgs e)
 		{
