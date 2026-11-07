@@ -345,12 +345,14 @@ namespace SmartCashDisbursementApp
 			pnlFooter.Controls.Add(pnlActionBar);
 			pnlFooter.Dock = DockStyle.Bottom;
 			pnlFooter.Name = "pnlFooter";
+			pnlFooter.Visible = true;
 			pnlFooter.Height = 116;
 			pnlFooter.TabIndex = 7;
 			pnlActionBar.BackColor = Color.FromArgb(8, 52, 105);
 			pnlActionBar.Controls.Add(btnBack);
 			pnlActionBar.Controls.Add(btnConfirm);
 			pnlActionBar.Dock = DockStyle.Top;
+			pnlActionBar.Visible = true;
 			pnlActionBar.Height = 52;
 			// 
 			// lblFooter
@@ -402,7 +404,7 @@ namespace SmartCashDisbursementApp
 			btnConfirm.Size = new Size(150, 38);
 			btnConfirm.TabIndex = 2;
 			btnConfirm.Text = "CONFIRM";
-			btnConfirm.Visible = false;
+			btnConfirm.Visible = true;
 			btnConfirm.UseVisualStyleBackColor = false;
 			btnConfirm.Click += button4_Click;
 			// 

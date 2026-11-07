@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.Drawing;
 using System.Windows.Forms;
 using MySql.Data.MySqlClient;
 
@@ -20,9 +22,15 @@ namespace SmartCashDisbursementApp
         public DepositForm(int userId)
         {
             InitializeComponent();
+            btnConfirm.Parent = pnlActionBar;
+            pnlFooter.Visible = true;
+            pnlActionBar.Visible = true;
+            btnConfirm.Visible = true;
+            btnConfirm.BringToFront();
             this.userId = userId;
             UpdateDateTime();
             clockTimer.Start();
+            Shown += DepositForm_Shown;
             Resize += DepositForm_Resize;
             ApplyResponsiveLayout();
         }
@@ -55,7 +63,7 @@ namespace SmartCashDisbursementApp
             selectedMethod = "Specific";
             pnlCategorySelection.Visible = true;
             pnlSpecificReview.Visible = false;
-            btnConfirm.Visible = false;
+            btnConfirm.Visible = true;
             SelectSpecificCategory(null);
             UpdateSpecificPreview();
         }
@@ -202,7 +210,7 @@ namespace SmartCashDisbursementApp
         {
             pnlSpecificReview.Visible = false;
             pnlCategorySelection.Visible = true;
-            btnConfirm.Visible = false;
+            btnConfirm.Visible = true;
         }
 
         private void CategoryButton_Click(object sender, EventArgs e)
@@ -250,7 +258,7 @@ namespace SmartCashDisbursementApp
             pendingDepositAmount = 0;
             pnlCategorySelection.Visible = false;
             pnlSpecificReview.Visible = false;
-            btnConfirm.Visible = false;
+            btnConfirm.Visible = true;
             UpdateCategoryButtonStyles();
             lblSpecificDesc.Text = "(Select a specific budget category)";
         }
@@ -293,6 +301,40 @@ namespace SmartCashDisbursementApp
         private void DepositForm_Resize(object sender, EventArgs e)
         {
             ApplyResponsiveLayout();
+            PositionConfirmButton();
+        }
+
+        private void DepositForm_Shown(object sender, EventArgs e)
+        {
+            pnlFooter.Visible = true;
+            pnlActionBar.Visible = true;
+            btnConfirm.Visible = true;
+            btnConfirm.BringToFront();
+            pnlFooter.PerformLayout();
+            pnlActionBar.PerformLayout();
+            PositionConfirmButton();
+            WriteConfirmButtonDiagnostics();
+        }
+
+        private void PositionConfirmButton()
+        {
+            if (pnlActionBar == null || btnConfirm == null)
+                return;
+
+            btnConfirm.Size = new Size(150, 38);
+            btnConfirm.Location = new Point(
+                Math.Max(0, pnlActionBar.ClientSize.Width - btnConfirm.Width - 24),
+                7);
+        }
+
+        private void WriteConfirmButtonDiagnostics()
+        {
+            Debug.WriteLine(
+                $"DepositForm CONFIRM diagnostics: pnlFooter.ClientSize={pnlFooter.ClientSize}; " +
+                $"pnlActionBar.ClientSize={pnlActionBar.ClientSize}; " +
+                $"btnConfirm.Bounds={btnConfirm.Bounds}; btnConfirm.Visible={btnConfirm.Visible}; " +
+                $"btnConfirm.Parent={btnConfirm.Parent?.Name ?? "<none>"}; " +
+                $"pnlActionBar.Controls.Contains(btnConfirm)={pnlActionBar.Controls.Contains(btnConfirm)}");
         }
 
         private void clockTimer_Tick(object sender, EventArgs e)
