@@ -13,9 +13,12 @@ namespace SmartCashDisbursementApp
             InitializeComponent();
             this.userId = userId;
             this.fullName = fullName;
-            lblSubtitle.Text = $"MAIN MENU - PLEASE SELECT AN OPTION  |  Welcome, {fullName}";
+            lblSubtitle.Text = "MAIN MENU - PLEASE SELECT AN OPTION";
+            lblWelcome.Text = $"Welcome, {fullName}";
             Resize += DashboardForm_Resize;
             ApplyResponsiveLayout();
+            UpdateDateTime();
+            clockTimer.Start();
         }
 
         private void btnCashDeposit_Click(object sender, EventArgs e)
@@ -59,12 +62,29 @@ namespace SmartCashDisbursementApp
 
         private void ApplyResponsiveLayout()
         {
-            if (pnlMain == null || lblTitle == null || lblSubtitle == null)
+            if (pnlMain == null || lblTitle == null || lblSubtitle == null || lblWelcome == null || pnlHeader == null || pnlFooter == null)
                 return;
 
             pnlMain.Left = Math.Max(24, (ClientSize.Width - pnlMain.Width) / 2);
             lblTitle.Left = Math.Max(24, (ClientSize.Width - lblTitle.Width) / 2);
             lblSubtitle.Left = Math.Max(24, (ClientSize.Width - lblSubtitle.Width) / 2);
+            lblWelcome.Left = Math.Max(24, (ClientSize.Width - lblWelcome.Width) / 2);
+
+            int contentTop = pnlHeader.Bottom + 28;
+            lblTitle.Top = contentTop;
+            lblSubtitle.Top = lblTitle.Bottom + 8;
+            lblWelcome.Top = lblSubtitle.Bottom + 4;
+            pnlMain.Top = lblWelcome.Bottom + 18;
+        }
+
+        private void DashboardForm_FormClosed(object sender, FormClosedEventArgs e)
+        {
+            clockTimer.Stop();
+        }
+
+        private void UpdateDateTime()
+        {
+            lblDateTime.Text = DateTime.Now.ToString("MMM dd, yyyy | hh:mm tt");
         }
     }
 }

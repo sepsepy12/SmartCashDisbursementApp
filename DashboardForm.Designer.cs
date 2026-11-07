@@ -6,6 +6,11 @@
 
         protected override void Dispose(bool disposing)
         {
+            if (disposing)
+            {
+                clockTimer?.Stop();
+            }
+
             if (disposing && (components != null))
             {
                 components.Dispose();
@@ -15,10 +20,13 @@
 
         private void InitializeComponent()
         {
+            components = new System.ComponentModel.Container();
             pnlHeader = new Panel();
             lblAppName = new Label();
+            lblAppSubtitle = new Label();
             lblTitle = new Label();
             lblSubtitle = new Label();
+            lblWelcome = new Label();
             pnlMain = new Panel();
             pnlCashDeposit = new Panel();
             pbA = new PictureBox();
@@ -34,7 +42,9 @@
             lblCName = new Label();
             pnlFooter = new Panel();
             lblSecurity = new Label();
+            lblSecuritySubtitle = new Label();
             lblDateTime = new Label();
+            clockTimer = new System.Windows.Forms.Timer(components);
             pnlHeader.SuspendLayout();
             pnlMain.SuspendLayout();
             pnlCashDeposit.SuspendLayout();
@@ -48,31 +58,43 @@
             // 
             // pnlHeader
             // 
-            pnlHeader.BackColor = Color.FromArgb(8, 80, 145);
+            pnlHeader.BackColor = Color.FromArgb(7, 57, 113);
             pnlHeader.Controls.Add(lblAppName);
+            pnlHeader.Controls.Add(lblAppSubtitle);
             pnlHeader.Dock = DockStyle.Top;
             pnlHeader.Location = new Point(0, 0);
             pnlHeader.Name = "pnlHeader";
             pnlHeader.Padding = new Padding(10);
-            pnlHeader.Size = new Size(800, 70);
+            pnlHeader.Size = new Size(800, 76);
             pnlHeader.TabIndex = 3;
             // 
             // lblAppName
             // 
             lblAppName.AutoSize = true;
-            lblAppName.Font = new Font("Segoe UI Semibold", 12F, FontStyle.Bold);
+            lblAppName.Font = new Font("Segoe UI", 17F, FontStyle.Bold);
             lblAppName.ForeColor = Color.White;
-            lblAppName.Location = new Point(12, 20);
+            lblAppName.Location = new Point(96, 13);
             lblAppName.Name = "lblAppName";
-            lblAppName.Size = new Size(231, 21);
+            lblAppName.Size = new Size(337, 31);
             lblAppName.TabIndex = 0;
             lblAppName.Text = "SMART CASH DISBURSEMENT";
-            // 
+            //
+            // lblAppSubtitle
+            //
+            lblAppSubtitle.AutoSize = true;
+            lblAppSubtitle.Font = new Font("Segoe UI", 11F, FontStyle.Bold);
+            lblAppSubtitle.ForeColor = Color.FromArgb(164, 213, 255);
+            lblAppSubtitle.Location = new Point(98, 42);
+            lblAppSubtitle.Name = "lblAppSubtitle";
+            lblAppSubtitle.Size = new Size(165, 20);
+            lblAppSubtitle.TabIndex = 1;
+            lblAppSubtitle.Text = "BUDGETING MACHINE";
+            //
             // lblTitle
             // 
             lblTitle.AutoSize = true;
             lblTitle.Font = new Font("Segoe UI", 16F, FontStyle.Bold);
-            lblTitle.Location = new Point(340, 90);
+            lblTitle.Location = new Point(340, 112);
             lblTitle.Name = "lblTitle";
             lblTitle.Size = new Size(149, 30);
             lblTitle.TabIndex = 2;
@@ -82,19 +104,30 @@
             // 
             lblSubtitle.AutoSize = true;
             lblSubtitle.Font = new Font("Segoe UI", 10F);
-            lblSubtitle.Location = new Point(260, 125);
+            lblSubtitle.Location = new Point(260, 151);
             lblSubtitle.Name = "lblSubtitle";
             lblSubtitle.Size = new Size(274, 19);
             lblSubtitle.TabIndex = 1;
             lblSubtitle.Text = "MAIN MENU - PLEASE SELECT AN OPTION";
-            // 
+            //
+            // lblWelcome
+            //
+            lblWelcome.AutoSize = true;
+            lblWelcome.Font = new Font("Segoe UI", 10F);
+            lblWelcome.ForeColor = Color.FromArgb(55, 75, 105);
+            lblWelcome.Location = new Point(350, 176);
+            lblWelcome.Name = "lblWelcome";
+            lblWelcome.Size = new Size(100, 19);
+            lblWelcome.TabIndex = 5;
+            lblWelcome.Text = "Welcome";
+            //
             // pnlMain
             // 
             pnlMain.Anchor = AnchorStyles.Top | AnchorStyles.Left;
             pnlMain.Controls.Add(pnlCashDeposit);
             pnlMain.Controls.Add(pnlCashWithdrawal);
             pnlMain.Controls.Add(pnlBudgeting);
-            pnlMain.Location = new Point(40, 160);
+            pnlMain.Location = new Point(40, 205);
             pnlMain.Name = "pnlMain";
             pnlMain.Size = new Size(720, 220);
             pnlMain.TabIndex = 0;
@@ -241,44 +274,63 @@
             // 
             // pnlFooter
             // 
-            pnlFooter.BackColor = Color.FromArgb(8, 80, 145);
+            pnlFooter.BackColor = Color.FromArgb(8, 52, 105);
             pnlFooter.Controls.Add(lblSecurity);
+            pnlFooter.Controls.Add(lblSecuritySubtitle);
             pnlFooter.Controls.Add(lblDateTime);
             pnlFooter.Dock = DockStyle.Bottom;
-            pnlFooter.Location = new Point(0, 480);
+            pnlFooter.Location = new Point(0, 456);
             pnlFooter.Name = "pnlFooter";
-            pnlFooter.Padding = new Padding(8);
-            pnlFooter.Size = new Size(800, 40);
+            pnlFooter.Padding = new Padding(16, 8, 16, 8);
+            pnlFooter.Size = new Size(800, 64);
             pnlFooter.TabIndex = 4;
             // 
             // lblSecurity
             // 
             lblSecurity.AutoSize = true;
-            lblSecurity.Font = new Font("Segoe UI", 9F);
+            lblSecurity.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
             lblSecurity.ForeColor = Color.White;
-            lblSecurity.Location = new Point(12, 12);
+            lblSecurity.Location = new Point(24, 9);
             lblSecurity.Name = "lblSecurity";
-            lblSecurity.Size = new Size(249, 15);
+            lblSecurity.Size = new Size(99, 15);
             lblSecurity.TabIndex = 0;
-            lblSecurity.Text = "SECURE SYSTEM - Your security is our priority.";
-            // 
+            lblSecurity.Text = "SECURE SYSTEM";
+            //
+            // lblSecuritySubtitle
+            //
+            lblSecuritySubtitle.AutoSize = true;
+            lblSecuritySubtitle.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
+            lblSecuritySubtitle.ForeColor = Color.White;
+            lblSecuritySubtitle.Location = new Point(24, 23);
+            lblSecuritySubtitle.Name = "lblSecuritySubtitle";
+            lblSecuritySubtitle.Size = new Size(158, 15);
+            lblSecuritySubtitle.TabIndex = 1;
+            lblSecuritySubtitle.Text = "Your security is our priority.";
+            //
             // lblDateTime
             // 
-            lblDateTime.AutoSize = true;
-            lblDateTime.Font = new Font("Segoe UI", 9F);
+            lblDateTime.Anchor = AnchorStyles.Top | AnchorStyles.Right | AnchorStyles.Bottom;
+            lblDateTime.AutoSize = false;
+            lblDateTime.Font = new Font("Segoe UI", 10F);
             lblDateTime.ForeColor = Color.White;
-            lblDateTime.Location = new Point(640, 12);
+            lblDateTime.Location = new Point(520, 8);
             lblDateTime.Name = "lblDateTime";
-            lblDateTime.Size = new Size(152, 15);
-            lblDateTime.TabIndex = 1;
-            lblDateTime.Text = "October 28, 2026 | 10:59 PM";
-            // 
+            lblDateTime.Size = new Size(264, 48);
+            lblDateTime.TabIndex = 2;
+            lblDateTime.TextAlign = ContentAlignment.MiddleRight;
+            //
+            // clockTimer
+            //
+            clockTimer.Interval = 1000;
+            clockTimer.Tick += (sender, e) => UpdateDateTime();
+            //
             // DashboardForm
             // 
             AutoScaleDimensions = new SizeF(12F, 30F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(800, 520);
             Controls.Add(pnlMain);
+            Controls.Add(lblWelcome);
             Controls.Add(lblSubtitle);
             Controls.Add(lblTitle);
             Controls.Add(pnlHeader);
@@ -287,9 +339,9 @@
             FormBorderStyle = FormBorderStyle.None;
             Name = "DashboardForm";
             Text = "Dashboard";
-            TopMost = true;
             WindowState = FormWindowState.Maximized;
             Load += DashboardForm_Load;
+            FormClosed += DashboardForm_FormClosed;
             pnlHeader.ResumeLayout(false);
             pnlHeader.PerformLayout();
             pnlMain.ResumeLayout(false);
@@ -307,8 +359,10 @@
 
         private System.Windows.Forms.Panel pnlHeader;
         private System.Windows.Forms.Label lblAppName;
+        private System.Windows.Forms.Label lblAppSubtitle;
         private System.Windows.Forms.Label lblTitle;
         private System.Windows.Forms.Label lblSubtitle;
+        private System.Windows.Forms.Label lblWelcome;
         private System.Windows.Forms.Panel pnlMain;
         private System.Windows.Forms.Panel pnlCashDeposit;
         private System.Windows.Forms.PictureBox pbA;
@@ -324,6 +378,8 @@
         private System.Windows.Forms.Label lblCName;
         private System.Windows.Forms.Panel pnlFooter;
         private System.Windows.Forms.Label lblSecurity;
+        private System.Windows.Forms.Label lblSecuritySubtitle;
         private System.Windows.Forms.Label lblDateTime;
+        private System.Windows.Forms.Timer clockTimer;
     }
 }
