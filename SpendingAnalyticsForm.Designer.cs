@@ -67,11 +67,7 @@ namespace SmartCashDisbursementApp
 			btnBack.Cursor = Cursors.Hand;
 			btnBack.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
 			btnBack.Size = new Size(110, 38);
-			pnlRecent.Controls.Remove(btnViewAll);
-			actionBar.Controls.Add(btnViewAll);
 			btnViewAll.Size = new Size(220, 38);
-			btnViewAll.BackColor = Color.FromArgb(90, 100, 115);
-			btnViewAll.Anchor = AnchorStyles.Right | AnchorStyles.Top;
 			btnViewAll.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
 			btnExport = ActionButton("EXPORT REPORT", 880, 7, 170, actionBar, btnExport_Click);
 			btnExport.BackColor = Color.FromArgb(10, 125, 55);
