@@ -221,6 +221,10 @@ namespace SmartCashDisbursementApp
 			detailsLayout.Controls.Add(txtTargetDate, 1, 1);
 			ConfigureInputLabel(lblAmount, "ENTER AMOUNT (₱)");
 			ConfigureInputLabel(lblDate, "ENTER DATE (YYYY-MM-DD)");
+			lblAmount.Dock = DockStyle.Fill;
+			lblAmount.Margin = new Padding(0, 0, 18, 0);
+			lblDate.Dock = DockStyle.Fill;
+			lblDate.Margin = new Padding(18, 0, 0, 0);
 			textBox1.Dock = DockStyle.Fill;
 			textBox1.Font = new Font("Segoe UI", 14F);
 			textBox1.Margin = new Padding(0, 2, 18, 0);

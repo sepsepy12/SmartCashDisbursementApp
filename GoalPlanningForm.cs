@@ -303,6 +303,14 @@ namespace SmartCashDisbursementApp
 				pnlContent.Padding = new Padding(horizontalPadding, 0, horizontalPadding, 0);
 			}
 
+			if (categoryLayout != null)
+			{
+				int buttonGroupWidth = button1.Width + button2.Width + button3.Width
+					+ button1.Margin.Horizontal + button2.Margin.Horizontal + button3.Margin.Horizontal;
+				int categoryPadding = Math.Max(0, (categoryLayout.ClientSize.Width - buttonGroupWidth) / 2);
+				categoryLayout.Padding = new Padding(categoryPadding, 20, categoryPadding, 20);
+			}
+
 			lblDateTime.Location = new System.Drawing.Point(Math.Max(0, ClientSize.Width - lblDateTime.Width - 24), 20);
 		}
 
