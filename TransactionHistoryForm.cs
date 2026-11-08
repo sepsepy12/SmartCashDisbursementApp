@@ -288,25 +288,35 @@ namespace SmartCashDisbursementApp
 
 		private void ApplyResponsiveLayout()
 		{
-			if (transactionGrid == null || pnlFooter == null)
+			if (transactionGrid == null || pnlFooter == null || securityFooter == null)
 				return;
 
 			const int filterGroupWidth = 610;
 			int filterLeft = Math.Max(24, (ClientSize.Width - filterGroupWidth) / 2);
-			lblTitle.Left = Math.Max(24, (ClientSize.Width - lblTitle.Width) / 2);
+			lblTitle.Location = new Point(24, pnlHeader.Height + 12);
+			lblTitle.Width = Math.Max(0, ClientSize.Width - 48);
+			int filterTop = lblTitle.Bottom + 6;
 			lblType.Left = filterLeft;
+			lblType.Top = filterTop + 3;
 			typeFilter.Left = filterLeft + 45;
+			typeFilter.Top = filterTop;
 			lblCategory.Left = filterLeft + 215;
+			lblCategory.Top = filterTop + 3;
 			categoryFilter.Left = filterLeft + 290;
-			btnRefresh.Left = filterLeft + 480;
+			categoryFilter.Top = filterTop;
+			btnRefresh.Location = new Point(filterLeft + 480, filterTop - 3);
 
 			int contentWidth = Math.Min(1400, Math.Max(0, ClientSize.Width - 48));
 			int contentLeft = Math.Max(24, (ClientSize.Width - contentWidth) / 2);
-			transactionGrid.Location = new Point(contentLeft, transactionGrid.Top);
+			int gridTop = filterTop + 50;
+			transactionGrid.Location = new Point(contentLeft, gridTop);
 			transactionGrid.Width = contentWidth;
-			transactionGrid.Height = Math.Max(180, ClientSize.Height - pnlFooter.Height - transactionGrid.Top - 24);
+			transactionGrid.Height = Math.Max(0, ClientSize.Height - pnlFooter.Height - gridTop - 24);
 			lblEmpty.Left = Math.Max(contentLeft + 12, contentLeft + (contentWidth - lblEmpty.Width) / 2);
-			lblEmpty.Top = transactionGrid.Top + Math.Max(12, (transactionGrid.Height - lblEmpty.Height) / 2);
+			lblEmpty.Top = transactionGrid.Top + Math.Max(0, (transactionGrid.Height - lblEmpty.Height) / 2);
+			dateTimeLabel.Location = new Point(
+				Math.Max(24, securityFooter.ClientSize.Width - dateTimeLabel.Width - 24),
+				Math.Max(8, (securityFooter.ClientSize.Height - dateTimeLabel.Height) / 2));
 		}
 	}
 }
