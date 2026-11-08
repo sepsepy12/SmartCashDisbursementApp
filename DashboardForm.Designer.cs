@@ -32,6 +32,7 @@
             pbA = new PictureBox();
             lblAIndex = new Label();
             lblAName = new Label();
+            lblCashDepositAssistance = new Label();
             pnlCashWithdrawal = new Panel();
             pbB = new PictureBox();
             lblBIndex = new Label();
@@ -138,6 +139,7 @@
             pnlCashDeposit.BorderStyle = BorderStyle.FixedSingle;
             pnlCashDeposit.Controls.Add(pbA);
             pnlCashDeposit.Controls.Add(lblAIndex);
+            pnlCashDeposit.Controls.Add(lblCashDepositAssistance);
             pnlCashDeposit.Controls.Add(lblAName);
             pnlCashDeposit.Cursor = Cursors.Hand;
             pnlCashDeposit.Location = new Point(0, 0);
@@ -179,6 +181,16 @@
             lblAName.TabIndex = 2;
             lblAName.Text = "CASH\r\nDEPOSIT";
             lblAName.Click += btnCashDeposit_Click;
+            // 
+            // lblCashDepositAssistance
+            // 
+            lblCashDepositAssistance.Font = new Font("Segoe UI", 8.5F, FontStyle.Italic);
+            lblCashDepositAssistance.Location = new Point(60, 137);
+            lblCashDepositAssistance.Name = "lblCashDepositAssistance";
+            lblCashDepositAssistance.Size = new Size(160, 20);
+            lblCashDepositAssistance.TabIndex = 3;
+            lblCashDepositAssistance.Text = "(Ask for Assistance)";
+            lblCashDepositAssistance.TextAlign = ContentAlignment.MiddleCenter;
             // 
             // pnlCashWithdrawal
             // 
@@ -368,6 +380,7 @@
         private System.Windows.Forms.PictureBox pbA;
         private System.Windows.Forms.Label lblAIndex;
         private System.Windows.Forms.Label lblAName;
+        private System.Windows.Forms.Label lblCashDepositAssistance;
         private System.Windows.Forms.Panel pnlCashWithdrawal;
         private System.Windows.Forms.PictureBox pbB;
         private System.Windows.Forms.Label lblBIndex;
