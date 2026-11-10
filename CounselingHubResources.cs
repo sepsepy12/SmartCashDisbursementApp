@@ -59,14 +59,19 @@ namespace SmartCashDisbursementApp
             if (cardsPanel == null) return;
             int availableWidth = cardsPanel.ClientSize.Width;
             int width = Math.Min(520, Math.Max(240, (availableWidth - 40) / 2));
+            int cardHeight = width < 300 ? 240 : 180;
             int horizontalPadding = Math.Max(0, (availableWidth - (width * 2) - 40) / 2);
-            cardsPanel.Padding = new Padding(horizontalPadding, 10, horizontalPadding, 10);
-            foreach (Control card in cardsPanel.Controls) card.Width = width;
+            cardsPanel.Padding = new Padding(horizontalPadding, 14, horizontalPadding, 14);
+            foreach (Control card in cardsPanel.Controls)
+            {
+                card.Width = width;
+                card.Height = cardHeight;
+            }
 
             if (contentView != null)
             {
-                int contentPadding = Math.Max(32, (contentView.ClientSize.Width - 1400) / 2);
-                contentView.Padding = new Padding(contentPadding, 30, contentPadding, 20);
+                int contentPadding = Math.Max(48, (contentView.ClientSize.Width - 1400) / 2);
+                contentView.Padding = new Padding(contentPadding, 26, contentPadding, 26);
             }
         }
 
@@ -111,11 +116,11 @@ namespace SmartCashDisbursementApp
                 if (goals.Count > 0)
                 {
                     var goal = goals.OrderByDescending(g => g.CurrentBalance).First();
-                    return $"Set a clear savings target and save a portion of money received before discretionary spending.\r\n\r\n• Avoid unnecessary purchases and compare prices before buying.\r\n• Keep savings separate from everyday spending money.\r\n• Monitor progress toward your saved goals.\r\n\r\nYour saved goal for {goal.CategoryName} is already available in Goal Planning. Review it regularly and keep contributions consistent.\r\n\r\nSmall, regular contributions can be more manageable than waiting to save whatever remains at the end of the month.";
+                    return $"A savings goal for {goal.CategoryName} is already set in Goal Planning. Review its progress regularly and keep your contributions consistent.";
                 }
             }
             catch { }
-            return "Set a clear savings target and save a portion of money received before discretionary spending.\r\n\r\n• Avoid unnecessary purchases.\r\n• Compare prices before buying.\r\n• Keep savings separate from everyday spending money.\r\n• Monitor progress toward saved goals.\r\n\r\nNo saved goals are currently available. You can create one in Goal Planning and review your progress regularly.";
+            return "Savings goal information is unavailable right now. Review your goals when they are available and continue contributing consistently.";
         }
 
         private string BuildSpendingAdvice()
@@ -128,14 +133,14 @@ namespace SmartCashDisbursementApp
                 if (spendingCategories.Count > 0)
                 {
                     var highest = spendingCategories.OrderByDescending(c => c.MonthlyWithdrawals).First();
-                    var advice = $"This month's highest withdrawal category is {highest.Name}. Review its recent transactions before making another withdrawal.";
+                    var advice = $"Your highest withdrawal this month is in the {highest.Name} category. Review its recent transactions before making another purchase.";
                     var depleted = categories.Where(c => c.AvailableBalance <= 0).Select(c => c.Name).ToList();
-                    if (depleted.Count > 0) advice += $"\r\n\r\nAvailable balance is at or below zero for: {string.Join(", ", depleted)}. Consider pausing non-essential spending in these categories.";
-                    return advice + "\r\n\r\nKeep spending within available funds and review transactions regularly. If spending is high compared with available funds, delay non-essential purchases and reassess your category limits.";
+                    if (depleted.Count > 0) advice += $"\r\n\r\nThe available balance is at or below zero in these categories: {string.Join(", ", depleted)}. Consider pausing non-essential spending in them.";
+                    return advice;
                 }
             }
             catch { }
-            return "Review your transactions before making another withdrawal. Identify which categories receive the most spending, avoid unnecessary expenses, and check that money remains available for essential needs.\r\n\r\nPersonalized category advice is not available until transaction and category data can be loaded.";
+            return "No spending category information is available for this month. Check category balances before making purchases and review your spending when transaction data is available.";
         }
 
         private void contentBackButton_Click(object? sender, EventArgs e)

@@ -77,7 +77,7 @@ namespace SmartCashDisbursementApp
             subtitleLabel.Text = "BUDGETING MACHINE";
 
             selectionView.Dock = DockStyle.Fill;
-            selectionView.Padding = new Padding(35, 12, 35, 12);
+            selectionView.Padding = new Padding(35, 18, 35, 18);
             selectionView.Controls.Add(cardsPanel);
             selectionView.Controls.Add(keyboardInstructionLabel);
             selectionView.Controls.Add(selectionSubtitleLabel);
@@ -85,41 +85,41 @@ namespace SmartCashDisbursementApp
             selectionTitleLabel.Dock = DockStyle.Top;
             selectionTitleLabel.Font = new Font("Segoe UI", 15F, FontStyle.Bold);
             selectionTitleLabel.ForeColor = Color.FromArgb(13, 49, 108);
-            selectionTitleLabel.Height = 34;
+            selectionTitleLabel.Height = 42;
             selectionTitleLabel.Text = "COUNSELING HUB & RESOURCES";
             selectionTitleLabel.TextAlign = ContentAlignment.MiddleCenter;
             selectionSubtitleLabel.Dock = DockStyle.Top;
             selectionSubtitleLabel.Font = new Font("Segoe UI", 11F);
             selectionSubtitleLabel.ForeColor = Color.FromArgb(55, 75, 105);
-            selectionSubtitleLabel.Height = 30;
-            selectionSubtitleLabel.Text = "REQUEST ADVICE & ACCESS HELPFUL RESOURCES";
+            selectionSubtitleLabel.Height = 44;
+            selectionSubtitleLabel.Text = "Practical guidance for better budgeting, smarter spending, and stronger savings habits.";
             selectionSubtitleLabel.TextAlign = ContentAlignment.MiddleCenter;
             keyboardInstructionLabel.Dock = DockStyle.Top;
             keyboardInstructionLabel.Font = new Font("Segoe UI", 11F, FontStyle.Bold);
             keyboardInstructionLabel.ForeColor = Color.FromArgb(13, 49, 108);
-            keyboardInstructionLabel.Height = 32;
-            keyboardInstructionLabel.Text = "SELECT AN OPTION (PRESS A, B, C, OR D)";
+            keyboardInstructionLabel.Height = 42;
+            keyboardInstructionLabel.Text = "Choose a topic below to explore helpful financial advice and recommendations.";
             keyboardInstructionLabel.TextAlign = ContentAlignment.MiddleCenter;
             cardsPanel.Dock = DockStyle.Fill;
             cardsPanel.AutoScroll = true;
             cardsPanel.FlowDirection = FlowDirection.LeftToRight;
             cardsPanel.WrapContents = true;
-            cardsPanel.Padding = new Padding(0, 10, 0, 10);
+            cardsPanel.Padding = new Padding(0, 14, 0, 14);
             cardsPanel.Resize += cardsPanel_Resize;
-            cardsPanel.Controls.Add(CreateOptionCard('A', "BUDGETING TIPS", "Learn simple budgeting tips to manage your money better.", Color.FromArgb(20, 84, 180)));
-            cardsPanel.Controls.Add(CreateOptionCard('B', "SAVING TIPS", "Discover smart ways to build your savings and secure your future.", Color.FromArgb(15, 117, 55)));
-            cardsPanel.Controls.Add(CreateOptionCard('C', "SPENDING ADVICE", "Get advice on how to reduce unnecessary expenses.", Color.FromArgb(235, 105, 0)));
-            cardsPanel.Controls.Add(CreateOptionCard('D', "CONTACT INFO", "View contact information for support and inquiries.", Color.FromArgb(72, 48, 150)));
+            cardsPanel.Controls.Add(CreateOptionCard('A', "BUDGETING TIPS", "Learn how to plan your income, divide your money wisely, and manage your budget using practical budgeting techniques.", Color.FromArgb(20, 84, 180)));
+            cardsPanel.Controls.Add(CreateOptionCard('B', "SAVING TIPS", "Discover practical ways to build your savings, prepare for future expenses, and achieve your financial goals.", Color.FromArgb(15, 117, 55)));
+            cardsPanel.Controls.Add(CreateOptionCard('C', "SPENDING ADVICE", "Get practical recommendations for controlling expenses, reducing unnecessary purchases, and making better financial decisions.", Color.FromArgb(235, 105, 0)));
+            cardsPanel.Controls.Add(CreateOptionCard('D', "CONTACT INFORMATION", "Find information about available support services and assistance for budgeting-related questions and concerns.", Color.FromArgb(72, 48, 150)));
 
             contentView.Dock = DockStyle.Fill;
-            contentView.Padding = new Padding(60, 30, 60, 20);
+            contentView.Padding = new Padding(50, 26, 50, 26);
             contentView.Visible = false;
             contentView.Controls.Add(contentTextBox);
             contentView.Controls.Add(contentTitleLabel);
             contentTitleLabel.Dock = DockStyle.Top;
             contentTitleLabel.Font = new Font("Segoe UI", 20F, FontStyle.Bold);
             contentTitleLabel.ForeColor = Color.FromArgb(13, 49, 108);
-            contentTitleLabel.Height = 54;
+            contentTitleLabel.Height = 66;
             contentTitleLabel.TextAlign = ContentAlignment.MiddleCenter;
             contentTextBox.BackColor = Color.White;
             contentTextBox.BorderStyle = BorderStyle.FixedSingle;
@@ -212,10 +212,10 @@ namespace SmartCashDisbursementApp
 
         private Panel CreateOptionCard(char option, string title, string description, Color accent)
         {
-            var card = new Panel { Name = "card" + option, Tag = option, BackColor = Color.White, BorderStyle = BorderStyle.FixedSingle, Cursor = Cursors.Hand, Margin = new Padding(10), Padding = new Padding(18), Height = 150 };
-            var badge = new Label { Text = option.ToString(), BackColor = accent, ForeColor = Color.White, Font = new Font("Segoe UI", 30F, FontStyle.Bold), TextAlign = ContentAlignment.MiddleCenter, Dock = DockStyle.Left, Width = 82 };
-            var titleLabel = new Label { Text = title, ForeColor = accent, Font = new Font("Segoe UI", 13F, FontStyle.Bold), Dock = DockStyle.Top, Height = 38, Padding = new Padding(16, 5, 0, 0) };
-            var descriptionLabel = new Label { Text = description, ForeColor = Color.FromArgb(35, 35, 35), Font = new Font("Segoe UI", 11F), Dock = DockStyle.Fill, Padding = new Padding(16, 0, 10, 0) };
+            var card = new Panel { Name = "card" + option, Tag = option, BackColor = Color.White, BorderStyle = BorderStyle.FixedSingle, Cursor = Cursors.Hand, Margin = new Padding(10), Padding = new Padding(16), Height = 180 };
+            var badge = new Label { Text = option.ToString(), BackColor = accent, ForeColor = Color.White, Font = new Font("Segoe UI", 30F, FontStyle.Bold), TextAlign = ContentAlignment.MiddleCenter, Dock = DockStyle.Left, Width = 76 };
+            var titleLabel = new Label { Text = title, ForeColor = accent, Font = new Font("Segoe UI", 13F, FontStyle.Bold), Dock = DockStyle.Top, Height = 42, Padding = new Padding(14, 5, 8, 0) };
+            var descriptionLabel = new Label { Text = description, ForeColor = Color.FromArgb(35, 35, 35), Font = new Font("Segoe UI", 11F), TextAlign = ContentAlignment.TopLeft, Dock = DockStyle.Fill, Padding = new Padding(14, 4, 12, 8) };
             card.Controls.Add(descriptionLabel);
             card.Controls.Add(titleLabel);
             card.Controls.Add(badge);
