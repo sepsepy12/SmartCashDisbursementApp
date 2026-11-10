@@ -59,23 +59,22 @@ namespace SmartCashDisbursementApp
             footerClockTimer = new System.Windows.Forms.Timer(components);
             SuspendLayout();
 
-            headerPanel.BackColor = Color.FromArgb(8, 52, 105);
+            headerPanel.BackColor = Color.FromArgb(7, 57, 113);
             headerPanel.Controls.Add(appNameLabel);
             headerPanel.Controls.Add(subtitleLabel);
             headerPanel.Dock = DockStyle.Top;
-            headerPanel.Height = 88;
-            appNameLabel.Dock = DockStyle.Top;
-            appNameLabel.Font = new Font("Segoe UI", 18F, FontStyle.Bold);
+            headerPanel.Height = 76;
+            headerPanel.Padding = new Padding(10);
+            appNameLabel.AutoSize = true;
+            appNameLabel.Font = new Font("Segoe UI", 17F, FontStyle.Bold);
             appNameLabel.ForeColor = Color.White;
-            appNameLabel.Padding = new Padding(28, 12, 0, 0);
+            appNameLabel.Location = new Point(96, 13);
             appNameLabel.Text = "SMART CASH DISBURSEMENT";
-            appNameLabel.Height = 48;
-            subtitleLabel.Dock = DockStyle.Top;
-            subtitleLabel.Font = new Font("Segoe UI", 10F);
-            subtitleLabel.ForeColor = Color.FromArgb(180, 225, 245);
-            subtitleLabel.Padding = new Padding(30, 0, 0, 0);
+            subtitleLabel.AutoSize = true;
+            subtitleLabel.Font = new Font("Segoe UI", 11F, FontStyle.Bold);
+            subtitleLabel.ForeColor = Color.FromArgb(164, 213, 255);
+            subtitleLabel.Location = new Point(98, 42);
             subtitleLabel.Text = "BUDGETING MACHINE";
-            subtitleLabel.Height = 28;
 
             selectionView.Dock = DockStyle.Fill;
             selectionView.Padding = new Padding(35, 12, 35, 12);
