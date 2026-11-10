@@ -96,10 +96,57 @@ namespace SmartCashDisbursementApp
             };
             contentTextBox.Text = option switch
             {
-                'A' => "Track all cash received and expenses so you know where your money goes.\r\n\r\n• Separate needs from wants before making a purchase.\r\n• The 50/30/20 guideline can be a useful reference: about 50% for needs, 30% for wants, and 20% for savings. It is not a mandatory rule and should be adjusted to your circumstances.\r\n• Set a spending limit for each category.\r\n• Review remaining balances regularly.\r\n• Avoid spending money already assigned to savings or essential expenses.",
+                'A' => """
+                    A budget is a plan for how you will use the money you receive. It helps you understand where your money goes, make informed choices, and keep spending aligned with your priorities.
+
+                    A. UNDERSTANDING BUDGETING
+                    A budget compares your income with your planned expenses and savings. Planning ahead can help you cover important costs, avoid overspending, and prepare for future needs.
+
+                    B. APPLY THE 50/30/20 BUDGETING RULE
+                    The 50/30/20 rule is a general guide: about 50% for needs, 30% for wants, and 20% for savings. Adjust it to your circumstances and actual expenses; it is not a mandatory rule.
+
+                    Example for a ₱10,000 deposit:
+                    • Needs — ₱5,000 (50%) for essentials such as food, transportation, and utilities.
+                    • Wants — ₱3,000 (30%) for non-essential expenses such as entertainment and personal purchases.
+                    • Savings — ₱2,000 (20%) for future goals and emergencies.
+
+                    C. PRIORITIZE ESSENTIAL EXPENSES
+                    Plan for necessary expenses such as food, transportation, and utilities before spending on non-essential items. This helps protect the money needed for everyday needs.
+
+                    D. TRACK INCOME AND EXPENSES
+                    Record deposits and withdrawals and regularly review the remaining balance in each category. Keeping track helps you notice changes early and make adjustments before a balance runs low.
+
+                    E. SET REALISTIC SPENDING LIMITS
+                    Choose a spending limit for each category based on your income and essential costs. A realistic limit makes it easier to follow your plan and avoid spending more than you intended.
+
+                    PRACTICAL RECOMMENDATION
+                    Create a budget before spending your money. Always prioritize essential expenses and regularly review your remaining balances to avoid overspending.
+                    """,
                 'B' => BuildSavingAdvice(),
                 'C' => BuildSpendingAdvice(),
-                _ => "Support contact details have not been configured for this installation.\r\n\r\nPlease ask the institution or system administrator to configure the official support contact information. No unverified telephone numbers, email addresses, or office locations are shown here."
+                _ => """
+                    Financial guidance can help you understand your options and make a plan when managing money feels difficult.
+
+                    A. PURPOSE OF FINANCIAL ASSISTANCE
+                    You can seek guidance if you are having trouble managing your budget, controlling expenses, or reaching your savings goals. Discussing your situation may help you identify practical next steps.
+
+                    B. WHEN TO SEEK ASSISTANCE
+                    Consider asking for guidance if you:
+                    • Have difficulty managing monthly expenses.
+                    • Frequently run out of budget before the next deposit.
+                    • Find it difficult to maintain savings.
+                    • Are unsure how to allocate money among budget categories.
+                    • Have difficulty controlling unnecessary spending.
+
+                    C. AVAILABLE SUPPORT INFORMATION
+                    No official contact details are configured in this application. Do not rely on unverified contact information.
+
+                    D. CONTACT INFORMATION AVAILABILITY
+                    Contact information is currently unavailable. Please coordinate with the appropriate project administrator or designated support personnel for assistance.
+
+                    PRACTICAL RECOMMENDATION
+                    Seeking guidance when experiencing budgeting difficulties can help you understand your financial situation and make better financial decisions.
+                    """
             };
             selectionView.Visible = false;
             contentView.Visible = true;
@@ -110,21 +157,45 @@ namespace SmartCashDisbursementApp
 
         private string BuildSavingAdvice()
         {
+            var personalizedInsight = string.Empty;
             try
             {
                 var goals = budgetRepository.GetGoalsForUser(userId);
                 if (goals.Count > 0)
                 {
                     var goal = goals.OrderByDescending(g => g.CurrentBalance).First();
-                    return $"A savings goal for {goal.CategoryName} is already set in Goal Planning. Review its progress regularly and keep your contributions consistent.";
+                    personalizedInsight = $"\r\n\r\nYour current savings goal for {goal.CategoryName} is set up in Goal Planning. Review its progress regularly and keep your contributions consistent.";
                 }
             }
             catch { }
-            return "Savings goal information is unavailable right now. Review your goals when they are available and continue contributing consistently.";
+
+            return """
+                Saving regularly can help you prepare for planned expenses, emergencies, and future goals. Choose an amount you can sustain and make saving part of your budget.
+
+                A. SET CLEAR SAVINGS GOALS
+                Decide what you are saving for, set a specific target amount, and choose a realistic deadline. A clear goal makes it easier to plan how much to contribute and track your progress.
+
+                B. SAVE CONSISTENTLY
+                Set aside a portion of every deposit rather than waiting to see whether money is left over. Even small, regular contributions can build over time.
+
+                C. BUILD AN EMERGENCY FUND
+                Keep money available for unexpected expenses, such as an urgent repair or an unplanned essential cost. An emergency fund can reduce the need to disrupt other goals when surprises occur.
+
+                D. AVOID UNNECESSARY PURCHASES
+                Before buying non-essential items, consider whether the purchase fits your priorities. Reducing some optional spending can free money for your savings goals.
+
+                E. MONITOR SAVINGS PROGRESS
+                Review your savings balance and compare it with your target regularly. If your circumstances change, adjust the contribution or deadline to keep the goal realistic.
+                """ + personalizedInsight + """
+
+                PRACTICAL RECOMMENDATION
+                Develop a consistent savings habit, even if you can only save a small amount. Regular contributions can gradually help you achieve your financial goals.
+                """;
         }
 
         private string BuildSpendingAdvice()
         {
+            var personalizedInsight = string.Empty;
             try
             {
                 var now = DateTime.Now;
@@ -133,14 +204,45 @@ namespace SmartCashDisbursementApp
                 if (spendingCategories.Count > 0)
                 {
                     var highest = spendingCategories.OrderByDescending(c => c.MonthlyWithdrawals).First();
-                    var advice = $"Your highest withdrawal this month is in the {highest.Name} category. Review its recent transactions before making another purchase.";
+                    personalizedInsight = $"Your highest withdrawal this month is in the {highest.Name} category. Review its recent transactions before making another purchase.";
                     var depleted = categories.Where(c => c.AvailableBalance <= 0).Select(c => c.Name).ToList();
-                    if (depleted.Count > 0) advice += $"\r\n\r\nThe available balance is at or below zero in these categories: {string.Join(", ", depleted)}. Consider pausing non-essential spending in them.";
-                    return advice;
+                    if (depleted.Count > 0) personalizedInsight += $"\r\n\r\nThe available balance is at or below zero in these categories: {string.Join(", ", depleted)}. Consider pausing non-essential spending in them.";
+                }
+                else
+                {
+                    personalizedInsight = "No spending category information is available for this month. Check category balances before making purchases and review your spending when transaction data is available.";
                 }
             }
             catch { }
-            return "No spending category information is available for this month. Check category balances before making purchases and review your spending when transaction data is available.";
+
+            return """
+                Responsible spending means making choices that fit your priorities and available budget. Checking your balances and reviewing purchases can help you manage expenses.
+
+                A. UNDERSTAND NEEDS AND WANTS
+                Needs are essential purchases, such as food, transportation, and utilities. Wants are non-essential purchases, such as entertainment or optional personal items. Consider which type an expense is before using your budget.
+
+                B. AVOID IMPULSE BUYING
+                Pause before making an unplanned purchase. Give yourself time to decide whether you need the item, whether it fits your budget, and whether the money has a higher-priority use.
+
+                C. MONITOR CATEGORY BALANCES
+                Check your available Needs, Wants, and Savings balances before spending. A quick review can help you avoid withdrawing money that is already reserved for another purpose.
+
+                D. MANAGE INSUFFICIENT BUDGET BALANCES
+                If a category does not have enough money, consider reducing the expense, postponing the purchase, or adding funds to the category if your budget allows.
+
+                Example:
+                If your Wants balance is ₱300 and you want to withdraw ₱500, your available balance is insufficient. Consider reducing the withdrawal to ₱300 or less, postponing the purchase, or depositing additional funds into the Wants category.
+
+                E. REVIEW SPENDING HABITS
+                Examine your transaction history regularly to see where your money goes. Look for optional expenses you could reduce and use what you learn to update your budget.
+
+                F. MAKE BETTER FINANCIAL DECISIONS
+                Spend within the available category balance and avoid unnecessary withdrawals. If your priorities change, review your budget first rather than relying on money assigned to another purpose.
+                """ + (string.IsNullOrWhiteSpace(personalizedInsight) ? string.Empty : "\r\n\r\nTHIS MONTH'S SPENDING\r\n" + personalizedInsight) + """
+
+                PRACTICAL RECOMMENDATION
+                Before making a purchase, check your available category balance and consider whether the expense is necessary. Avoid spending more than your allocated budget.
+                """;
         }
 
         private void contentBackButton_Click(object? sender, EventArgs e)
