@@ -116,6 +116,22 @@ namespace SmartCashDisbursementApp
                             foreach (var allocation in allocations)
                             {
                                 int categoryId = budgetRepo.GetOrCreateCategoryId(userId, allocation.Key, conn, transaction);
+                                const string updateSql = @"
+                                    UPDATE budget_categories
+                                    SET allocated_amount = allocated_amount + @amount
+                                    WHERE user_id = @userId AND id = @categoryId";
+                                using (var updateCommand = new MySqlCommand(updateSql, conn, transaction))
+                                {
+                                    updateCommand.Parameters.AddWithValue("@amount", allocation.Value);
+                                    updateCommand.Parameters.AddWithValue("@userId", userId);
+                                    updateCommand.Parameters.AddWithValue("@categoryId", categoryId);
+                                    int updatedRows = updateCommand.ExecuteNonQuery();
+                                    if (updatedRows != 1 && allocation.Value != 0)
+                                    {
+                                        throw new InvalidOperationException("The deposit category balance could not be updated.");
+                                    }
+                                }
+
                                 const string sql = "INSERT INTO transactions (user_id, category_id, type, amount) VALUES (@userId, @categoryId, 'deposit', @amount)";
                                 using (var cmd = new MySqlCommand(sql, conn, transaction))
                                 {
