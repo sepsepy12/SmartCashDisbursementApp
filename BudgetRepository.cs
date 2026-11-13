@@ -76,17 +76,16 @@ namespace SmartCashDisbursementApp
                 conn.Open();
                 const string sql = @"
                     SELECT bc.category_name,
-                           COALESCE(SUM(CASE WHEN t.type = 'withdrawal'
-                                              AND t.created_at >= @monthStart
-                                              AND t.created_at < @nextMonthStart
-                                             THEN t.amount ELSE 0 END), 0) AS monthly_withdrawals,
-                           COALESCE(SUM(CASE WHEN t.type = 'deposit' THEN t.amount ELSE -t.amount END), 0) AS available_balance
+                           (SELECT COALESCE(SUM(t.amount), 0)
+                            FROM transactions t
+                            WHERE t.category_id = bc.id
+                              AND t.user_id = bc.user_id
+                              AND t.type = 'withdrawal'
+                              AND t.created_at >= @monthStart
+                              AND t.created_at < @nextMonthStart) AS monthly_withdrawals,
+                           bc.allocated_amount AS available_balance
                     FROM budget_categories bc
-                    LEFT JOIN transactions t
-                      ON t.category_id = bc.id
-                     AND t.user_id = bc.user_id
                     WHERE bc.user_id = @userId
-                    GROUP BY bc.id, bc.category_name
                     ORDER BY bc.id";
                 using (var cmd = new MySqlCommand(sql, conn))
                 {
@@ -195,14 +194,15 @@ namespace SmartCashDisbursementApp
                 conn.Open();
                 string sql = @"
                     SELECT bc.id, bc.category_name,
-                           COALESCE(SUM(CASE WHEN t.type = 'deposit' THEN t.amount ELSE 0 END), 0) AS allocated,
-                           COALESCE(SUM(CASE WHEN t.type = 'withdrawal' THEN t.amount ELSE 0 END), 0) AS spent
+                           bc.allocated_amount AS allocated,
+                           (SELECT COALESCE(SUM(t.amount), 0)
+                            FROM transactions t
+                            WHERE t.category_id = bc.id
+                              AND t.user_id = bc.user_id
+                              AND t.type = 'withdrawal') AS spent
                     FROM budget_categories bc
-                    LEFT JOIN transactions t
-                        ON t.category_id = bc.id
-                       AND t.user_id = bc.user_id
                     WHERE bc.user_id = @userId
-                    GROUP BY bc.id, bc.category_name";
+                    ORDER BY bc.id";
 
                 using (var cmd = new MySqlCommand(sql, conn))
                 {
@@ -303,33 +303,60 @@ namespace SmartCashDisbursementApp
                     try
                     {
                         const string categorySql = @"
-                            SELECT id
+                            SELECT id, allocated_amount
                             FROM budget_categories
                             WHERE user_id = @userId AND category_name = @categoryName
                             FOR UPDATE";
 
-                        int categoryId;
+                        int categoryId = 0;
+                        decimal availableBalance = 0;
+                        bool categoryFound;
                         using (var categoryCommand = new MySqlCommand(categorySql, conn, transaction))
                         {
                             categoryCommand.Parameters.AddWithValue("@userId", userId);
                             categoryCommand.Parameters.AddWithValue("@categoryName", categoryName);
-                            var result = categoryCommand.ExecuteScalar();
-                            if (result == null || result == System.DBNull.Value)
+                            using (var reader = categoryCommand.ExecuteReader())
                             {
-                                transaction.Rollback();
-                                failureReason = "The selected category does not exist for this user.";
-                                return false;
+                                categoryFound = reader.Read();
+                                if (categoryFound)
+                                {
+                                    categoryId = reader.GetInt32("id");
+                                    availableBalance = reader.GetDecimal("allocated_amount");
+                                }
                             }
-
-                            categoryId = System.Convert.ToInt32(result);
                         }
 
-                        remainingBalance = GetCategoryBalance(userId, categoryId, conn, transaction);
-                        if (amount > remainingBalance)
+                        if (!categoryFound)
+                        {
+                            transaction.Rollback();
+                            failureReason = "The selected category does not exist for this user.";
+                            return false;
+                        }
+
+                        if (amount > availableBalance)
                         {
                             transaction.Rollback();
                             failureReason = "The requested amount is greater than the selected category balance.";
                             return false;
+                        }
+
+                        const string updateSql = @"
+                            UPDATE budget_categories
+                            SET allocated_amount = allocated_amount - @amount
+                            WHERE user_id = @userId
+                              AND id = @categoryId
+                              AND allocated_amount >= @amount";
+                        using (var updateCommand = new MySqlCommand(updateSql, conn, transaction))
+                        {
+                            updateCommand.Parameters.AddWithValue("@amount", amount);
+                            updateCommand.Parameters.AddWithValue("@userId", userId);
+                            updateCommand.Parameters.AddWithValue("@categoryId", categoryId);
+                            if (updateCommand.ExecuteNonQuery() != 1)
+                            {
+                                transaction.Rollback();
+                                failureReason = "The requested amount is greater than the selected category balance.";
+                                return false;
+                            }
                         }
 
                         const string insertSql = @"
@@ -344,7 +371,7 @@ namespace SmartCashDisbursementApp
                         }
 
                         transaction.Commit();
-                        remainingBalance -= amount;
+                        remainingBalance = availableBalance - amount;
                         return true;
                     }
                     catch
@@ -366,11 +393,9 @@ namespace SmartCashDisbursementApp
         private decimal GetCategoryBalance(int userId, int categoryId, MySqlConnection conn, MySqlTransaction transaction)
         {
             const string sql = @"
-                SELECT
-                    COALESCE(SUM(CASE WHEN type = 'deposit' THEN amount ELSE 0 END), 0) -
-                    COALESCE(SUM(CASE WHEN type = 'withdrawal' THEN amount ELSE 0 END), 0)
-                FROM transactions
-                WHERE user_id = @userId AND category_id = @categoryId";
+                SELECT allocated_amount
+                FROM budget_categories
+                WHERE user_id = @userId AND id = @categoryId";
 
             using (var cmd = transaction == null
                 ? new MySqlCommand(sql, conn)
@@ -378,7 +403,8 @@ namespace SmartCashDisbursementApp
             {
                 cmd.Parameters.AddWithValue("@userId", userId);
                 cmd.Parameters.AddWithValue("@categoryId", categoryId);
-                return System.Convert.ToDecimal(cmd.ExecuteScalar());
+                var result = cmd.ExecuteScalar();
+                return result == null || result == System.DBNull.Value ? 0 : System.Convert.ToDecimal(result);
             }
         }
 
@@ -394,8 +420,7 @@ namespace SmartCashDisbursementApp
                            bc.category_name,
                            g.target_amount,
                            g.target_date,
-                           COALESCE(SUM(CASE WHEN t.type = 'deposit' THEN t.amount ELSE 0 END), 0)
-                           - COALESCE(SUM(CASE WHEN t.type = 'withdrawal' THEN t.amount ELSE 0 END), 0) AS current_balance
+                           bc.allocated_amount AS current_balance
                     FROM goals g
                     INNER JOIN budget_categories bc
                         ON bc.id = g.category_id
@@ -407,11 +432,7 @@ namespace SmartCashDisbursementApp
                         GROUP BY user_id, category_id
                     ) latest
                         ON latest.latest_goal_id = g.id
-                    LEFT JOIN transactions t
-                        ON t.category_id = bc.id
-                       AND t.user_id = bc.user_id
                     WHERE g.user_id = @userId
-                    GROUP BY g.id, bc.category_name, g.target_amount, g.target_date
                     ORDER BY g.target_date, g.id";
 
                 using (var cmd = new MySqlCommand(sql, conn))
