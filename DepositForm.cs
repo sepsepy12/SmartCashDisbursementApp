@@ -187,7 +187,7 @@ namespace SmartCashDisbursementApp
                                 administratorUserId,
                                 "DEPOSIT_AUTHORIZED",
                                 userId,
-                                $"Authorized deposit of {pendingDepositAmount:C}.",
+                                $"Authorized deposit of ₱{pendingDepositAmount:N2}.",
                                 transaction);
                             transaction.Commit();
                         }
