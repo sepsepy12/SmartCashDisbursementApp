@@ -51,6 +51,16 @@ namespace SmartCashDisbursementApp
 				return;
 			}
 
+			if (button == btnTransactionMonitoring)
+			{
+				if (userId.HasValue)
+				{
+					using var transactionMonitoringForm = new TransactionMonitoringForm(userId.Value);
+					transactionMonitoringForm.ShowDialog(this);
+				}
+				return;
+			}
+
 			MessageBox.Show(
 				$"{button.Text} will be implemented in a later phase.",
 				"Coming Later",
