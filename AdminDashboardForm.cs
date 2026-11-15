@@ -41,6 +41,16 @@ namespace SmartCashDisbursementApp
 				return;
 			}
 
+			if (button == btnUserManagement)
+			{
+				if (userId.HasValue)
+				{
+					using var userManagementForm = new UserManagementForm(userId.Value);
+					userManagementForm.ShowDialog(this);
+				}
+				return;
+			}
+
 			MessageBox.Show(
 				$"{button.Text} will be implemented in a later phase.",
 				"Coming Later",
