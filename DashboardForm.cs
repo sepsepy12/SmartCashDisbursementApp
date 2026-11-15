@@ -7,13 +7,15 @@ namespace SmartCashDisbursementApp
     {
         private int userId;
         private string fullName;
+        public string Role { get; }
         internal bool IsSigningOut { get; private set; }
 
-        public DashboardForm(int userId, string fullName)
+        public DashboardForm(int userId, string fullName, string role)
         {
             InitializeComponent();
             this.userId = userId;
             this.fullName = fullName;
+            Role = role;
             lblSubtitle.Text = "MAIN MENU - PLEASE SELECT AN OPTION";
             lblWelcome.Text = $"Welcome, {fullName}";
             Resize += DashboardForm_Resize;

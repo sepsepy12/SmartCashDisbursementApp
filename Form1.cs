@@ -26,7 +26,7 @@ namespace SmartCashDisbursementApp
             using (var conn = DatabaseHelper.GetConnection())
             {
                 conn.Open();
-                string sql = "SELECT id, password_hash, full_name FROM users WHERE rfid_uid = @uid";
+                string sql = "SELECT id, password_hash, full_name, role, is_active FROM users WHERE rfid_uid = @uid";
                 using (var cmd = new MySql.Data.MySqlClient.MySqlCommand(sql, conn))
                 {
                     cmd.Parameters.AddWithValue("@uid", rfidUid);
@@ -37,28 +37,41 @@ namespace SmartCashDisbursementApp
                             int userId = reader.GetInt32("id");
                             string storedHash = reader.GetString("password_hash");
                             string fullName = reader.GetString("full_name");
+                            string? role = reader["role"] is DBNull ? null : Convert.ToString(reader["role"]);
+                            bool isActive = reader["is_active"] is not DBNull && Convert.ToBoolean(reader["is_active"]);
 
                             if (BCrypt.Net.BCrypt.Verify(enteredPin, storedHash))
                             {
-                                this.Hide();
-                                var dashboard = new DashboardForm(userId, fullName);
-                                dashboard.FormClosed += (s, args) =>
+                                if (!isActive)
                                 {
-                                    if (dashboard.IsSigningOut)
+                                    MessageBox.Show("This account is inactive. Please contact an administrator.");
+                                }
+                                else if (role != "user" && role != "admin")
+                                {
+                                    MessageBox.Show("This account has an invalid role and cannot log in.");
+                                }
+                                else
+                                {
+                                    this.Hide();
+                                    var dashboard = new DashboardForm(userId, fullName, role);
+                                    dashboard.FormClosed += (s, args) =>
                                     {
-                                        txtRfidUid.Clear();
-                                        txtPin.Clear();
-                                        WindowState = FormWindowState.Normal;
-                                        Show();
-                                        Activate();
-                                        txtRfidUid.Focus();
-                                    }
-                                    else
-                                    {
-                                        Close();
-                                    }
-                                };
-                                dashboard.Show();
+                                        if (dashboard.IsSigningOut)
+                                        {
+                                            txtRfidUid.Clear();
+                                            txtPin.Clear();
+                                            WindowState = FormWindowState.Normal;
+                                            Show();
+                                            Activate();
+                                            txtRfidUid.Focus();
+                                        }
+                                        else
+                                        {
+                                            Close();
+                                        }
+                                    };
+                                    dashboard.Show();
+                                }
                             }
                             else
                             {
