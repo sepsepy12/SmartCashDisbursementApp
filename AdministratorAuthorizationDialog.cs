@@ -8,6 +8,7 @@ namespace SmartCashDisbursementApp
 		public AdministratorAuthorizationDialog()
 		{
 			InitializeComponent();
+			Shown += (_, _) => txtRfidUid.Focus();
 		}
 
 		internal void TakeCredentials(out string rfidUid, out string pin)
