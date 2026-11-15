@@ -61,6 +61,16 @@ namespace SmartCashDisbursementApp
 				return;
 			}
 
+			if (button == btnAuthorizationHistory)
+			{
+				if (userId.HasValue)
+				{
+					using var authorizationHistoryForm = new DepositAuthorizationHistoryForm(userId.Value);
+					authorizationHistoryForm.ShowDialog(this);
+				}
+				return;
+			}
+
 			MessageBox.Show(
 				$"{button.Text} will be implemented in a later phase.",
 				"Coming Later",
