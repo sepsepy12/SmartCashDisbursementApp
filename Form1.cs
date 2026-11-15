@@ -53,10 +53,16 @@ namespace SmartCashDisbursementApp
                                 else
                                 {
                                     this.Hide();
-                                    var dashboard = new DashboardForm(userId, fullName, role);
+                                    Form dashboard = role == "admin"
+                                        ? new AdminDashboardForm(userId, fullName)
+                                        : new DashboardForm(userId, fullName, role);
                                     dashboard.FormClosed += (s, args) =>
                                     {
-                                        if (dashboard.IsSigningOut)
+                                        bool isSigningOut = dashboard is AdminDashboardForm adminDashboard
+                                            ? adminDashboard.IsSigningOut
+                                            : dashboard is DashboardForm userDashboard && userDashboard.IsSigningOut;
+
+                                        if (isSigningOut)
                                         {
                                             txtRfidUid.Clear();
                                             txtPin.Clear();
