@@ -81,6 +81,7 @@ namespace SmartCashDisbursementApp
 				}
 
 				string passwordHash = BCrypt.Net.BCrypt.HashPassword(pin);
+				int registeredUserId;
 				const string insertSql = @"
 					INSERT INTO users (rfid_uid, password_hash, full_name, role, is_active)
 					VALUES (@rfidUid, @passwordHash, @fullName, 'user', TRUE)";
@@ -95,8 +96,11 @@ namespace SmartCashDisbursementApp
 						MessageBox.Show(this, "The account could not be registered. Please try again.", "Registration Failed", MessageBoxButtons.OK, MessageBoxIcon.Error);
 						return;
 					}
+					registeredUserId = checked((int)insertCommand.LastInsertedId);
 				}
 
+				SystemActivityLogger.Log(connection, administratorUserId, "USER_REGISTERED", registeredUserId,
+					$"Registered user account for {fullName}.", transaction);
 				transaction.Commit();
 				MessageBox.Show(this, "The user account was registered successfully.", "Registration Complete", MessageBoxButtons.OK, MessageBoxIcon.Information);
 				ClearRegistrationFields();

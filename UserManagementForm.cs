@@ -202,6 +202,13 @@ namespace SmartCashDisbursementApp
 					}
 				}
 
+				SystemActivityLogger.Log(
+					connection,
+					administratorUserId,
+					isActive ? "USER_ACTIVATED" : "USER_DEACTIVATED",
+					selectedUserId,
+					$"{(isActive ? "Activated" : "Deactivated")} user account for {accountName}.",
+					transaction);
 				transaction.Commit();
 				MessageBox.Show(this, $"The account was {(isActive ? "activated" : "deactivated")} successfully.", "Account Updated", MessageBoxButtons.OK, MessageBoxIcon.Information);
 				LoadAccounts();

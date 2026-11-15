@@ -182,6 +182,13 @@ namespace SmartCashDisbursementApp
                                 }
                             }
 
+                            SystemActivityLogger.Log(
+                                conn,
+                                administratorUserId,
+                                "DEPOSIT_AUTHORIZED",
+                                userId,
+                                $"Authorized deposit of {pendingDepositAmount:C}.",
+                                transaction);
                             transaction.Commit();
                         }
                         catch

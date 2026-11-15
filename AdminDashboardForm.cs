@@ -71,6 +71,13 @@ namespace SmartCashDisbursementApp
 				return;
 			}
 
+			if (button == btnActivityLogs)
+			{
+				using var activityLogsForm = new SystemActivityLogsForm();
+				activityLogsForm.ShowDialog(this);
+				return;
+			}
+
 			MessageBox.Show(
 				$"{button.Text} will be implemented in a later phase.",
 				"Coming Later",
@@ -88,6 +95,20 @@ namespace SmartCashDisbursementApp
 
 			if (result == DialogResult.Yes)
 			{
+				try
+				{
+					using var connection = DatabaseHelper.GetConnection();
+					connection.Open();
+					SystemActivityLogger.Log(connection, userId!.Value, "ADMIN_SIGN_OUT", null, "Administrator signed out.");
+				}
+				catch (Exception)
+				{
+					MessageBox.Show(this,
+						"Sign-out could not be completed because the activity could not be recorded. Please try again.",
+						"Unable to Sign Out", MessageBoxButtons.OK, MessageBoxIcon.Error);
+					return;
+				}
+
 				IsSigningOut = true;
 				userId = null;
 				fullName = null;
