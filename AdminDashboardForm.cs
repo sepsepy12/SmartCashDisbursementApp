@@ -31,6 +31,16 @@ namespace SmartCashDisbursementApp
 				return;
 			}
 
+			if (button == btnAccountRegistration)
+			{
+				if (userId.HasValue)
+				{
+					using var registrationForm = new AccountRegistrationForm(userId.Value);
+					registrationForm.ShowDialog(this);
+				}
+				return;
+			}
+
 			MessageBox.Show(
 				$"{button.Text} will be implemented in a later phase.",
 				"Coming Later",
