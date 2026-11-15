@@ -24,6 +24,7 @@
             pnlHeader = new Panel();
             lblAppName = new Label();
             lblAppSubtitle = new Label();
+            btnSignOut = new Button();
             lblTitle = new Label();
             lblSubtitle = new Label();
             lblWelcome = new Label();
@@ -62,6 +63,7 @@
             pnlHeader.BackColor = Color.FromArgb(7, 57, 113);
             pnlHeader.Controls.Add(lblAppName);
             pnlHeader.Controls.Add(lblAppSubtitle);
+            pnlHeader.Controls.Add(btnSignOut);
             pnlHeader.Dock = DockStyle.Top;
             pnlHeader.Location = new Point(0, 0);
             pnlHeader.Name = "pnlHeader";
@@ -90,6 +92,22 @@
             lblAppSubtitle.Size = new Size(165, 20);
             lblAppSubtitle.TabIndex = 1;
             lblAppSubtitle.Text = "BUDGETING MACHINE";
+            //
+            // btnSignOut
+            //
+            btnSignOut.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            btnSignOut.BackColor = Color.FromArgb(164, 213, 255);
+            btnSignOut.FlatAppearance.BorderSize = 0;
+            btnSignOut.FlatStyle = FlatStyle.Flat;
+            btnSignOut.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
+            btnSignOut.ForeColor = Color.FromArgb(7, 57, 113);
+            btnSignOut.Location = new Point(670, 21);
+            btnSignOut.Name = "btnSignOut";
+            btnSignOut.Size = new Size(106, 34);
+            btnSignOut.TabIndex = 2;
+            btnSignOut.Text = "Sign Out";
+            btnSignOut.UseVisualStyleBackColor = false;
+            btnSignOut.Click += btnSignOut_Click;
             //
             // lblTitle
             // 
@@ -372,6 +390,7 @@
         private System.Windows.Forms.Panel pnlHeader;
         private System.Windows.Forms.Label lblAppName;
         private System.Windows.Forms.Label lblAppSubtitle;
+        private System.Windows.Forms.Button btnSignOut;
         private System.Windows.Forms.Label lblTitle;
         private System.Windows.Forms.Label lblSubtitle;
         private System.Windows.Forms.Label lblWelcome;

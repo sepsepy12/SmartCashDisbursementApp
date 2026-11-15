@@ -7,6 +7,7 @@ namespace SmartCashDisbursementApp
     {
         private int userId;
         private string fullName;
+        internal bool IsSigningOut { get; private set; }
 
         public DashboardForm(int userId, string fullName)
         {
@@ -27,6 +28,21 @@ namespace SmartCashDisbursementApp
             var deposit = new DepositForm(userId);
             deposit.FormClosed += (s, args) => this.Show();
             deposit.Show();
+        }
+
+        private void btnSignOut_Click(object sender, EventArgs e)
+        {
+            var result = MessageBox.Show(
+                "Are you sure you want to sign out?",
+                "Sign Out",
+                MessageBoxButtons.YesNo,
+                MessageBoxIcon.Question);
+
+            if (result == DialogResult.Yes)
+            {
+                IsSigningOut = true;
+                Close();
+            }
         }
 
         private void btnCashWithdrawal_Click(object sender, EventArgs e)

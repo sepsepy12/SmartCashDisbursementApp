@@ -42,7 +42,22 @@ namespace SmartCashDisbursementApp
                             {
                                 this.Hide();
                                 var dashboard = new DashboardForm(userId, fullName);
-                                dashboard.FormClosed += (s, args) => this.Close();
+                                dashboard.FormClosed += (s, args) =>
+                                {
+                                    if (dashboard.IsSigningOut)
+                                    {
+                                        txtRfidUid.Clear();
+                                        txtPin.Clear();
+                                        WindowState = FormWindowState.Normal;
+                                        Show();
+                                        Activate();
+                                        txtRfidUid.Focus();
+                                    }
+                                    else
+                                    {
+                                        Close();
+                                    }
+                                };
                                 dashboard.Show();
                             }
                             else
