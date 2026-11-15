@@ -12,9 +12,17 @@
 		<NoWarn>$(NoWarn);WFO1000</NoWarn>
 	</PropertyGroup>
 
+	<ItemGroup>
+	  <None Include="AdminBootstrap\AdminBootstrap.csproj" />
+	</ItemGroup>
+
   <ItemGroup>
     <PackageReference Include="BCrypt.Net-Next" Version="4.2.0" />
     <PackageReference Include="MySql.Data" Version="9.7.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Remove="AdminBootstrap\**\*.cs" />
   </ItemGroup>
 
   <ItemGroup>
