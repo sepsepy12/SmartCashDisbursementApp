@@ -18,6 +18,7 @@ namespace SmartCashDisbursementApp
 			{
 				"ADMIN_LOGIN",
 				"ADMIN_SIGN_OUT",
+				"ADMIN_REGISTERED",
 				"USER_REGISTERED",
 				"USER_ACTIVATED",
 				"USER_DEACTIVATED",

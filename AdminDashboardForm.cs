@@ -41,6 +41,16 @@ namespace SmartCashDisbursementApp
 				return;
 			}
 
+			if (button == btnAdministratorManagement)
+			{
+				if (userId.HasValue)
+				{
+					using var administratorManagementForm = new AdministratorManagementForm(userId.Value);
+					administratorManagementForm.ShowDialog(this);
+				}
+				return;
+			}
+
 			if (button == btnUserManagement)
 			{
 				if (userId.HasValue)

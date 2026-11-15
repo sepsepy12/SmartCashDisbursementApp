@@ -9,6 +9,7 @@ namespace SmartCashDisbursementApp
 		private FlowLayoutPanel flpNavigation;
 		private Button btnDashboardOverview;
 		private Button btnAccountRegistration;
+		private Button btnAdministratorManagement;
 		private Button btnUserManagement;
 		private Button btnTransactionMonitoring;
 		private Button btnAuthorizationHistory;
@@ -37,6 +38,7 @@ namespace SmartCashDisbursementApp
 			flpNavigation = new FlowLayoutPanel();
 			btnDashboardOverview = CreateNavigationButton("Dashboard Overview");
 			btnAccountRegistration = CreateNavigationButton("Account Registration");
+			btnAdministratorManagement = CreateNavigationButton("Administrator Management");
 			btnUserManagement = CreateNavigationButton("User Management");
 			btnTransactionMonitoring = CreateNavigationButton("Transaction Monitoring");
 			btnAuthorizationHistory = CreateNavigationButton("Deposit Authorization History");
@@ -91,6 +93,7 @@ namespace SmartCashDisbursementApp
 			flpNavigation.AutoScroll = true;
 			flpNavigation.Controls.Add(btnDashboardOverview);
 			flpNavigation.Controls.Add(btnAccountRegistration);
+			flpNavigation.Controls.Add(btnAdministratorManagement);
 			flpNavigation.Controls.Add(btnUserManagement);
 			flpNavigation.Controls.Add(btnTransactionMonitoring);
 			flpNavigation.Controls.Add(btnAuthorizationHistory);
@@ -112,6 +115,10 @@ namespace SmartCashDisbursementApp
 			// btnAccountRegistration
 			// 
 			btnAccountRegistration.Click += btnNavigation_Click;
+			// 
+			// btnAdministratorManagement
+			// 
+			btnAdministratorManagement.Click += btnNavigation_Click;
 			// 
 			// btnUserManagement
 			// 
