@@ -86,8 +86,15 @@ namespace SmartCashDisbursementApp
 
 		private void ConfirmWithdrawal()
 		{
-			if (isSaving || pendingAmount <= 0 || string.IsNullOrEmpty(selectedCategory))
+			if (isSaving || string.IsNullOrEmpty(selectedCategory))
 				return;
+
+			if (!CashAmountValidator.IsValid(pendingAmount))
+			{
+				ClearPendingWithdrawal();
+				MessageBox.Show("Invalid withdrawal amount. Withdrawals must be in multiples of ₱50.", "Invalid Amount", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+				return;
+			}
 
 			if (!TryGetAmount(out decimal enteredAmount))
 			{
@@ -144,11 +151,11 @@ namespace SmartCashDisbursementApp
 		private bool TryGetAmount(out decimal amount)
 		{
 			string text = txtAmount.Text.Replace("P", "").Replace("₱", "").Trim();
-			if (decimal.TryParse(text, out amount) && amount > 0)
+			if (decimal.TryParse(text, out amount) && CashAmountValidator.IsValid(amount))
 				return true;
 
 			amount = 0;
-			MessageBox.Show("Please enter a valid withdrawal amount greater than zero.", "Invalid Amount", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+			MessageBox.Show("Invalid withdrawal amount. Withdrawals must be in multiples of ₱50.", "Invalid Amount", MessageBoxButtons.OK, MessageBoxIcon.Warning);
 			return false;
 		}
 

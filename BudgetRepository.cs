@@ -283,9 +283,9 @@ namespace SmartCashDisbursementApp
             remainingBalance = 0;
             failureReason = null;
 
-            if (amount <= 0)
+            if (!CashAmountValidator.IsValid(amount))
             {
-                failureReason = "The withdrawal amount must be greater than zero.";
+                failureReason = "Invalid withdrawal amount. Withdrawals must be in multiples of ₱50.";
                 return false;
             }
 

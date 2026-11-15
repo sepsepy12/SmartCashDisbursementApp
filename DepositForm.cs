@@ -102,6 +102,14 @@ namespace SmartCashDisbursementApp
 
         private void ConfirmDeposit(Dictionary<string, decimal> allocations, string summary)
         {
+            if (!CashAmountValidator.IsValid(pendingDepositAmount))
+            {
+                MessageBox.Show(
+                    "Invalid deposit amount. Only ₱50, ₱100, ₱200, ₱500, and ₱1,000 bills are accepted.",
+                    "Invalid Amount", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
             isSaving = true;
             btnConfirm.Enabled = false;
             try
@@ -176,9 +184,11 @@ namespace SmartCashDisbursementApp
         private bool TryGetDepositAmount(out decimal amount)
         {
             string text = txtAmountDisplay.Text.Replace("P", "").Replace("₱", "").Trim();
-            if (decimal.TryParse(text, out amount) && amount > 0) return true;
+            if (decimal.TryParse(text, out amount) && CashAmountValidator.IsValid(amount)) return true;
             amount = 0;
-            MessageBox.Show("Please enter a valid deposit amount.", "Invalid Amount", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            MessageBox.Show(
+                "Invalid deposit amount. Only ₱50, ₱100, ₱200, ₱500, and ₱1,000 bills are accepted.",
+                "Invalid Amount", MessageBoxButtons.OK, MessageBoxIcon.Warning);
             return false;
         }
 
