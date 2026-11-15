@@ -112,8 +112,25 @@ namespace SmartCashDisbursementApp
 
             isSaving = true;
             btnConfirm.Enabled = false;
+            string rfidUid = string.Empty;
+            string pin = string.Empty;
             try
             {
+                using (var authorizationDialog = new AdministratorAuthorizationDialog())
+                {
+                    if (authorizationDialog.ShowDialog(this) != DialogResult.OK)
+                    {
+                        MessageBox.Show(this,
+                            "Administrator authorization was cancelled. No deposit was made.",
+                            "Authorization Cancelled",
+                            MessageBoxButtons.OK,
+                            MessageBoxIcon.Information);
+                        return;
+                    }
+
+                    authorizationDialog.TakeCredentials(out rfidUid, out pin);
+                }
+
                 using (var conn = DatabaseHelper.GetConnection())
                 {
                     conn.Open();
@@ -121,6 +138,18 @@ namespace SmartCashDisbursementApp
                     {
                         try
                         {
+                            if (!TryVerifyAdministrator(conn, transaction, rfidUid, pin, out int administratorUserId, out string authorizationError))
+                            {
+                                transaction.Rollback();
+                                MessageBox.Show(this,
+                                    authorizationError,
+                                    "Administrator Authorization Failed",
+                                    MessageBoxButtons.OK,
+                                    MessageBoxIcon.Warning);
+                                return;
+                            }
+
+                            pin = string.Empty;
                             foreach (var allocation in allocations)
                             {
                                 int categoryId = budgetRepo.GetOrCreateCategoryId(userId, allocation.Key, conn, transaction);
@@ -140,12 +169,15 @@ namespace SmartCashDisbursementApp
                                     }
                                 }
 
-                                const string sql = "INSERT INTO transactions (user_id, category_id, type, amount) VALUES (@userId, @categoryId, 'deposit', @amount)";
+                                const string sql = @"
+                                    INSERT INTO transactions (user_id, category_id, type, amount, authorized_by_user_id)
+                                    VALUES (@userId, @categoryId, 'deposit', @amount, @administratorUserId)";
                                 using (var cmd = new MySqlCommand(sql, conn, transaction))
                                 {
                                     cmd.Parameters.AddWithValue("@userId", userId);
                                     cmd.Parameters.AddWithValue("@categoryId", categoryId);
                                     cmd.Parameters.AddWithValue("@amount", allocation.Value);
+                                    cmd.Parameters.AddWithValue("@administratorUserId", administratorUserId);
                                     cmd.ExecuteNonQuery();
                                 }
                             }
@@ -170,15 +202,79 @@ namespace SmartCashDisbursementApp
                 MessageBox.Show("Deposit confirmed successfully!\n\n" + summary, "Deposit Successful", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 ResetPendingDeposit();
             }
+            catch (MySqlException)
+            {
+                MessageBox.Show("A database error occurred while verifying the administrator or saving the deposit. Please try again.", "Database Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
             catch (Exception)
             {
                 MessageBox.Show("The deposit could not be saved. Please try again.", "Database Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
             finally
             {
+                rfidUid = string.Empty;
+                pin = string.Empty;
                 isSaving = false;
                 btnConfirm.Enabled = true;
             }
+        }
+
+        private bool TryVerifyAdministrator(
+            MySqlConnection connection,
+            MySqlTransaction transaction,
+            string rfidUid,
+            string pin,
+            out int administratorUserId,
+            out string errorMessage)
+        {
+            administratorUserId = 0;
+            errorMessage = "The administrator RFID UID or PIN is invalid.";
+
+            const string sql = @"
+                SELECT id, password_hash, role, is_active
+                FROM users
+                WHERE rfid_uid = @rfidUid
+                FOR UPDATE";
+            string passwordHash;
+            string role;
+            bool isActive;
+            using (var command = new MySqlCommand(sql, connection, transaction))
+            {
+                command.Parameters.AddWithValue("@rfidUid", rfidUid);
+                using (var reader = command.ExecuteReader())
+                {
+                    if (!reader.Read())
+                        return false;
+
+                    administratorUserId = reader.GetInt32("id");
+                    passwordHash = Convert.ToString(reader["password_hash"]) ?? string.Empty;
+                    role = Convert.ToString(reader["role"]) ?? string.Empty;
+                    isActive = reader["is_active"] is not DBNull && Convert.ToBoolean(reader["is_active"]);
+                }
+            }
+
+            if (!BCrypt.Net.BCrypt.Verify(pin, passwordHash))
+            {
+                administratorUserId = 0;
+                return false;
+            }
+
+            if (!isActive)
+            {
+                administratorUserId = 0;
+                errorMessage = "This administrator account is inactive and cannot authorize deposits.";
+                return false;
+            }
+
+            if (!string.Equals(role, "admin", StringComparison.Ordinal))
+            {
+                administratorUserId = 0;
+                errorMessage = "This account is not authorized to approve deposits.";
+                return false;
+            }
+
+            errorMessage = string.Empty;
+            return true;
         }
 
         private bool TryGetDepositAmount(out decimal amount)
